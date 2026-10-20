@@ -43,7 +43,7 @@ The spec says the evaluation harness comes before the interface, so model decisi
 | BE-2 | Schema v2 | n/a | done | main (via be-2-schema) | Prisma 7 schema and first migration per D-009 (implementation notes there) and D-012. 25 database tests against real PostgreSQL: immutability (ONB-4, MODEL-3), citations (RES-5), no summary without evidence (RES-3), one running analysis per request, delete-a-reader (SEC-3 groundwork), feedback versions (FB-1). CI runs them with a PostgreSQL service |
 | BE-3 | Custom authentication | SEC-1, SEC-2 | todo | | Scope fixed in D-001 |
 | BE-4 | Catalog ingestion (Goodreads datasets) | n/a | todo | | Five files in `data/raw/` per D-004; stream-parse the `.gz` files |
-| BE-5 | Source audit and adapters | n/a | todo | | Fill `docs/DATA_SOURCES.md` first |
+| BE-5 | Source audit and adapters | n/a | in progress | | Audit done and D-003 decided 2026-10-20: Open Library, Google Books (live only), Hardcover (ratings only). Next: adapters, plus test calls once `GOOGLE_BOOKS_API_KEY` and `HARDCOVER_API_TOKEN` are in `.env` |
 | BE-6 | Search and cover identification | DISC-1 to DISC-5 | todo | | |
 | BE-7 | Taste capture API | ONB-1 to ONB-4 | todo | | |
 | BE-8 | Analysis pipeline | RES-1 to RES-7 | todo | | |

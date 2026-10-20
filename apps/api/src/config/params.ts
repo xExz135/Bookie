@@ -51,6 +51,18 @@ export const PARAMS = {
     source: 'D-001',
     secret: true,
   },
+  GOOGLE_BOOKS_API_KEY: {
+    schema: z.string().min(1).optional(),
+    description: 'Google Books API key. Ratings and metadata, fetched live only, never stored.',
+    source: 'D-003',
+    secret: true,
+  },
+  HARDCOVER_API_TOKEN: {
+    schema: z.string().min(1).optional(),
+    description: 'Hardcover personal access token with read-only scopes. Aggregate ratings only.',
+    source: 'D-003',
+    secret: true,
+  },
   GEMINI_API_KEY: {
     schema: z.string().min(1).optional(),
     description: 'Gemini API key for LLM and vision steps. Server-side only.',

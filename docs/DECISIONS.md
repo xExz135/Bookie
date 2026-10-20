@@ -65,11 +65,26 @@ Decision: **A, Skip allowed.** Decided by the owner on 2026-10-20. This replaces
 Consequences: ONB-2 stands as written. The result screen of a reader with no ratings shows public reception plus the invitation card (`personalMatch.status = needs_taste_data`).
 
 ## D-003 Which live sources are used
-Status: **OPEN**
+Status: **DECIDED**
 Date: 2026-10-20
 Affects: BE-5, BE-8; spec section 5
 Context: the owner lists StoryGraph, Google Books, Open Library, LibraryThing and Hardcover. Spec section 5 says availability must be verified, not assumed, and a source that does not allow storing or displaying content is excluded or limited to derived data.
 Decision: pending the audit in `docs/DATA_SOURCES.md`. Until it is complete, no live adapter is built, and the app runs on the dataset.
+Audit so far (2026-10-20, details in `docs/DATA_SOURCES.md`): no audited source offers usable review text.
+- StoryGraph: no official API; only a third-party service that logs in with your own account (100 free calls a month, then from $499 a month). Proposed: **exclude**.
+- Google Books: ratings and metadata, no review text; needs a free API key; terms forbid permanent copies. Proposed: **use, live only** (cache per HTTP headers, never store).
+- Open Library: ratings, metadata and covers, no review text; free, 1 request per second. Proposed: **use**, cached and rate-limited.
+- LibraryThing (Talpa): natural-language search returning ISBNs only. Proposed: **exclude**.
+- Hardcover: review text exists but its rules forbid using other users' data; aggregate ratings are allowed when labelled as Hardcover data. Free plan 5,000 requests a day; API in beta. Proposed: **derived data only** (average rating, count, breakdown).
+Decision (owner, 2026-10-20): **use Open Library, Google Books and Hardcover; exclude StoryGraph and LibraryThing.**
+- Open Library: `use`. Ratings, metadata and covers, cached, at most 1 request per second, identified by a User-Agent.
+- Google Books: `use, live only`. Ratings and metadata fetched per analysis and kept only as long as the HTTP cache header allows; Google attribution shown.
+- Hardcover: `derived data only`. Average rating, rating count and breakdown, always labelled as Hardcover data. No review text, no user data, no images.
+- **Review text comes only from the UCSD Goodreads dataset** (spec section 5). The live sources add separate rating lines; they never supply written evidence.
+Consequences:
+- Adapters are built for these three sources only (BE-5). Their `review_sources` rows are added by a new migration with the terms above.
+- Settings `GOOGLE_BOOKS_API_KEY` and `HARDCOVER_API_TOKEN` (secrets, server-side only). Test calls for Google Books and Hardcover run once the owner has put these in `.env`.
+- The dataset was collected around 2017, so books published later usually have no review text. Their result shows live ratings but no written verdict (evidence `insufficient`, RES-3). This is a known limit, reported honestly in the UI and README.
 
 ## D-004 Dataset usage terms
 Status: **DECIDED** (owner accepts the terms risk)
@@ -221,3 +236,10 @@ Decision: the optional questionnaire has exactly these fields. Every field may b
 - `themesToAvoid`: list of `{ theme, sensitivity: high | moderate | low }`. A theme that is not listed is unknown.
 Genre and theme names come from a server-side list (`GET /questionnaire/options`).
 Consequences: `CONTRACT.md` 4.2 updated (draft v0.2).
+
+## D-013 Reviews from other editions of the same work
+Status: **DECIDED (rejected)**
+Date: 2026-10-20
+Affects: BE-4, BE-8; spec section 4 (work and edition)
+Context: an edition with no reviews of its own could borrow the dataset reviews of other editions of the same work, labelled as such.
+Decision: **no.** Decided by the owner on 2026-10-20. Each edition uses only its own reviews, as spec section 4 says. An edition without usable reviews gets no written verdict (RES-3) and shows the live ratings and the personal match only.
