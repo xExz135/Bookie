@@ -1,0 +1,9 @@
+# Owner-written documents are formatted by hand
+*.md
+docs/
+contract/openapi.json
+pnpm-lock.yaml
+/data/
+dist/
+coverage/
+node_modules/

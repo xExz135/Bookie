@@ -1,0 +1,191 @@
+{
+  "components": {
+    "schemas": {
+      "AnalysisStatus": {
+        "enum": [
+          "running",
+          "complete",
+          "partial",
+          "failed"
+        ],
+        "type": "string"
+      },
+      "ConfidenceLevel": {
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "type": "string"
+      },
+      "ErrorCode": {
+        "enum": [
+          "VALIDATION_FAILED",
+          "UNAUTHENTICATED",
+          "TOKEN_EXPIRED",
+          "INVALID_CREDENTIALS",
+          "NOT_FOUND",
+          "RATE_LIMITED",
+          "SCAN_QUOTA_EXCEEDED",
+          "UPLOAD_TOO_LARGE",
+          "UNSUPPORTED_TYPE",
+          "NOT_A_BOOK",
+          "UNREADABLE_IMAGE",
+          "IDENTIFICATION_UNAVAILABLE",
+          "SOURCES_UNAVAILABLE",
+          "LLM_QUOTA_EXHAUSTED",
+          "INVALID_MODEL_OUTPUT",
+          "CONFLICT",
+          "EMAIL_IN_USE",
+          "INTERNAL_ERROR"
+        ],
+        "type": "string"
+      },
+      "ErrorResponseDto": {
+        "properties": {
+          "code": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ErrorCode"
+              }
+            ]
+          },
+          "fields": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Present only for VALIDATION_FAILED: field name to message.",
+            "type": "object"
+          },
+          "message": {
+            "description": "Safe default text. The frontend maps `code` to its own wording.",
+            "type": "string"
+          },
+          "retryAfterSeconds": {
+            "type": "number"
+          },
+          "retryable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "retryable"
+        ],
+        "type": "object"
+      },
+      "EvidenceState": {
+        "enum": [
+          "sufficient",
+          "limited",
+          "insufficient",
+          "unavailable"
+        ],
+        "type": "string"
+      },
+      "FeedbackTarget": {
+        "enum": [
+          "public",
+          "personal"
+        ],
+        "type": "string"
+      },
+      "FeedbackValue": {
+        "enum": [
+          "accurate",
+          "not_for_me"
+        ],
+        "type": "string"
+      },
+      "ModelId": {
+        "enum": [
+          "B0",
+          "B1",
+          "B2",
+          "B3",
+          "B4"
+        ],
+        "type": "string"
+      },
+      "PersonalMatchStatus": {
+        "enum": [
+          "done",
+          "running",
+          "failed",
+          "skipped",
+          "needs_taste_data",
+          "below_floor"
+        ],
+        "type": "string"
+      },
+      "SourceOutcome": {
+        "enum": [
+          "ok",
+          "empty",
+          "failed",
+          "rate_limited",
+          "not_permitted"
+        ],
+        "type": "string"
+      },
+      "StepName": {
+        "enum": [
+          "resolve",
+          "fetchReviews",
+          "selectReviews",
+          "extractTraits",
+          "publicSummary",
+          "evidenceConfidence",
+          "personalMatch",
+          "finalize"
+        ],
+        "type": "string"
+      },
+      "StepStatus": {
+        "enum": [
+          "pending",
+          "running",
+          "done",
+          "failed",
+          "skipped"
+        ],
+        "type": "string"
+      },
+      "TraitFit": {
+        "enum": [
+          "aligned",
+          "conflicting",
+          "unknown"
+        ],
+        "type": "string"
+      },
+      "TraitKey": {
+        "enum": [
+          "pace",
+          "tone",
+          "themes",
+          "contentIntensity"
+        ],
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "contact": {},
+    "description": "Generated from apps/api. Meanings and rules live in docs/CONTRACT.md; this file holds shapes.",
+    "title": "Book Verdict API",
+    "version": "0.2.0-draft"
+  },
+  "openapi": "3.0.0",
+  "paths": {},
+  "servers": [],
+  "tags": []
+}

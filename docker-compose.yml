@@ -1,0 +1,41 @@
+# Local development services. Start with: docker compose up -d
+# All images are free; nothing here needs a subscription (D-005).
+name: bookie
+
+services:
+  postgres:
+    # PostgreSQL with the free pgvector extension for book embeddings (D-006)
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bookie}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bookie}
+      POSTGRES_DB: ${POSTGRES_DB:-bookie}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-bookie} -d ${POSTGRES_DB:-bookie}']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    # Catches password-reset emails locally (D-001). Web UI on port 8025.
+    image: axllent/mailpit:latest
+    ports:
+      - '${SMTP_PORT:-1025}:1025'
+      - '${MAILPIT_UI_PORT:-8025}:8025'
+
+volumes:
+  postgres-data:

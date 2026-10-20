@@ -1,0 +1,750 @@
+// REFERENCE ONLY (v1 design). Superseded by the v2 schema plan in DECISIONS.md D-009.
+// Do not migrate from this file. Acceptance IDs quoted below (ACC-1, PROF-3, AUTH-5, ...) are v1 IDs.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =====================================================================
+// Book Verdict (revised to match the UI design)
+//
+// Every change from the previous version is marked  // NEW  or  // CHANGED.
+//
+// Shared data (catalogue, sources, reviews, public analyses) never
+// references User, so deleting a user cascades only through user-owned
+// tables and leaves shared data intact (ACC-1).
+//
+// Things Prisma cannot express live in a raw SQL migration:
+//   - immutability triggers on ProfileVersion, ProfileLikedGenre,
+//     ProfileDislikedGenre, ProfileThemeSensitivity, ProfileReferenceBook
+//     and PersonalAnalysis (+ its PersonalTraitComparison rows)
+//   - partial unique index: one running Analysis per (userId, editionId)
+//   - pg_trgm GIN indexes on Edition.normalizedTitle / normalizedAuthor
+//   - CHECK constraints (pace 1-5, rating 0-5, evidence shape, and the new ones):
+//       ProfileVersion: minPages <= maxPages, both > 0
+//       PublicAnalysis: publicScore/criticScore/readerScore 0-100,
+//                       confidenceScore 0-100, averageRating 0-5
+//       PersonalAnalysis: score 0-100, confidenceScore 0-100
+//       ClaimEvidence: (reviewId IS NOT NULL) <> (sourceId IS NOT NULL)
+//   - views: qualifying_profile_versions, analysis_history
+// =====================================================================
+
+// ---------------------------------------------------------------------
+// Auth and sessions (user-owned)
+// ---------------------------------------------------------------------
+
+model User {
+  id                       String            @id @default(uuid())
+  email                    String            @unique // always stored lowercased
+  password                 String // argon2id hash, never plaintext
+  name                     String
+  emailVerifiedAt          DateTime?
+  questionnaireState       QuestionnaireState @default(PENDING)
+  currentProfileVersionId  String?           @unique
+  createdAt                DateTime          @default(now())
+  updatedAt                DateTime          @updatedAt
+  currentProfileVersion    ProfileVersion?   @relation("CurrentProfileVersion", fields: [currentProfileVersionId], references: [id], onDelete: SetNull)
+  profileVersions          ProfileVersion[]  @relation("UserProfileVersions")
+  emailTokens              EmailToken[]
+  refreshTokens            RefreshToken[]
+  scanUsages               ScanUsage[]
+  analyses                 Analysis[]
+  personalAnalyses         PersonalAnalysis[]
+  feedback                 Feedback[]
+  refreshRequests          RefreshRequest[]
+}
+
+model EmailToken {
+  id        String         @id @default(uuid())
+  userId    String
+  type      EmailTokenType
+  tokenHash String         @unique // only the hash is stored
+  createdAt DateTime       @default(now())
+  expiresAt DateTime
+  usedAt    DateTime? // single use
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+}
+
+/// Rotating refresh tokens. familyId groups one rotation chain; presenting
+/// a token whose usedAt is already set revokes the whole family (AUTH-7).
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String
+  familyId  String
+  tokenHash String    @unique
+  issuedAt  DateTime  @default(now())
+  expiresAt DateTime
+  usedAt    DateTime?
+  revokedAt DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+  @@index([userId])
+}
+
+/// Lockout counting per email and per IP. Not tied to User so unknown
+/// emails are counted too (AUTH-5). Email is stored hashed; purge on a schedule.
+model LoginAttempt {
+  id          Int      @id @default(autoincrement())
+  emailHash   String
+  ip          String
+  success     Boolean
+  attemptedAt DateTime @default(now())
+
+  @@index([emailHash, attemptedAt])
+  @@index([ip, attemptedAt])
+}
+
+/// Scan quota ledger. Records that a scan happened, never the image (DISC-6).
+/// "14 scans remaining today" = daily limit (AppSetting) minus today's rows.
+model ScanUsage {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  scannedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, scannedAt])
+}
+
+// ---------------------------------------------------------------------
+// Reader profile (versioned, immutable; user-owned)
+// ---------------------------------------------------------------------
+
+/// Immutable snapshot of a reader's answers. NULL = unknown / no preference
+/// and is never treated as a dislike (PROF-3).
+/// Qualifying = pace is set AND at least one liked genre exists.
+/// Unsaved edits ("Changes not saved, v4 Draft") live client-side only;
+/// a version row exists only once the reader saves.
+model ProfileVersion {
+  id                  String                     @id @default(uuid())
+  userId              String
+  versionNo           Int
+  pace                Int? // 1 slow burn .. 5 fast-moving. UI offers 3 choices -> store 1 / 3 / 5
+  // CHANGED: replaces preferredLength (SHORT/MEDIUM/LONG) and themeSensitivity (single Int)
+  minPages            Int? // "primary sweet spot" lower bound, e.g. 400
+  maxPages            Int? // upper bound, e.g. 600
+  includeLongBooks    Boolean? // "include books over 600 pages"; NULL = unknown
+  changeSummary       String? // NEW: optional text shown in version history
+  createdAt           DateTime                   @default(now())
+  user                User                       @relation("UserProfileVersions", fields: [userId], references: [id], onDelete: Cascade)
+  currentFor          User?                      @relation("CurrentProfileVersion")
+  likedGenres         ProfileLikedGenre[]
+  dislikedGenres      ProfileDislikedGenre[]
+  themeSensitivities  ProfileThemeSensitivity[] // NEW
+  referenceBooks      ProfileReferenceBook[]
+  analyses            Analysis[]
+  personalAnalyses    PersonalAnalysis[]
+  feedback            Feedback[]
+
+  @@unique([userId, versionNo])
+}
+
+model Genre {
+  id             Int                    @id @default(autoincrement())
+  name           String                 @unique
+  liked          ProfileLikedGenre[]
+  disliked       ProfileDislikedGenre[]
+}
+
+model ProfileLikedGenre {
+  profileVersionId String
+  genreId          Int
+  profileVersion   ProfileVersion @relation(fields: [profileVersionId], references: [id], onDelete: Cascade)
+  genre            Genre          @relation(fields: [genreId], references: [id])
+
+  @@id([profileVersionId, genreId])
+}
+
+/// A genre should not be both liked and disliked in one version (app-level check).
+model ProfileDislikedGenre {
+  profileVersionId String
+  genreId          Int
+  profileVersion   ProfileVersion @relation(fields: [profileVersionId], references: [id], onDelete: Cascade)
+  genre            Genre          @relation(fields: [genreId], references: [id])
+
+  @@id([profileVersionId, genreId])
+}
+
+/// NEW: lookup of sensitive themes shown on the profile screen
+/// ("Substance Abuse & Addiction", "Graphic Violence & Physical Harm",
+/// "Tragedy & Bleak Themes", "Grief & Bereavement", ...).
+model Theme {
+  id            Int                        @id @default(autoincrement())
+  name          String                     @unique
+  sensitivities ProfileThemeSensitivity[]
+}
+
+/// NEW: per-theme sensitivity. A theme with NO row = "No preference / unset":
+/// never factored into the score and listed under "not factored in" (PROF-3, RES-10).
+/// LOW is a real answer ("tolerant"), different from unset.
+model ProfileThemeSensitivity {
+  profileVersionId String
+  themeId          Int
+  level            SensitivityLevel
+  profileVersion   ProfileVersion   @relation(fields: [profileVersionId], references: [id], onDelete: Cascade)
+  theme            Theme            @relation(fields: [themeId], references: [id])
+
+  @@id([profileVersionId, themeId])
+}
+
+/// "2 to 3 books you loved or disliked". The book may not be catalogued,
+/// so title/author stay free text; editionId is set when the reader picked
+/// one via search.
+model ProfileReferenceBook {
+  id               String                    @id @default(uuid())
+  profileVersionId String
+  title            String
+  author           String?
+  sentiment        Sentiment // CHANGED: HATED renamed DISLIKED ("Not for me" in the UI)
+  note             String? // NEW: the line shown under the benchmark
+  editionId        String? // NEW: optional link to the shared catalogue
+  profileVersion   ProfileVersion            @relation(fields: [profileVersionId], references: [id], onDelete: Cascade)
+  edition          Edition?                  @relation(fields: [editionId], references: [id], onDelete: SetNull)
+  comparisons      PersonalTraitComparison[]
+
+  @@index([profileVersionId])
+}
+
+// ---------------------------------------------------------------------
+// Catalogue (shared, no user references)
+// ---------------------------------------------------------------------
+
+model Work {
+  id             String    @id @default(uuid())
+  canonicalTitle String
+  primaryAuthor  String
+  createdAt      DateTime  @default(now())
+  editions       Edition[]
+}
+
+model Edition {
+  id                String               @id @default(uuid())
+  workId            String
+  title             String
+  subtitle          String?
+  authors           String[]
+  language          String? // BCP 47 tag
+  publisher         String? // NEW
+  publicationYear   Int?
+  publicationDate   DateTime?            @db.Date // NEW: full date when known ("Pub Date: Oct 18, 2022")
+  format            String? // "Hardcover", "Paperback", "Audiobook", ...
+  pageCount         Int? // NEW: needed to score the page-range preference
+  narrator          String? // NEW: audiobooks
+  durationSeconds   Int? // NEW: audiobooks ("21h 03m")
+  asin              String? // NEW: audiobook identifier
+  isbn13            String?              @unique
+  coverUrl          String?
+  description       String?
+  normalizedTitle   String // lowercased, accent-stripped, for fuzzy matching
+  normalizedAuthor  String
+  metadataFetchedAt DateTime             @default(now())
+  metadataExpiresAt DateTime
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  work              Work                 @relation(fields: [workId], references: [id])
+  externalIds       EditionExternalId[]
+  fetches           ReviewFetch[]
+  reviews           Review[]
+  publicAnalyses    PublicAnalysis[]
+  analyses          Analysis[]
+  personalAnalyses  PersonalAnalysis[]
+  refreshRequests   RefreshRequest[]
+  referenceBooks    ProfileReferenceBook[] // NEW (back-relation)
+
+  @@index([workId])
+}
+
+// ---------------------------------------------------------------------
+// Sources, fetches, reviews (shared)
+// ---------------------------------------------------------------------
+
+model ReviewSource {
+  id             Int                 @id @default(autoincrement())
+  name           String              @unique
+  sourceType     SourceType // NEW: "Access type" column (community / editorial / academic)
+  audience       AudienceType // NEW: critic vs reader, used for the divergence analysis
+  providesText   Boolean
+  storageAllowed Boolean // may review text be stored?
+  displayAllowed Boolean // may review text be shown?
+  enabled        Boolean             @default(true)
+  termsNotes     String?
+  termsCheckedAt DateTime?
+  externalIds    EditionExternalId[]
+  fetches        ReviewFetch[]
+  reviews        Review[]
+  claimEvidence  ClaimEvidence[]
+  traitEvidence  BookTraitEvidence[]
+}
+
+model EditionExternalId {
+  editionId  String
+  sourceId   Int
+  externalId String
+  edition    Edition      @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  source     ReviewSource @relation(fields: [sourceId], references: [id])
+
+  @@id([editionId, sourceId])
+  @@unique([sourceId, externalId])
+}
+
+/// One attempt to query one source for one edition. Failures and empty
+/// results get short expiries so they are retried, and are never read as
+/// "no criticism exists". reviewsVersion groups the fetches that feed one
+/// public analysis.
+/// "Retry missing sources": create a new reviewsVersion that carries over
+/// the OK fetches and re-attempts the failed ones, then build a new
+/// PublicAnalysis for it and repoint the Analysis.
+model ReviewFetch {
+  id             String        @id @default(uuid())
+  editionId      String
+  sourceId       Int
+  reviewsVersion Int
+  outcome        SourceOutcome
+  errorCode      String?
+  attemptCount   Int           @default(1) // NEW
+  reviewCount    Int           @default(0)
+  ratingAvg      Decimal?      @db.Decimal(3, 2)
+  ratingCount    Int?
+  workLevelOnly  Boolean       @default(false) // reviews not specific to this edition
+  fetchedAt      DateTime      @default(now())
+  expiresAt      DateTime
+  edition        Edition       @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  source         ReviewSource  @relation(fields: [sourceId], references: [id])
+  reviews        Review[]
+
+  @@unique([editionId, sourceId, reviewsVersion])
+  @@index([editionId, sourceId, expiresAt])
+}
+
+/// text is NULL when the source does not allow storage (derived data only).
+/// The application must enforce ReviewSource.storageAllowed on insert.
+model Review {
+  id               String              @id @default(uuid())
+  fetchId          String
+  editionId        String
+  sourceId         Int
+  externalReviewId String
+  reviewerName     String? // NEW: byline, when the source permits showing it
+  reviewerRole     String? // NEW: "Lead Literary Critic", "Fiction Books Desk"
+  url              String? // NEW: link to the original, for attribution
+  rating           Decimal?            @db.Decimal(3, 2)
+  text             String?
+  textLength       Int?
+  language         String?
+  postedAt         DateTime?
+  createdAt        DateTime            @default(now())
+  fetch            ReviewFetch         @relation(fields: [fetchId], references: [id], onDelete: Cascade)
+  edition          Edition             @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  source           ReviewSource        @relation(fields: [sourceId], references: [id])
+  evidenceItems    AnalysisEvidenceItem[]
+  claimEvidence    ClaimEvidence[]
+  traitEvidence    BookTraitEvidence[]
+
+  @@unique([fetchId, externalReviewId])
+  @@index([editionId, sourceId])
+}
+
+// ---------------------------------------------------------------------
+// Public analysis (shared, identical for every user)
+// ---------------------------------------------------------------------
+
+model PublicAnalysis {
+  id               String                 @id @default(uuid())
+  editionId        String
+  reviewsVersion   Int
+  evidenceState    EvidenceState
+  confidence       ConfidenceLevel // computed by code, not the language model
+  confidenceScore  Int? // NEW: 0-100 ("88/100"); the level above is derived from it
+  confidenceInputs Json                   @default("{}") // counts, coverage, text vs rating-only
+  // NEW: public consensus numbers, all computed by code from ratings
+  publicScore      Decimal?               @db.Decimal(5, 2) // 0-100, shown as "88%"
+  averageRating    Decimal?               @db.Decimal(3, 2) // 0-5, shown as "4.54 / 5.0"
+  criticScore      Decimal?               @db.Decimal(5, 2) // critic-audience sources only
+  readerScore      Decimal?               @db.Decimal(5, 2) // reader-audience sources only
+  ratingSpread     Decimal?               @db.Decimal(5, 3) // dispersion; drives "Deeply Divided"
+  consensusLabel   ConsensusLabel?
+  summary          String? // NULL when evidence is insufficient (RES-5)
+  modelVersion     String?
+  promptVersion    String?
+  generatedAt      DateTime               @default(now())
+  expiresAt        DateTime
+  edition          Edition                @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  evidenceSet      AnalysisEvidenceItem[]
+  claims           AnalysisClaim[]
+  traits           BookTrait[]
+  analyses         Analysis[]
+  personalAnalyses PersonalAnalysis[]
+
+  @@unique([editionId, reviewsVersion])
+  @@index([editionId, expiresAt])
+}
+
+/// The bounded set of reviews actually sent to the model (default max 75).
+/// position gives the stable "Review #12" numbers used in citations.
+model AnalysisEvidenceItem {
+  publicAnalysisId String
+  reviewId         String
+  position         Int // NEW: 1..N within this public analysis
+  publicAnalysis   PublicAnalysis @relation(fields: [publicAnalysisId], references: [id], onDelete: Cascade)
+  review           Review         @relation(fields: [reviewId], references: [id], onDelete: NoAction)
+
+  @@id([publicAnalysisId, reviewId])
+  @@unique([publicAnalysisId, position])
+}
+
+model AnalysisClaim {
+  id               String          @id @default(uuid())
+  publicAnalysisId String
+  kind             ClaimKind
+  text             String
+  rank             Int
+  publicAnalysis   PublicAnalysis  @relation(fields: [publicAnalysisId], references: [id], onDelete: Cascade)
+  evidence         ClaimEvidence[]
+
+  @@index([publicAnalysisId, kind, rank])
+}
+
+/// A citation is either a stored review, or (when text may not be stored)
+/// a source plus a count. Real foreign keys make dangling citations
+/// impossible (RES-7). Enforce the "one or the other" shape with a CHECK
+/// in the raw SQL migration.
+/// excerpt is the verbatim snippet shown under the claim; the app must
+/// verify it occurs in Review.text and only set it when
+/// ReviewSource.displayAllowed (the "Verified" badge).
+model ClaimEvidence {
+  id          String        @id @default(uuid())
+  claimId     String
+  reviewId    String?
+  sourceId    Int?
+  reviewCount Int?
+  excerpt     String? // NEW
+  claim       AnalysisClaim @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  review      Review?       @relation(fields: [reviewId], references: [id], onDelete: NoAction)
+  source      ReviewSource? @relation(fields: [sourceId], references: [id])
+
+  @@index([claimId])
+}
+
+/// Book characteristics extracted once per public analysis, then compared
+/// with each reader's profile trait by trait.
+model BookTrait {
+  id               String                 @id @default(uuid())
+  publicAnalysisId String
+  kind             TraitKind
+  value            String // e.g. "fast", "grief", "literary fiction", "voice-driven"
+  publicAnalysis   PublicAnalysis         @relation(fields: [publicAnalysisId], references: [id], onDelete: Cascade)
+  evidence         BookTraitEvidence[]
+  comparisons      PersonalTraitComparison[]
+
+  @@unique([publicAnalysisId, kind, value])
+}
+
+model BookTraitEvidence {
+  id              String       @id @default(uuid())
+  bookTraitId     String
+  reviewId        String?
+  sourceId        Int?
+  reviewCount     Int?
+  fromDescription Boolean      @default(false)
+  bookTrait       BookTrait    @relation(fields: [bookTraitId], references: [id], onDelete: Cascade)
+  review          Review?      @relation(fields: [reviewId], references: [id], onDelete: NoAction)
+  source          ReviewSource? @relation(fields: [sourceId], references: [id])
+
+  @@index([bookTraitId])
+}
+
+// ---------------------------------------------------------------------
+// Analyses, steps, personal analysis (user-owned)
+// ---------------------------------------------------------------------
+
+/// One request to analyze one edition for one user.
+/// Ownership of profileVersion / personalAnalysis is enforced in the
+/// application layer (always query by userId).
+/// Raw SQL migration adds: UNIQUE (userId, editionId) WHERE status = 'RUNNING'
+/// so duplicate requests join the in-progress analysis.
+model Analysis {
+  id                   String           @id @default(uuid())
+  userId               String
+  editionId            String
+  status               AnalysisStatus   @default(RUNNING)
+  verdict              VerdictLabel? // NEW: "Highly Recommended" etc. Set at FINALIZE from
+                                        // public + personal scores using thresholds in AppSetting;
+                                        // stored so history stays truthful if thresholds change.
+  publicAnalysisId     String?
+  personalAnalysisId   String?          @unique
+  profileVersionId     String? // version in force when requested; null if none qualifying
+  recalculatedFromId   String?
+  createdAt            DateTime         @default(now())
+  finishedAt           DateTime?
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edition              Edition          @relation(fields: [editionId], references: [id])
+  publicAnalysis       PublicAnalysis?  @relation(fields: [publicAnalysisId], references: [id])
+  personalAnalysis     PersonalAnalysis? @relation(fields: [personalAnalysisId], references: [id], onDelete: SetNull)
+  profileVersion       ProfileVersion?  @relation(fields: [profileVersionId], references: [id], onDelete: SetNull)
+  recalculatedFrom     Analysis?        @relation("Recalculation", fields: [recalculatedFromId], references: [id], onDelete: SetNull)
+  recalculations       Analysis[]       @relation("Recalculation")
+  steps                AnalysisStep[]
+  feedback             Feedback[]
+
+  @@index([userId, createdAt])
+}
+
+/// Per-step tracking: visible status (RES-2), retry only failed steps (RES-3).
+model AnalysisStep {
+  id           String      @id @default(uuid())
+  analysisId   String
+  step         StepName
+  status       StepStatus  @default(PENDING)
+  attemptCount Int         @default(0)
+  errorCode    String?
+  durationMs   Int?
+  startedAt    DateTime?
+  finishedAt   DateTime?
+  analysis     Analysis    @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@unique([analysisId, step])
+}
+
+/// Immutable (trigger in raw migration). Recalculation inserts a new row.
+/// "Outdated" is derived by comparing profileVersionId with
+/// User.currentProfileVersionId, never stored.
+/// "Evaluated against 5 core preferences" = count of non-UNKNOWN comparisons.
+model PersonalAnalysis {
+  id               String                    @id @default(uuid())
+  userId           String
+  editionId        String
+  profileVersionId String
+  publicAnalysisId String
+  score            Decimal?                  @db.Decimal(5, 2) // "preference match", not a probability of enjoyment
+  confidence       ConfidenceLevel
+  confidenceScore  Int? // NEW: 0-100 ("82/100")
+  generatedAt      DateTime                  @default(now())
+  user             User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edition          Edition                   @relation(fields: [editionId], references: [id])
+  profileVersion   ProfileVersion            @relation(fields: [profileVersionId], references: [id], onDelete: NoAction)
+  publicAnalysis   PublicAnalysis            @relation(fields: [publicAnalysisId], references: [id])
+  comparisons      PersonalTraitComparison[]
+  analysis         Analysis?
+
+  @@index([userId, generatedAt])
+}
+
+/// Inputs to the code-computed score so it is reproducible (RES-9).
+/// UNKNOWN rows are listed as "not factored in" and excluded from the
+/// score (RES-10). bookTraitId is null when the book side is unknown;
+/// profileValue is null when the profile side is unknown.
+/// CAUTION rows (e.g. "Sensitivity Noted") are shown under "Things to keep
+/// in mind"; whether they reduce the score is a scoring rule, and the effect
+/// is recorded in scoreContribution either way.
+model PersonalTraitComparison {
+  id                 String                @id @default(uuid())
+  personalAnalysisId String
+  kind               TraitKind
+  bookTraitId        String?
+  profileValue       String?
+  referenceBookId    String? // NEW: set when the comparison comes from a benchmark book
+  result             TraitResult
+  headline           String? // NEW: e.g. "Deliberate, Immersive Epic"
+  reasoning          String?
+  scoreContribution  Decimal?              @db.Decimal(5, 2) // NEW: signed points, e.g. +18.00; NULL for UNKNOWN
+  personalAnalysis   PersonalAnalysis      @relation(fields: [personalAnalysisId], references: [id], onDelete: Cascade)
+  bookTrait          BookTrait?            @relation(fields: [bookTraitId], references: [id])
+  referenceBook      ProfileReferenceBook? @relation(fields: [referenceBookId], references: [id], onDelete: SetNull)
+
+  @@index([personalAnalysisId])
+}
+
+// ---------------------------------------------------------------------
+// Feedback, refresh limits (user-owned)
+// ---------------------------------------------------------------------
+
+/// Public and personal sections are rated separately and can be changed
+/// later. Always load the Analysis by (id, userId) before writing so one
+/// user cannot give feedback on another's analysis (FB-2).
+model Feedback {
+  id               String          @id @default(uuid())
+  userId           String
+  analysisId       String
+  target           FeedbackTarget
+  value            FeedbackValue
+  profileVersionId String? // required when target = PERSONAL
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analysis         Analysis        @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  profileVersion   ProfileVersion? @relation(fields: [profileVersionId], references: [id], onDelete: NoAction)
+
+  @@unique([userId, analysisId, target])
+}
+
+/// Per-book daily refresh limit so external quotas cannot be exhausted.
+model RefreshRequest {
+  id          Int      @id @default(autoincrement())
+  userId      String
+  editionId   String
+  requestedAt DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edition     Edition  @relation(fields: [editionId], references: [id])
+
+  @@index([userId, editionId, requestedAt])
+}
+
+// ---------------------------------------------------------------------
+// Configuration (tunable defaults from the spec's parameter rule)
+// Suggested new keys: verdict.thresholds, consensus.label_thresholds,
+// confidence.weights
+// ---------------------------------------------------------------------
+
+model AppSetting {
+  key         String   @id
+  value       Json
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------
+
+enum EmailTokenType {
+  VERIFY
+  RESET
+}
+
+enum QuestionnaireState {
+  PENDING
+  STARTED
+  SKIPPED
+  COMPLETED
+}
+
+/// NEW: per-theme sensitivity. "No preference" is the absence of a row.
+enum SensitivityLevel {
+  HIGH
+  MODERATE
+  LOW
+}
+
+/// CHANGED: HATED -> DISLIKED
+enum Sentiment {
+  LOVED
+  DISLIKED
+}
+
+/// NEW
+enum SourceType {
+  COMMUNITY
+  EDITORIAL
+  ACADEMIC
+}
+
+/// NEW
+enum AudienceType {
+  CRITIC
+  READER
+}
+
+enum SourceOutcome {
+  OK
+  EMPTY
+  FAILED
+  RATE_LIMITED
+  NOT_PERMITTED
+}
+
+enum EvidenceState {
+  SUFFICIENT
+  LIMITED
+  INSUFFICIENT
+  UNAVAILABLE
+}
+
+enum ConfidenceLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+/// NEW: values are a proposal; align the bands with your spec.
+enum ConsensusLabel {
+  UNIVERSAL_ACCLAIM
+  EXCEPTIONAL_ACCLAIM
+  GENERALLY_FAVORABLE
+  MIXED
+  DEEPLY_DIVIDED
+  GENERALLY_UNFAVORABLE
+}
+
+/// NEW: values are a proposal; the UI so far shows only the first two.
+enum VerdictLabel {
+  HIGHLY_RECOMMENDED
+  WORTH_EXPLORING
+  PROCEED_WITH_CAUTION
+  NOT_FOR_YOU
+}
+
+enum ClaimKind {
+  PRAISE
+  COMPLAINT
+}
+
+/// CHANGED: added LENGTH and STYLE (voice, structure, prose)
+enum TraitKind {
+  PACE
+  THEME
+  GENRE
+  TONE
+  LENGTH
+  STYLE
+}
+
+/// CHANGED: added CAUTION ("Sensitivity Noted")
+enum TraitResult {
+  MATCH
+  MISMATCH
+  CAUTION
+  UNKNOWN
+}
+
+enum AnalysisStatus {
+  RUNNING
+  COMPLETE
+  PARTIAL
+  FAILED
+  CANCELLED
+}
+
+enum StepName {
+  RESOLVE_EDITION
+  FETCH_REVIEWS
+  SELECT_EVIDENCE
+  PUBLIC_ANALYSIS
+  EVIDENCE_CONFIDENCE
+  PERSONAL_ANALYSIS
+  FINALIZE
+}
+
+enum StepStatus {
+  PENDING
+  RUNNING
+  DONE
+  FAILED
+  SKIPPED
+}
+
+enum FeedbackTarget {
+  PUBLIC
+  PERSONAL
+}
+
+enum FeedbackValue {
+  ACCURATE
+  NOT_FOR_ME
+}

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary-container":"#131b2e","on-primary-fixed-variant":"#3f465c","tertiary-fixed":"#85f8c4","primary-fixed":"#dae2fd","on-secondary-container":"#682c00","surface":"#f8f9ff","surface-bright":"#f8f9ff","inverse-on-surface":"#eaf1ff","surface-tint":"#565e74","on-primary-fixed":"#131b2e","secondary":"#9b4500","tertiary-container":"#002114","secondary-fixed":"#ffdbca","on-secondary-fixed":"#331200","error":"#ba1a1a","on-tertiary-fixed-variant":"#005137","on-secondary":"#ffffff","surface-container-lowest":"#ffffff","surface-container-highest":"#d3e4fe","background":"#f8f9ff","on-primary-container":"#7c839b","surface-dim":"#cbdbf5","surface-variant":"#d3e4fe","outline-variant":"#c6c6cd","inverse-primary":"#bec6e0","error-container":"#ffdad6","on-tertiary-container":"#069669","on-error":"#ffffff","tertiary":"#000000","secondary-container":"#fd8a42","on-secondary-fixed-variant":"#763300","on-surface":"#0b1c30","outline":"#76777d","secondary-fixed-dim":"#ffb68e","surface-container-low":"#eff4ff","on-surface-variant":"#45464d","surface-container-high":"#dce9ff","primary":"#000000","on-primary":"#ffffff","surface-container":"#e5eeff","primary-fixed-dim":"#bec6e0","on-background":"#0b1c30","on-tertiary-fixed":"#002114","inverse-surface":"#213145","on-error-container":"#93000a","tertiary-fixed-dim":"#68dba9","on-tertiary":"#ffffff"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"space-sm":"0.5rem",gutter:"1.5rem","gutter-desktop":"2rem","space-xs":"0.25rem","gutter-mobile":"1rem","space-lg":"1.5rem","space-md":"1rem","margin-mobile":"1rem","space-xl":"2.5rem",margin:"1.5rem","margin-desktop":"3rem"},fontFamily:{"metric-num":["Inter"],"label-sm":["Inter"],"headline-sm":["Newsreader"],"headline-md":["Newsreader"],"body-lg":["Newsreader"],"label-lg":["Inter"],"headline-lg-mobile":["Newsreader"],"display-lg":["Newsreader"],"label-md":["Inter"],"headline-lg":["Newsreader"],"body-sm":["Inter"],"display-lg-mobile":["Newsreader"],"body-md":["Inter"]},fontSize:{"metric-num":["1.75rem",{lineHeight:"2rem",letterSpacing:"-0.02em",fontWeight:"600"}],"label-sm":["0.6875rem",{lineHeight:"0.875rem",letterSpacing:"0.06em",fontWeight:"500"}],"headline-sm":["1.25rem",{lineHeight:"1.625rem",fontWeight:"600"}],"headline-md":["1.625rem",{lineHeight:"2.125rem",letterSpacing:"-0.01em",fontWeight:"500"}],"body-lg":["1.125rem",{lineHeight:"1.875rem",fontWeight:"400"}],"label-lg":["0.875rem",{lineHeight:"1.25rem",letterSpacing:"0.01em",fontWeight:"600"}],"headline-lg-mobile":["1.75rem",{lineHeight:"2.25rem",letterSpacing:"-0.01em",fontWeight:"500"}],"display-lg":["3.5rem",{lineHeight:"4.25rem",letterSpacing:"-0.02em",fontWeight:"400"}],"label-md":["0.75rem",{lineHeight:"1rem",letterSpacing:"0.05em",fontWeight:"600"}],"headline-lg":["2.25rem",{lineHeight:"2.75rem",letterSpacing:"-0.015em",fontWeight:"500"}],"body-sm":["0.8125rem",{lineHeight:"1.25rem",fontWeight:"400"}],"display-lg-mobile":["2.25rem",{lineHeight:"2.75rem",letterSpacing:"-0.01em",fontWeight:"400"}],"body-md":["0.9375rem",{lineHeight:"1.5rem",fontWeight:"400"}]}}}}</script><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 w-full z-50 bg-primary-container text-on-primary-container shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 max-w-7xl mx-auto px-gutter-desktop flex items-center justify-between gap-gutter"><div class="flex items-center gap-space-lg"><a class="flex items-center gap-space-sm group text-left" data-path="discover" href="#"><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest tracking-tight">Book Verdict</span><span class="font-label-sm text-label-sm text-secondary-fixed tracking-widest uppercase">Evidence-Based Literary Critique</span></div></a><nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-surface-container-lowest font-semibold border-b-2 border-secondary-container"><a aria-current="page" class="transition-colors py-space-sm text-surface-container-lowest font-semibold border-b-2 border-secondary-container" data-path="discover" href="#">Discover</a><a class="font-label-md text-label-md text-primary-fixed-dim hover:text-surface-container-lowest transition-colors py-space-sm" data-path="verdict-and-analysis" href="#">Verdict &amp; Analysis</a><a class="font-label-md text-label-md text-primary-fixed-dim hover:text-surface-container-lowest transition-colors py-space-sm" data-path="reader-profile" href="#">Reader Profile</a><a class="font-label-md text-label-md text-primary-fixed-dim hover:text-surface-container-lowest transition-colors py-space-sm" data-path="history-and-recalculation" href="#">History &amp; Recalculation</a></nav></div><div class="flex items-center gap-space-md"><div class="relative hidden md:block w-64 lg:w-72"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-primary-container text-lg">search</span><input class="w-full bg-primary-container/80 pl-9 pr-3 py-1.5 rounded-lg text-surface-container-lowest placeholder:text-on-primary-container placeholder:font-body-sm font-body-sm focus:outline-none focus:ring-1 focus:ring-secondary-container text-body-sm border border-outline-variant/30" placeholder="Inquire monograph, critique, ISBN..." type="search"/></div><button class="hidden sm:flex items-center gap-space-xs px-space-sm py-1.5 rounded-lg bg-surface-container-low/10 text-primary-fixed hover:bg-surface-container-low/20 hover:text-surface-container-lowest transition-colors" title="Install Progressive Web App" type="button"><span class="material-symbols-outlined text-sm">download</span><span class="font-label-sm text-label-sm uppercase tracking-wider">Install PWA</span></button><div class="flex items-center gap-space-sm pl-space-sm border-l border-outline-variant/20"><div class="hidden lg:flex flex-col text-right"><div class="flex items-center justify-end gap-1"><span class="font-label-md text-label-md text-surface-container-lowest">Elena Rostova</span><span class="font-label-sm text-label-sm text-secondary-fixed">(v3 Active)</span></div><div class="flex items-center justify-end gap-1"><span class="material-symbols-outlined text-xs text-on-tertiary-container">verified</span><span class="font-label-sm text-label-sm text-on-tertiary-container">Verified Reader</span></div></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1VKhLM_-uhmJ4p1jyTEnXc8P3qpYULHlhNkvTOdZpIanekdv54-c9cC-JVjhqO9VXaJBTjC6YZO877oaJX-5-HEigU6KyXBRaT5LPK0ixPsCo340gNl1y5hiQAyVH7BWBcRF1Tfm9ixWVVgqTippIPWXJ8q2BYIxLH16G7mfXTlU-x9d6MVESMG_DJ_RSAMq0xZ9OtjRWHViXezzqX1j4iCrmJl58pcxUS-SEWYtCV6fx8FT-Q3gOWG7w"/></div></div></div></header><main class="w-full pt-20 bg-surface min-h-[calc(100vh-14rem)]"><div class="flex flex-col w-full">
+<!-- Top Editorial Header & Analytical Banner -->
+<section class="w-full bg-surface-container-low py-space-xl">
+<div class="max-w-7xl mx-auto px-gutter-desktop">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
+<div class="max-w-3xl">
+<div class="inline-flex items-center gap-space-xs px-space-sm py-1 rounded-lg bg-surface-container-highest text-secondary mb-space-sm shadow-sm">
+<span class="material-symbols-outlined text-sm">balance</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Honest Book Insights</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight leading-none mb-space-sm">
+            Should you read this book?
+          </h1>
+<p class="font-headline-md text-headline-md text-on-surface-variant font-normal max-w-2xl">
+            Honest critical consensus paired with your personal taste — so you always know what to read next.
+          </p>
+</div>
+<!-- Analytical Phase Indicator Rail -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-xs min-w-[320px]">
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider">How It Works</span>
+<div class="flex items-center justify-between text-on-surface pt-1">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary ring-2 ring-secondary/20"></span>
+<span class="font-label-sm text-label-sm font-semibold text-secondary">1. Find book</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline-variant">→</span>
+<div class="flex items-center gap-1.5 opacity-60">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">2. Choose edition</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline-variant">→</span>
+<div class="flex items-center gap-1.5 opacity-40">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3. Get your verdict</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Reader Profile Status Card (Prof-1) -->
+<section class="max-w-7xl mx-auto px-gutter-desktop -mt-6 w-full z-10">
+<div class="bg-primary-container text-surface-container-lowest rounded-xl p-space-md shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest/10 flex items-center justify-center text-secondary-fixed flex-shrink-0">
+<span class="material-symbols-outlined text-xl">tune</span>
+</div>
+<div>
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-label-md text-label-md text-surface-container-lowest font-semibold">Your Reading Profile: Version 3 (Active)</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm uppercase font-semibold">Calibrated</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-primary-container mt-0.5">
+            Tailored for your tastes: Literary fiction, slow-burn narratives, character-driven storytelling.
+          </p>
+</div>
+</div>
+<a class="inline-flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-surface-container-lowest/15 hover:bg-surface-container-lowest/25 text-surface-container-lowest font-label-md text-label-md transition-colors flex-shrink-0" data-path="reader-profile" href="#">
+<span>Edit Taste Profile</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- Dual Input Discovery Engine: Title/ISBN + Cover Scanner -->
+<section class="max-w-7xl mx-auto px-gutter-desktop py-space-xl w-full">
+<div class="mb-space-md">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold">Find Your Next Book</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Search by title, author, or book cover</h2>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-stretch">
+<!-- Input Mode 1: Search & Autocomplete (7 Cols) -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5" for="book-inquiry">
+<span class="material-symbols-outlined text-base text-secondary">search</span>
+              Title, Author, or ISBN
+            </label>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Instant Search</span>
+</div>
+<div class="relative w-full">
+<input class="w-full bg-surface-container-low pl-4 pr-12 py-3.5 rounded-lg text-on-surface font-headline-sm text-headline-sm placeholder:italic placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:shadow-md transition-all" id="book-inquiry" placeholder="e.g. Elena Ferrante, 9780063251922..." type="text" value="Demon Copperhead"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center hover:bg-on-surface-variant transition-colors" title="Execute Search">
+<span class="material-symbols-outlined text-base">arrow_forward</span>
+</button>
+</div>
+<!-- Active Autocomplete / Recent Queries Pill Bank -->
+<div class="mt-space-md">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline block mb-space-xs">Recent searches</span>
+<div class="flex flex-wrap gap-space-xs">
+<button class="px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors font-body-sm text-body-sm text-on-surface flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-xs text-outline">history</span>
+<span>Klara and the Sun</span>
+<span class="font-label-sm text-label-sm text-outline">Ishiguro</span>
+</button>
+<button class="px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors font-body-sm text-body-sm text-on-surface flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-xs text-outline">history</span>
+<span>Project Hail Mary</span>
+<span class="font-label-sm text-label-sm text-outline">Weir</span>
+</button>
+<button class="px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors font-body-sm text-body-sm text-on-surface flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-xs text-outline">history</span>
+<span>The Bee Sting</span>
+<span class="font-label-sm text-label-sm text-outline">Murray</span>
+</button>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md bg-surface-container-low -mx-space-lg -mb-space-lg p-space-md rounded-b-xl flex items-center justify-between text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-base text-on-tertiary-container">check_circle</span>
+<span class="font-body-sm text-body-sm">3 editions found</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Verified book match</span>
+</div>
+</div>
+<!-- Input Mode 2: Camera Cover Scanner Widget (5 Cols) -->
+<div class="lg:col-span-5 bg-surface-container-low p-space-lg rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base text-secondary">photo_camera</span>
+              Snap Cover Photo
+            </label>
+<div class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-xs">shutter_speed</span>
+<span>14 scans remaining today</span>
+</div>
+</div>
+<!-- Interactive Dropzone Mockup -->
+<div class="relative bg-surface-container-lowest rounded-xl p-space-md text-center flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container-high/40 transition-all group">
+<div class="w-14 h-14 rounded-full bg-surface-container flex items-center justify-center text-secondary mb-space-xs group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-2xl">document_scanner</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mb-0.5">Photograph or upload a book cover</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mb-space-sm">
+              Take a quick photo of the cover to instantly identify the exact title and publication edition.
+            </p>
+<div class="inline-flex items-center gap-1.5 px-space-md py-1.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm">
+<span class="material-symbols-outlined text-sm">camera_alt</span>
+<span>Take Photo or Choose File</span>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm mt-space-sm text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-outline">lock</span>
+<span class="font-label-sm text-label-sm text-outline">Private on device</span>
+</div>
+<button class="font-label-sm text-label-sm text-secondary hover:text-on-secondary-container underline" type="button">
+            Camera settings
+          </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Candidate Ambiguity Resolution (Disc-1 & Disc-2) -->
+<section class="max-w-7xl mx-auto px-gutter-desktop py-space-lg w-full">
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm pb-space-md">
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold uppercase">Choose Your Edition</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mt-1">Which edition are you reading or exploring?</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Critical reviews and pacing can differ between print, international releases, and audiobooks. Pick your edition.
+          </p>
+</div>
+<div class="flex items-center gap-space-xs self-start md:self-auto">
+<span class="font-label-sm text-label-sm text-outline">Selected title:</span>
+<span class="px-space-sm py-1 rounded-md bg-surface-container-high font-label-sm text-label-sm font-semibold text-on-surface">Demon Copperhead by Barbara Kingsolver</span>
+</div>
+</div>
+<!-- 3 Distinct Candidate Edition Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter pt-space-md">
+<!-- Candidate A: Recommended US Hardcover First Edition -->
+<div class="edition-card relative bg-surface-container-low rounded-xl p-space-md flex flex-col justify-between cursor-pointer ring-2 ring-secondary bg-surface-container-high/30 shadow-md transition-all" id="edition-candidate-a">
+<div class="absolute top-3 right-3">
+<span class="px-2 py-0.5 rounded bg-primary text-on-primary font-label-sm text-label-sm font-semibold uppercase tracking-wider">Recommended</span>
+</div>
+<div>
+<div class="aspect-[2/3] w-full max-h-56 rounded-lg overflow-hidden mb-space-sm shadow-sm relative bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Modern high resolution cover of Demon Copperhead by Barbara Kingsolver hardcover edition, featuring moody Appalachian blue mountains and warm rustic orange typography, contemporary American literary novel design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNcql3zYDbTtGEhh0ah-AJXvOUYqs9f9kUxNqCf5YuvmoNAtfEMnb4YV0nwN7_2Pbn8Zgr1lYGUGc2alvMYEmCDesVdIMD7WBhadsJOuF81ZQjGyFMl_MtMMha5X6tGBSb-NxLg3J5RrFSy8hY9TUr5kqmGAdBEqWIoA_pzuIqjJQwH-23uMwkgqEBqVaHgK0yXBonpJH_MDu6kXJUtpVyullvyU4Nwvr_o6cQWiO2n1hlpFz3AEI4"/>
+<div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-primary/80 backdrop-blur-sm text-on-primary font-label-sm text-label-sm">
+                560 pp.
+              </div>
+</div>
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">HarperCollins</span>
+<span class="text-outline text-xs">•</span>
+<span class="font-label-sm text-label-sm text-outline">Oct 2022</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface leading-snug">Demon Copperhead</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">Barbara Kingsolver</p>
+<div class="mt-space-sm space-y-1.5 text-on-surface-variant">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span>Format:</span>
+<span class="font-semibold text-on-surface">Hardcover 1st Edition</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span>Language:</span>
+<span class="font-semibold text-on-surface">English (US)</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span>ISBN-13:</span>
+<span class="font-mono text-xs text-on-surface">978-0063251922</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm pt-1">
+<span>Consensus Sample:</span>
+<span class="font-semibold text-on-tertiary-container flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">verified</span> 42 critic &amp; reader reviews
+                </span>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md">
+<div class="flex items-center gap-2">
+<input checked="" class="w-4 h-4 text-secondary accent-secondary focus:ring-secondary cursor-pointer" id="radio-cand-a" name="edition-select" type="radio"/>
+<label class="font-label-md text-label-md text-on-surface font-semibold cursor-pointer" for="radio-cand-a">Selected Edition</label>
+</div>
+</div>
+</div>
+<!-- Candidate B: UK Paperback Edition -->
+<div class="edition-card relative bg-surface-container-lowest rounded-xl p-space-md flex flex-col justify-between cursor-pointer hover:bg-surface-container-low/70 transition-all shadow-sm" id="edition-candidate-b">
+<div class="absolute top-3 right-3">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium uppercase tracking-wider">UK Edition</span>
+</div>
+<div>
+<div class="aspect-[2/3] w-full max-h-56 rounded-lg overflow-hidden mb-space-sm shadow-sm relative bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="UK Paperback edition cover of Demon Copperhead by Barbara Kingsolver published by Faber and Faber, elegant literary minimalist layout with stylized illustration of tobacco leaves and rugged timber, deep navy and sepia tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM905IWJih8yrxUb7ZFta8o2K4p1MIl_NuGHHB2-U_CLLs-EEtVJz9Okyir60YR3cSxKuA_B7iOk80HSD8Rx6c_lGh0rj9BstK-R44Qt-0xjHQH_7U4-_0UnLpwKtzLiTNyoKgwhqvjP-YTD5hsbEIvnwHeLxvd4gdfH3M7iKvWo2Z2fZ9w299CrEa_RLKtnlqhjzsaKNOVL1doo9jBBooC116vy9mO23JDgDjb12Li5VQ69AVOthT"/>
+<div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-primary/80 backdrop-blur-sm text-on-primary font-label-sm text-label-sm">
+                544 pp.
+              </div>
+</div>
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">Faber &amp; Faber</span>
+<span class="text-outline text-xs">•</span>
+<span class="font-label-sm text-label-sm text-outline">May 2023</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface leading-snug">Demon Copperhead</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">Barbara Kingsolver</p>
+<div class="mt-space-sm space-y-1.5 text-on-surface-variant">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span>Format:</span>
+<span class="font-semibold text-on-surface">Paperback (UK Trade)</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span>Language:</span>
+<span class="font-semibold text-on-surface">English (UK Localized)</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span>ISBN-13:</span>
+<span class="font-mono text-xs text-on-surface">978-0571376483</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm pt-1">
+<span>Consensus Sample:</span>
+<span class="font-semibold text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">menu_book</span> 28 British reviews
+                </span>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md">
+<div class="flex items-center gap-2">
+<input class="w-4 h-4 text-secondary accent-secondary focus:ring-secondary cursor-pointer" id="radio-cand-b" name="edition-select" type="radio"/>
+<label class="font-label-md text-label-md text-on-surface font-normal cursor-pointer" for="radio-cand-b">Select UK Paperback</label>
+</div>
+</div>
+</div>
+<!-- Candidate C: Unabridged Audiobook -->
+<div class="edition-card relative bg-surface-container-lowest rounded-xl p-space-md flex flex-col justify-between cursor-pointer hover:bg-surface-container-low/70 transition-all shadow-sm" id="edition-candidate-c">
+<div class="absolute top-3 right-3">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-medium uppercase tracking-wider">Audio Monograph</span>
+</div>
+<div>
+<div class="aspect-[2/3] w-full max-h-56 rounded-lg overflow-hidden mb-space-sm shadow-sm relative bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Digital audiobook square-format cover of Demon Copperhead narrated by Charlie Thurston with headphone insignia watermark, vibrant high contrast artistic rendering of Southwest Virginia coal mountains at twilight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAu02BI_fKZW275WqfuNH09mGxPNje9stcbQczBu5BSfdeZvwH_bUWHTQQJbJLFSIlbwOULa04KixVbUDhRru7h8-iOG1UK0uQ5ds1H0oVRZ_sZRBAfVggXGCkQvgcyJlvnas2W8WlB47MT-8nPSF3Muw7s0_hSdI6QejhVP4tLRkIUYVW4SArXdxpsTUJARdxfpWriViiGczYIc_TezkePWVhEi0iHCDMvsVrDVOCFXEMLroAH6rfB"/>
+<div class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-primary/80 backdrop-blur-sm text-on-primary font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">headphones</span> 21h 03m
+              </div>
+</div>
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-semibold">HarperAudio</span>
+<span class="text-outline text-xs">•</span>
+<span class="font-label-sm text-label-sm text-outline">Oct 2022</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface leading-snug">Demon Copperhead</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant font-medium mt-0.5">Narrated by Charlie Thurston</p>
+<div class="mt-space-sm space-y-1.5 text-on-surface-variant">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span>Format:</span>
+<span class="font-semibold text-on-surface">Unabridged Audio</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span>Narrator Dialect:</span>
+<span class="font-semibold text-on-surface">Southern Appalachian</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span>ASIN:</span>
+<span class="font-mono text-xs text-on-surface">B0B47F81Z8</span>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm pt-1">
+<span>Auditory Pacing:</span>
+<span class="font-semibold text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">graphic_eq</span> Performance: Unabridged narration
+                </span>
+</div>
+</div>
+</div>
+<div class="pt-space-md mt-space-md">
+<div class="flex items-center gap-2">
+<input class="w-4 h-4 text-secondary accent-secondary focus:ring-secondary cursor-pointer" id="radio-cand-c" name="edition-select" type="radio"/>
+<label class="font-label-md text-label-md text-on-surface font-normal cursor-pointer" for="radio-cand-c">Select Audiobook Edition</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Explicit Confirmation Bar -->
+<div class="mt-space-xl p-space-md rounded-xl bg-surface-container flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-surface-container-lowest flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-base">check_box</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-on-surface font-semibold block">Personalized Analysis</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">We will evaluate critical praise, common complaints, and match it against your reader profile.</span>
+</div>
+</div>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-space-sm px-space-lg py-3 rounded-lg bg-primary hover:bg-on-surface-variant text-on-primary font-label-lg text-label-lg shadow-sm transition-all text-center" data-path="verdict-and-analysis" href="#">
+<span>Get My Book Verdict</span>
+<span class="material-symbols-outlined text-base">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Evidence Confidence Methodology Strip -->
+<section class="max-w-7xl mx-auto px-gutter-desktop py-space-sm w-full">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="p-space-md rounded-lg bg-surface-container-lowest shadow-sm flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-on-tertiary-container text-xl mt-0.5">verified_user</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold">Two Independent Views</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            What critics and readers think is kept strictly separate from whether it fits your personal reading taste. No confusing averaged ratings.
+          </p>
+</div>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container-lowest shadow-sm flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-secondary text-xl mt-0.5">analytics</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold">Review Transparency</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Every claim is backed by real review excerpts and evidence depth, so you can see why a consensus formed.
+          </p>
+</div>
+</div>
+<div class="p-space-md rounded-lg bg-surface-container-lowest shadow-sm flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-on-surface-variant text-xl mt-0.5">history_edu</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold">Evolves With You</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Whenever your reading tastes shift, you can refresh past book verdicts with a single click to see your updated match.
+          </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Recent Verdicts Strip (3 Sample Books with dual verdict status) -->
+<section class="max-w-7xl mx-auto px-gutter-desktop py-space-xl w-full">
+<div class="flex items-center justify-between mb-space-md">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">Community Picks</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Recent Book Verdicts</h3>
+</div>
+<a class="font-label-md text-label-md text-secondary hover:text-on-secondary-container flex items-center gap-1 font-semibold" data-path="history-and-recalculation" href="#">
+<span>View Reading History</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Recent 1: The Bee Sting -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-outline">Calculated 2h ago</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-semibold uppercase">
+              Rich Reviews
+            </span>
+</div>
+<div class="flex gap-space-sm mb-space-sm">
+<div class="w-16 h-24 rounded bg-surface-container flex-shrink-0 overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Editorial book cover of The Bee Sting by Paul Murray with striking chartreuse and jet black contemporary Irish literary aesthetic, Booker Prize finalist edition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxAmQUNifZtNAmQ7imBZida5NOLO5o1Oc4nD3H6fpWtaliDQ2126EsgsQqaAjjNkg3e5by0mPRYg-g0K3cxLrmQCNVrrEvfa0oSxs5U0o1vU6VaoW1-r5m2yI4UuZeUsJQOXZMEzaMFYR60AL2hysxsIRpWsN320leBIxVgpnLnClTcT4OdeMFCtQCfe3vOzgOGHJaS5AREkZTlZiG1J3hiRZrRtsGQnUbAyAknOcFem2R-5_hnbEE"/>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase">Paul Murray</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">The Bee Sting</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-0.5">
+                Tragicomic multigenerational Irish family unraveling across distinct narrative modes.
+              </p>
+</div>
+</div>
+<!-- Dual Pillar Micro Metrics -->
+<div class="bg-surface-container-low rounded-lg p-space-xs grid grid-cols-2 gap-2 text-center my-space-xs">
+<div class="p-1">
+<span class="font-label-sm text-label-sm text-outline block uppercase">Public</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">94% Acclaim</span>
+</div>
+<div class="p-1 border-l border-surface-container">
+<span class="font-label-sm text-label-sm text-secondary block uppercase">Your Match</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-semibold">91% Match</span>
+</div>
+</div>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">Verdict: Highly Recommended</span>
+<a class="font-label-sm text-label-sm text-on-surface font-semibold hover:text-secondary flex items-center gap-0.5" data-path="verdict-and-analysis" href="#">
+<span>Read Full Verdict</span>
+<span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Recent 2: Tomorrow, and Tomorrow, and Tomorrow -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-outline">Calculated Yesterday</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-semibold uppercase">
+              Rich Reviews
+            </span>
+</div>
+<div class="flex gap-space-sm mb-space-sm">
+<div class="w-16 h-24 rounded bg-surface-container flex-shrink-0 overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Book cover of Tomorrow and Tomorrow and Tomorrow by Gabrielle Zevin featuring classic woodblock style Great Wave artwork adapted for a modern digital gaming novel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzJHT9pQuTRi2qa9OSQ36NCxijaoDewGIcoMYSkebHUfV7DbIpph_sAX3AdvmTmsnMoUy4Nc0ixiVAqIHo6aDTMswuQ4TGbzcZRx8pFqY8fsXdKbbkCE6VOxzDfeK61SwW87yZTU2NHliBGPK76NWQw7C9uRGRIKpy4pjnZq6esxePHMIQI0Yb70ZoEJ27J5k8W3MP40nvUtoY_jR7zIUeIDg8ZkqJjrzB8IBanlBbEC_foVYVjaIc"/>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase">Gabrielle Zevin</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Tomorrow, and Tomorrow...</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-0.5">
+                Thirty-year creative collaboration and intimate friendship in video game design.
+              </p>
+</div>
+</div>
+<!-- Dual Pillar Micro Metrics -->
+<div class="bg-surface-container-low rounded-lg p-space-xs grid grid-cols-2 gap-2 text-center my-space-xs">
+<div class="p-1">
+<span class="font-label-sm text-label-sm text-outline block uppercase">Public</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">88% Acclaim</span>
+</div>
+<div class="p-1 border-l border-surface-container">
+<span class="font-label-sm text-label-sm text-secondary block uppercase">Your Match</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-semibold">62% Match</span>
+</div>
+</div>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm font-semibold">Verdict: Worth Exploring</span>
+<a class="font-label-sm text-label-sm text-on-surface font-semibold hover:text-secondary flex items-center gap-0.5" data-path="verdict-and-analysis" href="#">
+<span>Read Full Verdict</span>
+<span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Recent 3: Birnam Wood -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<span class="font-label-sm text-label-sm text-outline">Calculated 3d ago</span>
+<span class="px-2 py-0.5 rounded bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm font-semibold uppercase">
+              Rich Reviews
+            </span>
+</div>
+<div class="flex gap-space-sm mb-space-sm">
+<div class="w-16 h-24 rounded bg-surface-container flex-shrink-0 overflow-hidden shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Cover of Birnam Wood by Eleanor Catton showing botanical lush foliage with modern intense typography, psychological ecological thriller layout." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPl0ndkWc9hxKV0fnYk0EqKR7HOGj1FH6TFJMaqPYWPNCXXk9v7XN19XwXAelbfSh_VMzTU-cLLTDP_HsiVCPDrtuGi72fCWl-RSxsCdeKuRx3IESjycvMV1UPYGN_PlWHTpRxXEs0IxYn1-w6bLV1PufkZpXVi1VWXjYh3MuQxA9IJTY_s_wcHjf3S228WJ9dGXlQTGtz7AA4htAcgas6muZFY6F47nT-1RzkDB4Rcte_x0O6klKt"/>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase">Eleanor Catton</span>
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Birnam Wood</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-0.5">
+                Guerrilla gardening collective collides with a covert American billionaire in New Zealand.
+              </p>
+</div>
+</div>
+<!-- Dual Pillar Micro Metrics -->
+<div class="bg-surface-container-low rounded-lg p-space-xs grid grid-cols-2 gap-2 text-center my-space-xs">
+<div class="p-1">
+<span class="font-label-sm text-label-sm text-outline block uppercase">Public</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">82% Acclaim</span>
+</div>
+<div class="p-1 border-l border-surface-container">
+<span class="font-label-sm text-label-sm text-secondary block uppercase">Your Match</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-semibold">86% Match</span>
+</div>
+</div>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold">Verdict: Highly Recommended</span>
+<a class="font-label-sm text-label-sm text-on-surface font-semibold hover:text-secondary flex items-center gap-0.5" data-path="verdict-and-analysis" href="#">
+<span>Read Full Verdict</span>
+<span class="material-symbols-outlined text-xs">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Disambiguation Selection Script -->
+<script>
+    (function initDisambiguationGate() {
+      const cards = [
+        { id: 'edition-candidate-a', radio: 'radio-cand-a' },
+        { id: 'edition-candidate-b', radio: 'radio-cand-b' },
+        { id: 'edition-candidate-c', radio: 'radio-cand-c' }
+      ];
+
+      function selectEdition(targetIndex) {
+        cards.forEach((item, index) => {
+          const el = document.getElementById(item.id);
+          const rad = document.getElementById(item.radio);
+          if (!el || !rad) return;
+
+          if (index === targetIndex) {
+            rad.checked = true;
+            el.classList.add('ring-2', 'ring-secondary', 'bg-surface-container-high/30', 'shadow-md');
+            el.classList.remove('bg-surface-container-lowest');
+          } else {
+            rad.checked = false;
+            el.classList.remove('ring-2', 'ring-secondary', 'bg-surface-container-high/30', 'shadow-md');
+            el.classList.add('bg-surface-container-lowest');
+          }
+        });
+      }
+
+      cards.forEach((item, idx) => {
+        const el = document.getElementById(item.id);
+        if (el) {
+          el.addEventListener('click', (e) => {
+            selectEdition(idx);
+          });
+        }
+      });
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-low mt-margin-desktop"><div class="max-w-7xl mx-auto px-gutter-desktop py-space-xl"><div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-space-xl"><div class="md:col-span-1"><span class="font-headline-sm text-headline-sm text-on-surface">Book Verdict</span><p class="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">Honest literary consensus separated from your personal taste, giving readers clarity on what to pick up next.</p></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-sm">Review Standards</h4><ul class="space-y-space-xs font-body-sm text-body-sm text-on-surface-variant"><li><a class="hover:text-on-surface transition-colors" data-path="evidence-standards" href="#">Evidence Standards</a></li><li><a class="hover:text-on-surface transition-colors" data-path="source-attribution" href="#">Source Attribution Policy</a></li><li><a class="hover:text-on-surface transition-colors" data-path="verdict-and-analysis" href="#">Consensus Calibration</a></li></ul></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-sm">Reader Profile</h4><ul class="space-y-space-xs font-body-sm text-body-sm text-on-surface-variant"><li><a class="hover:text-on-surface transition-colors" data-path="reader-profile" href="#">Taste Alignment Matrix</a></li><li><a class="hover:text-on-surface transition-colors" data-path="history-and-recalculation" href="#">Audit Log &amp; Re-Scoring</a></li><li><a class="hover:text-on-surface transition-colors" data-path="user-settings" href="#">Security &amp; Verification</a></li></ul></div><div><h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-space-sm">Archive &amp; Sources</h4><p class="font-body-sm text-body-sm text-on-surface-variant mb-space-sm">Curated under the oversight of independent literary criticism panels.</p><span class="font-label-sm text-label-sm text-secondary tracking-widest uppercase">ISSN 2994-0182</span></div></div><div class="pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-sm"><p class="font-body-sm text-body-sm text-on-surface-variant">© 2024 Book Verdict Foundation. Literary Decision Guide. All rights reserved.</p><div class="flex items-center gap-space-lg"><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-policy" href="#">Privacy Framework</a><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="editorial-terms" href="#">Editorial Terms</a></div></div></div></footer></body></html>
