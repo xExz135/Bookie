@@ -1,4 +1,4 @@
-# Book Verdict (Team Bookie)
+# Bookie
 
 Helps a reader decide whether to read a book. They type a title or photograph a cover, and the app shows three separate signals: **public reception** (what reviewers say), a **personal match** from a learned taste model (shown on a 1 to 5 scale, not a probability of enjoyment), and **evidence confidence** for each.
 
