@@ -14,7 +14,8 @@
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "import:goodreads": "nest build && node dist/tools/import-goodreads.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.2.0",
@@ -24,6 +25,7 @@
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
     "pg": "^8.23.1",
+    "pg-copy-streams": "^7.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "zod": "^4.6.7"
@@ -35,6 +37,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^26.6.5",
     "@types/pg": "^8.23.1",
+    "@types/pg-copy-streams": "^1.2.5",
     "@types/supertest": "^7.2.1",
     "jest": "^30.5.2",
     "prisma": "7.10.1",

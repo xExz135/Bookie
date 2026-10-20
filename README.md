@@ -31,6 +31,7 @@ Mailpit shows the emails the app sends at http://localhost:8025.
 | `pnpm generate:check` | Fails if those generated files are out of date (runs in CI) |
 | `pnpm --filter @bookie/api db:migrate` | Creates and applies a migration on the dev database |
 | `pnpm --filter @bookie/api db:deploy` | Applies migrations to a fresh database |
+| `pnpm --filter @bookie/api import:goodreads` | Loads the Goodreads dataset from `data/raw/` (add `--limit-books 5000` for a quick sample). Safe to re-run |
 | `pnpm format` / `pnpm format:check` | Prettier |
 
 ## Repository layout

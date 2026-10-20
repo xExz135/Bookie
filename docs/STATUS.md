@@ -42,7 +42,7 @@ The spec says the evaluation harness comes before the interface, so model decisi
 | BE-1 | Foundations (repo, Compose, config, OpenAPI, CI) | n/a | done | main | Monorepo (pnpm), NestJS 12 API with health check, contract error format, typed config with every spec parameter, OpenAPI and `.env.example` generation with CI check, contract-sync tests, GitHub Actions CI. `docker compose up -d` verified 2026-10-20 (all three services healthy). Follow-up: ESLint; Redis in CI when caching arrives (BE-9) |
 | BE-2 | Schema v2 | n/a | done | main (via be-2-schema) | Prisma 7 schema and first migration per D-009 (implementation notes there) and D-012. 25 database tests against real PostgreSQL: immutability (ONB-4, MODEL-3), citations (RES-5), no summary without evidence (RES-3), one running analysis per request, delete-a-reader (SEC-3 groundwork), feedback versions (FB-1). CI runs them with a PostgreSQL service |
 | BE-3 | Custom authentication | SEC-1, SEC-2 | todo | | Scope fixed in D-001 |
-| BE-4 | Catalog ingestion (Goodreads datasets) | n/a | todo | | Five files in `data/raw/` per D-004; stream-parse the `.gz` files |
+| BE-4 | Catalog ingestion (Goodreads datasets) | n/a | done | main (via be-4-catalog-import) | Importer per D-014: streams the five files, bulk-loads with COPY, re-runnable. Sample run 2026-10-20 (5,000 most-rated books): 3,043 authors, 4,861 works, 5,000 editions, 18,098 genre links, 3,724,813 reviews in 17 minutes, 2.9 GB. Full import deferred by the owner (estimate about an hour and 15 GB); run `pnpm --filter @bookie/api import:goodreads` when needed |
 | BE-5 | Source audit and adapters | n/a | in progress | | Audit done and D-003 decided 2026-10-20: Open Library, Google Books (live only), Hardcover (ratings only). Next: adapters, plus test calls once `GOOGLE_BOOKS_API_KEY` and `HARDCOVER_API_TOKEN` are in `.env` |
 | BE-6 | Search and cover identification | DISC-1 to DISC-5 | todo | | |
 | BE-7 | Taste capture API | ONB-1 to ONB-4 | todo | | |
@@ -86,6 +86,7 @@ Record results as they are, including unfavorable ones.
 
 | Date | Role and package | What changed | Left for next session |
 |---|---|---|---|
+| 2026-10-20 | Backend, BE-4 | Goodreads importer with unit and database tests; sample import of the 5,000 most-rated books into the dev database; titles fixed on re-run (series markers) | Owner decides on the full import; then BE-12 (book representation) or BE-6 (search) |
 | 2026-10-20 | Backend, BE-2 | Schema v2 with Prisma 7, first migration with constraints, triggers and seed rows, database tests, CI database service. Local dev database reset once with the owner's consent | Owner reviews; then BE-5 (source audit) or BE-4 (catalog import) |
 | 2026-10-20 | Backend, BE-1 | Moved docs into `docs/` (design mockups to `docs/design/`, old schema to `docs/reference/`), removed the duplicate Stitch export, set up Git and BE-1 foundations. Contract: added `INTERNAL_ERROR` and the `/health` exception (frontend to approve) | Run `docker compose up -d` once Docker Desktop is open; next package BE-2 (schema v2) or BE-5 (source audit) |
 | 2026-10-20 | Setup (D-004) | Owner confirmed non-commercial portfolio project and chose the five dataset files; D-004 decided, BE-4 unblocked | Owner downloads the files to `data/raw/` |

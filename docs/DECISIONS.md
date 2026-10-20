@@ -243,3 +243,19 @@ Date: 2026-10-20
 Affects: BE-4, BE-8; spec section 4 (work and edition)
 Context: an edition with no reviews of its own could borrow the dataset reviews of other editions of the same work, labelled as such.
 Decision: **no.** Decided by the owner on 2026-10-20. Each edition uses only its own reviews, as spec section 4 says. An edition without usable reviews gets no written verdict (RES-3) and shows the live ratings and the personal match only.
+
+## D-014 How the Goodreads dataset is imported
+Status: **DECIDED** (backend role, BE-4)
+Date: 2026-10-20
+Affects: BE-4, BE-6, BE-8, BE-14
+Context: the dataset needs mapping rules, and its size (2.36m books, 15.7m reviews) needs a loading strategy.
+Decision:
+- **Command:** `pnpm --filter @bookie/api import:goodreads` (everything) or with `--limit-books N` (the N most-rated books with their works, authors, genres and reviews). Streams the `.json.gz` files and bulk-loads with PostgreSQL `COPY`.
+- **Re-runnable:** every ID is derived from the Goodreads ID (UUID version 5), so a re-run never duplicates rows. Editions and works whose details changed are updated; reviews, genres and links are only added.
+- **Titles:** the trailing series marker ("(The Hunger Games, #1)") is removed, because the dataset's `title_without_series` field still contains it.
+- **Missing values stay unknown:** Goodreads' "nophoto" placeholder becomes no cover; blank language, year, pages and ISBNs become null. Language codes are converted to BCP 47 ("eng" becomes "en").
+- **Reviews:** rating 0 means no rating. A review with neither rating nor text is skipped. A rating without text is kept as a rating-only review (empty text), which evidence confidence counts separately (spec 4).
+- **Goodreads' own rating summary** for each edition (average and count from the books file) is stored as a `review_fetches` row for the dataset source that never expires. Its `review_count` is the number of dataset reviews for that edition.
+- **Missing references:** a book whose work is not in the works file gets its own placeholder work; author links to authors missing from the authors file are dropped; reviews of books not in the catalog are dropped.
+- Cover URLs point at Goodreads' image server as recorded in 2017; nothing is downloaded or stored. Some links may no longer work.
+Consequences: search (BE-6) and the pipeline (BE-8) read only the catalog tables, never the files.
