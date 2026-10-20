@@ -86,8 +86,8 @@ Decision: **the owner chose to use the dataset anyway**, with these safeguards:
   1. `goodreads_books.json.gz`: edition metadata.
   2. `goodreads_book_authors.json.gz`: author names.
   3. `goodreads_book_works.json.gz`: work grouping.
-  4. `gooreads_book_genres_initial.json.gz`: genres (the page spells it "gooreads").
-  5. `goodread_reviews_dedup.json.gz`: review text and ratings (the page spells it "goodread").
+  4. `goodreads_book_genres_initial.json.gz`: genres (the page's link text says "gooreads"; the downloaded file is named as shown).
+  5. `goodreads_reviews_dedup.json.gz`: review text and ratings (the page's link text says "goodread"; the downloaded file is named as shown).
   `goodreads_interactions.csv` and its two ID maps are not used unless the ratings in the reviews file prove too few for B3.
 - **Never commercial.** Any commercial use requires removing the dataset first and replacing this decision.
 - **No redistribution:** dataset files and review text are never committed or published. `data/` is git-ignored. The repository gets a download script and a checksum list instead.
@@ -164,6 +164,30 @@ Align enums with `CONTRACT.md` section 3:
 Not in the database: offline evaluation results and labeled sets live as files in `eval/` (reproduced by one command, EVAL-1), not in tables.
 
 Consequences: the old file keeps a header saying it is reference only. Acceptance IDs quoted in it (ACC-1, PROF-3, AUTH-5 and others) are v1 IDs and do not exist in the v2 spec.
+
+Implementation notes (BE-2, 2026-10-20). Built in `apps/api/prisma/`. Where it differs from the plan above:
+- `AppSetting` is not a table. Settings live in `apps/api/src/config/params.ts` and the environment (BE-1).
+- The questionnaire is stored as rows (`profile_genre_preferences`, `profile_theme_avoidances`) plus a nullable `pace` column. A missing row means unknown, which keeps ONB-3 simple to enforce.
+- Authors have their own table (the dataset links books to author IDs). Works, authors and editions each have an external-ID table for the dataset's IDs.
+- Reviews do not belong to a fetch, because dataset reviews exist without one. `review_fetches` records each source query's outcome and counts.
+- Evidence items have their own IDs (the contract's `evidenceIds`) and a kind: `review`, `description` or `source_aggregate` (for sources whose text may not be stored). Claims and traits cite them through composite foreign keys, so the database itself rejects a citation to missing evidence or to another analysis's evidence (RES-5).
+- `personal_analyses` is linked one-to-one to `analyses` and stores an outcome (`scored`, `below_floor`, `needs_taste_data`). Running, failed and skipped come from the step status.
+- The current taste-profile version is the one with the highest `version_no`; there is no pointer column.
+- Immutability: updates to saved profile versions and personal results are rejected by triggers, and their child rows can only be inserted in the transaction that created the parent. Deletes stay allowed so delete-my-data works (SEC-3).
+- Embedding vectors have no fixed dimension until the embedding model is chosen (BE-12), which also adds their index.
+- Seed rows: the dataset's 10 genre groups, 4 themes to avoid (taken from the reader-profile mockup; the owner may extend the list) and the `goodreads_dataset` source policy (D-004).
+
+## D-012 Database access library
+Status: **DECIDED**
+Date: 2026-10-20
+Affects: BE-2 onward
+Context: the earlier schema was written for Prisma. A library had to be chosen for migrations and queries.
+Decision: **Prisma 7.10.1**, pinned. Made by the backend role while building BE-2.
+- npm's "latest" tag for Prisma pointed at a release candidate (8.0.0-rc), so the last stable release is pinned instead.
+- Prisma 7 uses the `pg` driver through `@prisma/adapter-pg`. The client is generated into `apps/api/src/generated/` (git-ignored) by `pnpm install`.
+- Hand-written SQL (extensions, CHECK constraints, triggers, the partial unique index, seed rows) lives at the top and bottom of the first migration.
+- Prisma refuses destructive commands such as `migrate reset` when run by an AI agent unless the user consents. That guard stays on.
+Consequences: queries outside Prisma's reach (vector search, trigram search) use `$queryRaw`.
 
 ## D-010 One rule for designs and schema: three separate signals, no percentages
 Status: **DECIDED**

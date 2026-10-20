@@ -82,6 +82,8 @@ pnpm typecheck           # TypeScript checks
 pnpm generate            # regenerate contract/openapi.json and .env.example from the API code
 pnpm generate:check      # CI: fail if the generated files are stale
 pnpm --filter @bookie/api dev   # API on :3001, health at /health
+pnpm --filter @bookie/api db:migrate   # create/apply a migration on the dev database
+pnpm --filter @bookie/api db:deploy    # apply migrations (CI and fresh databases)
 pnpm eval                # (planned, BE-14) one command reproduces every reported number (EVAL-1)
 ```
 
@@ -89,3 +91,4 @@ pnpm eval                # (planned, BE-14) one command reproduces every reporte
 - NestJS 12 is ESM-only. The API compiles to CommonJS and relies on Node's `require(esm)`; Jest runs with `--experimental-vm-modules` for the same reason. TypeScript is pinned to 5.9 because TypeScript 7 does not yet work with ts-jest and ts-node.
 - Settings and tunable parameters live in `apps/api/src/config/params.ts`, each with its default and source. `.env.example` is generated from it.
 - Enums and error codes in `apps/api/src/contract/` are tested against `docs/CONTRACT.md` sections 2 and 3. Change both together.
+- Database: Prisma 7 (D-012). Schema and migrations in `apps/api/prisma/`. Tests rebuild a separate `bookie_test` database on every run, so `docker compose up -d` must be running for `pnpm test`.

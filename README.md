@@ -14,6 +14,7 @@ Requirements: Node 22 or later, pnpm 10, Docker Desktop.
 pnpm install
 cp .env.example .env          # then fill in the secrets you need
 docker compose up -d          # PostgreSQL (with pgvector), Redis, Mailpit
+pnpm --filter @bookie/api db:deploy  # create the tables
 pnpm --filter @bookie/api dev # API on http://localhost:3001 (health: /health)
 ```
 
@@ -23,11 +24,13 @@ Mailpit shows the emails the app sends at http://localhost:8025.
 
 | Command | What it does |
 |---|---|
-| `pnpm test` | Unit and end-to-end tests |
+| `pnpm test` | Unit, end-to-end and database tests (needs `docker compose up -d`) |
 | `pnpm typecheck` | TypeScript checks in every package |
 | `pnpm build` | Builds every package |
 | `pnpm generate` | Regenerates `contract/openapi.json` and `.env.example` from the API code |
 | `pnpm generate:check` | Fails if those generated files are out of date (runs in CI) |
+| `pnpm --filter @bookie/api db:migrate` | Creates and applies a migration on the dev database |
+| `pnpm --filter @bookie/api db:deploy` | Applies migrations to a fresh database |
 | `pnpm format` / `pnpm format:check` | Prettier |
 
 ## Repository layout

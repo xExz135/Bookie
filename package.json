@@ -23,6 +23,10 @@
       "@parcel/watcher",
       "@scarf/scarf",
       "unrs-resolver"
+    ],
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "prisma"
     ]
   }
 }

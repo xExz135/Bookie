@@ -39,8 +39,8 @@ The spec says the evaluation harness comes before the interface, so model decisi
 
 | ID | Package | Acceptance IDs | Status | Branch | Notes |
 |---|---|---|---|---|---|
-| BE-1 | Foundations (repo, Compose, config, OpenAPI, CI) | n/a | done | main | Monorepo (pnpm), NestJS 12 API with health check, contract error format, typed config with every spec parameter, OpenAPI and `.env.example` generation with CI check, contract-sync tests, GitHub Actions CI. 32 tests pass. Not yet verified: `docker compose up` (Docker Desktop was not running; the file validates). Follow-ups: ESLint; PostgreSQL and Redis service containers in CI arrive with BE-2 |
-| BE-2 | Schema v2 | n/a | todo | | Follow the plan in D-009; the old Prisma file is reference only |
+| BE-1 | Foundations (repo, Compose, config, OpenAPI, CI) | n/a | done | main | Monorepo (pnpm), NestJS 12 API with health check, contract error format, typed config with every spec parameter, OpenAPI and `.env.example` generation with CI check, contract-sync tests, GitHub Actions CI. `docker compose up -d` verified 2026-10-20 (all three services healthy). Follow-up: ESLint; Redis in CI when caching arrives (BE-9) |
+| BE-2 | Schema v2 | n/a | done | main (via be-2-schema) | Prisma 7 schema and first migration per D-009 (implementation notes there) and D-012. 25 database tests against real PostgreSQL: immutability (ONB-4, MODEL-3), citations (RES-5), no summary without evidence (RES-3), one running analysis per request, delete-a-reader (SEC-3 groundwork), feedback versions (FB-1). CI runs them with a PostgreSQL service |
 | BE-3 | Custom authentication | SEC-1, SEC-2 | todo | | Scope fixed in D-001 |
 | BE-4 | Catalog ingestion (Goodreads datasets) | n/a | todo | | Five files in `data/raw/` per D-004; stream-parse the `.gz` files |
 | BE-5 | Source audit and adapters | n/a | todo | | Fill `docs/DATA_SOURCES.md` first |
@@ -86,6 +86,7 @@ Record results as they are, including unfavorable ones.
 
 | Date | Role and package | What changed | Left for next session |
 |---|---|---|---|
+| 2026-10-20 | Backend, BE-2 | Schema v2 with Prisma 7, first migration with constraints, triggers and seed rows, database tests, CI database service. Local dev database reset once with the owner's consent | Owner reviews; then BE-5 (source audit) or BE-4 (catalog import) |
 | 2026-10-20 | Backend, BE-1 | Moved docs into `docs/` (design mockups to `docs/design/`, old schema to `docs/reference/`), removed the duplicate Stitch export, set up Git and BE-1 foundations. Contract: added `INTERNAL_ERROR` and the `/health` exception (frontend to approve) | Run `docker compose up -d` once Docker Desktop is open; next package BE-2 (schema v2) or BE-5 (source audit) |
 | 2026-10-20 | Setup (D-004) | Owner confirmed non-commercial portfolio project and chose the five dataset files; D-004 decided, BE-4 unblocked | Owner downloads the files to `data/raw/` |
 | 2026-10-20 | Setup (decisions) | Decided D-001, D-002, D-006, D-009; D-004 conditional; added D-010 (design rules) and D-011 (questionnaire). Updated SPEC notes, CONTRACT v0.2, role files, DATA_SOURCES | Owner confirms non-commercial use; fix folder layout; Stage 1 |

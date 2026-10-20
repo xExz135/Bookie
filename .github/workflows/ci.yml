@@ -8,6 +8,28 @@ on:
 jobs:
   checks:
     runs-on: ubuntu-latest
+
+    services:
+      # Same image as docker-compose.yml. The database tests rebuild
+      # bookie_test from the migrations on every run.
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: bookie
+          POSTGRES_PASSWORD: bookie
+          POSTGRES_DB: bookie
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U bookie -d bookie"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+    env:
+      DATABASE_URL: postgresql://bookie:bookie@localhost:5432/bookie
+      TEST_DATABASE_URL: postgresql://bookie:bookie@localhost:5432/bookie_test
+
     steps:
       - uses: actions/checkout@v4
 
@@ -18,6 +40,7 @@ jobs:
           node-version: 24
           cache: pnpm
 
+      # Also generates the Prisma client (apps/api postinstall).
       - run: pnpm install --frozen-lockfile
 
       - name: Format
@@ -26,7 +49,10 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Tests
+      - name: Migrations apply to an empty database
+        run: pnpm --filter @bookie/api db:deploy
+
+      - name: Tests (unit, end-to-end and database)
         run: pnpm test
 
       - name: Generated files are up to date (contract/openapi.json, .env.example)

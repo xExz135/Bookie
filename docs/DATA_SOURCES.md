@@ -28,7 +28,7 @@ Complete this **before** building any adapter or storing any source's content (B
 | UCSD Goodreads books | `goodreads_books.json.gz` | Detailed book metadata | about 2.3m books, about 2 GB | Same page, same terms | Same as above | 2026-10-20 |
 | UCSD Goodreads authors | `goodreads_book_authors.json.gz` | Author names (the books file has only author IDs) | small | Same page, same terms | Same as above | 2026-10-20 |
 | UCSD Goodreads works | `goodreads_book_works.json.gz` | Groups editions into works | small | Same page, same terms | Same as above | 2026-10-20 |
-| UCSD Goodreads genres | `gooreads_book_genres_initial.json.gz` (spelled "gooreads" on the page) | Fuzzy genre labels per book | small | Same page, same terms | Same as above | 2026-10-20 |
+| UCSD Goodreads genres | `goodreads_book_genres_initial.json.gz` (the page's link text says "gooreads") | Fuzzy genre labels per book | small | Same page, same terms | Same as above | 2026-10-20 |
 | UCSD Goodreads interactions (not used yet) | `goodreads_interactions.csv` + `book_id_map.csv` + `user_id_map.csv` | Ratings without text, for B3 only if needed | about 229m interactions, about 4.1 GB | Same page, same terms | Same as above | 2026-10-20 |
 
 Terms source: https://mcauleylab.ucsd.edu/public_datasets/gdrive/goodreads/UCSD%20Book%20Graph.html (decision D-004).

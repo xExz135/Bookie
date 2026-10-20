@@ -1,0 +1,945 @@
+// Book Verdict v2 schema (BE-2). Plan: docs/DECISIONS.md D-009.
+//
+// Rules this schema follows:
+// - Enum values are the exact values in docs/CONTRACT.md section 3.
+// - Shared data (catalog, sources, reviews, public analyses, model versions)
+//   never references a user. User-owned rows cascade from `users`, so deleting
+//   a user removes everything that is theirs and nothing shared (SEC-3).
+// - No combined verdict, no percentages, no numeric confidence score (D-010).
+//
+// Things Prisma cannot express live in the SQL of the first migration:
+// extensions (pgvector, pg_trgm), CHECK constraints, immutability triggers,
+// the one-running-analysis partial unique index and seed rows.
+// When `prisma migrate dev` creates a later migration, check it does not try
+// to drop `analyses_one_running_per_request`; delete such lines if it does.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =====================================================================
+// Enums
+// =====================================================================
+
+enum AnalysisStatus {
+  running
+  complete
+  partial
+  failed
+
+  @@map("analysis_status")
+}
+
+enum StepName {
+  resolve
+  fetchReviews
+  selectReviews
+  extractTraits
+  publicSummary
+  evidenceConfidence
+  personalMatch
+  finalize
+
+  @@map("step_name")
+}
+
+enum StepStatus {
+  pending
+  running
+  done
+  failed
+  skipped
+
+  @@map("step_status")
+}
+
+enum SourceOutcome {
+  ok
+  empty
+  failed
+  rate_limited
+  not_permitted
+
+  @@map("source_outcome")
+}
+
+enum EvidenceState {
+  sufficient
+  limited
+  insufficient
+  unavailable
+
+  @@map("evidence_state")
+}
+
+enum ConfidenceLevel {
+  low
+  medium
+  high
+
+  @@map("confidence_level")
+}
+
+enum FeedbackTarget {
+  public
+  personal
+
+  @@map("feedback_target")
+}
+
+enum FeedbackValue {
+  accurate
+  not_for_me
+
+  @@map("feedback_value")
+}
+
+enum TraitKey {
+  pace
+  tone
+  themes
+  contentIntensity
+
+  @@map("trait_key")
+}
+
+enum TraitFit {
+  aligned
+  conflicting
+  unknown
+
+  @@map("trait_fit")
+}
+
+enum ModelId {
+  B0
+  B1
+  B2
+  B3
+  B4
+
+  @@map("model_id")
+}
+
+/// D-002: onboarding is shown until the reader picks an option, then never forced.
+enum OnboardingState {
+  pending
+  skipped
+  completed
+
+  @@map("onboarding_state")
+}
+
+/// D-011. A missing value means unknown, never a dislike.
+enum Pace {
+  slow
+  moderate
+  fast
+
+  @@map("pace")
+}
+
+enum Sensitivity {
+  high
+  moderate
+  low
+
+  @@map("sensitivity")
+}
+
+enum GenrePreference {
+  liked
+  disliked
+
+  @@map("genre_preference")
+}
+
+enum RatingOrigin {
+  quick_rate
+  imported
+
+  @@map("rating_origin")
+}
+
+enum ImportStatus {
+  processing
+  needs_review
+  confirmed
+  failed
+
+  @@map("import_status")
+}
+
+enum ImportRowStatus {
+  matched
+  unmatched
+  resolved
+  skipped
+
+  @@map("import_row_status")
+}
+
+enum ClaimKind {
+  praise
+  complaint
+
+  @@map("claim_kind")
+}
+
+/// What an evidence item points at. `source_aggregate` is used where a
+/// source's terms forbid storing review text: only a count is kept.
+enum EvidenceKind {
+  review
+  description
+  source_aggregate
+
+  @@map("evidence_kind")
+}
+
+/// Stored outcome of the personal-match step. Running, failed and skipped
+/// come from the step status instead (CONTRACT personalMatchStatus).
+enum PersonalOutcome {
+  scored
+  below_floor
+  needs_taste_data
+
+  @@map("personal_outcome")
+}
+
+// =====================================================================
+// Accounts (user-owned) - D-001
+// =====================================================================
+
+model User {
+  id              String          @id @default(uuid()) @db.Uuid
+  /// Always stored lowercased (CHECK in migration).
+  email           String          @unique
+  /// argon2id hash. Never the password.
+  passwordHash    String          @map("password_hash")
+  displayName     String          @map("display_name")
+  onboardingState OnboardingState @default(pending) @map("onboarding_state")
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  passwordResetTokens  PasswordResetToken[]
+  refreshTokens        RefreshToken[]
+  scanUsages           ScanUsage[]
+  tasteProfileVersions TasteProfileVersion[]
+  ratingImports        RatingImport[]
+  analyses             Analysis[]
+  personalAnalyses     PersonalAnalysis[]
+  feedback             Feedback[]
+  readingListItems     ReadingListItem[]
+  refreshRequests      RefreshRequest[]
+
+  @@map("users")
+}
+
+/// Single-use reset link. Only the hash of the token is stored.
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+/// Rotated on every use: the old row gets revokedAt, a new row is issued.
+/// No family tracking or reuse detection in v2 (D-001).
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  issuedAt  DateTime  @default(now()) @map("issued_at") @db.Timestamptz(3)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(3)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+/// Scan quota ledger. Records that a scan happened, never the image (DISC-3).
+model ScanUsage {
+  id        BigInt   @id @default(autoincrement())
+  userId    String   @map("user_id") @db.Uuid
+  scannedAt DateTime @default(now()) @map("scanned_at") @db.Timestamptz(3)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, scannedAt])
+  @@map("scan_usages")
+}
+
+// =====================================================================
+// Taste profile (user-owned, immutable once saved) - spec 6, D-011
+// =====================================================================
+
+/// One saved snapshot of a reader's taste. Never updated. Its ratings and
+/// questionnaire rows can only be written in the transaction that created it
+/// (trigger in migration). The current version is the one with the highest
+/// versionNo; results made with an older version are outdated (ONB-4).
+model TasteProfileVersion {
+  id            String   @id @default(uuid()) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  versionNo     Int      @map("version_no")
+  /// Questionnaire pace. Null = unknown.
+  pace          Pace?
+  changeSummary String?  @map("change_summary")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ratings          ProfileRating[]
+  genrePreferences ProfileGenrePreference[]
+  themeAvoidances  ProfileThemeAvoidance[]
+  tasteVectors     TasteVector[]
+  analyses         Analysis[]
+  personalAnalyses PersonalAnalysis[]
+  feedback         Feedback[]
+  createdByImport  RatingImport?
+
+  @@unique([userId, versionNo])
+  @@map("taste_profile_versions")
+}
+
+model ProfileRating {
+  tasteProfileVersionId String              @map("taste_profile_version_id") @db.Uuid
+  editionId             String              @map("edition_id") @db.Uuid
+  /// 1 to 5 (CHECK in migration).
+  rating                Int                 @db.SmallInt
+  origin                RatingOrigin
+  tasteProfileVersion   TasteProfileVersion @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  edition               Edition             @relation(fields: [editionId], references: [id])
+
+  @@id([tasteProfileVersionId, editionId])
+  @@index([editionId])
+  @@map("profile_ratings")
+}
+
+/// A genre with no row in a version is unknown (D-011).
+model ProfileGenrePreference {
+  tasteProfileVersionId String              @map("taste_profile_version_id") @db.Uuid
+  genreId               Int                 @map("genre_id")
+  preference            GenrePreference
+  tasteProfileVersion   TasteProfileVersion @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  genre                 Genre               @relation(fields: [genreId], references: [id])
+
+  @@id([tasteProfileVersionId, genreId])
+  @@map("profile_genre_preferences")
+}
+
+/// A theme with no row in a version is unknown (D-011).
+model ProfileThemeAvoidance {
+  tasteProfileVersionId String              @map("taste_profile_version_id") @db.Uuid
+  themeId               Int                 @map("theme_id")
+  sensitivity           Sensitivity
+  tasteProfileVersion   TasteProfileVersion @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  theme                 Theme               @relation(fields: [themeId], references: [id])
+
+  @@id([tasteProfileVersionId, themeId])
+  @@map("profile_theme_avoidances")
+}
+
+/// Genre names: the dataset's genre groups (seeded in migration).
+model Genre {
+  id          Int                      @id @default(autoincrement())
+  name        String                   @unique
+  preferences ProfileGenrePreference[]
+  editions    EditionGenre[]
+
+  @@map("genres")
+}
+
+/// Theme names for "themes to avoid" (seeded in migration).
+model Theme {
+  id         Int                     @id @default(autoincrement())
+  name       String                  @unique
+  avoidances ProfileThemeAvoidance[]
+
+  @@map("themes")
+}
+
+/// An uploaded ratings file. The file itself is parsed in memory and never
+/// stored; only these rows are kept until the import is confirmed, then the
+/// rows are deleted and only the ratings remain (spec 5, 12).
+model RatingImport {
+  id                 String               @id @default(uuid()) @db.Uuid
+  userId             String               @map("user_id") @db.Uuid
+  status             ImportStatus         @default(processing)
+  totalRows          Int                  @default(0) @map("total_rows")
+  matchedCount       Int                  @default(0) @map("matched_count")
+  createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  confirmedAt        DateTime?            @map("confirmed_at") @db.Timestamptz(3)
+  resultingVersionId String?              @unique @map("resulting_version_id") @db.Uuid
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resultingVersion   TasteProfileVersion? @relation(fields: [resultingVersionId], references: [id], onDelete: SetNull)
+  rows               RatingImportRow[]
+
+  @@index([userId, createdAt])
+  @@map("rating_imports")
+}
+
+model RatingImportRow {
+  id                  String          @id @default(uuid()) @db.Uuid
+  importId            String          @map("import_id") @db.Uuid
+  rowIndex            Int             @map("row_index")
+  rawTitle            String          @map("raw_title")
+  rawAuthor           String?         @map("raw_author")
+  /// 1 to 5 (CHECK in migration).
+  rating              Int             @db.SmallInt
+  status              ImportRowStatus
+  matchedEditionId    String?         @map("matched_edition_id") @db.Uuid
+  candidateEditionIds String[]        @map("candidate_edition_ids") @db.Uuid
+  import              RatingImport    @relation(fields: [importId], references: [id], onDelete: Cascade)
+  matchedEdition      Edition?        @relation(fields: [matchedEditionId], references: [id])
+
+  @@unique([importId, rowIndex])
+  @@map("rating_import_rows")
+}
+
+// =====================================================================
+// Catalog (shared) - spec 4 "work and edition"
+// =====================================================================
+
+model Work {
+  id                      String           @id @default(uuid()) @db.Uuid
+  title                   String
+  originalPublicationYear Int?             @map("original_publication_year")
+  createdAt               DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt               DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  editions                Edition[]
+  externalIds             WorkExternalId[]
+
+  @@map("works")
+}
+
+model Author {
+  id             String             @id @default(uuid()) @db.Uuid
+  name           String
+  /// Lowercased, accents stripped. Trigram index in migration.
+  normalizedName String             @map("normalized_name")
+  editions       EditionAuthor[]
+  externalIds    AuthorExternalId[]
+
+  @@index([normalizedName(ops: raw("gin_trgm_ops"))], type: Gin, map: "authors_normalized_name_trgm")
+  @@map("authors")
+}
+
+model Edition {
+  id                String   @id @default(uuid()) @db.Uuid
+  workId            String   @map("work_id") @db.Uuid
+  title             String
+  subtitle          String?
+  /// BCP 47 tag when known.
+  language          String?
+  publisher         String?
+  publicationYear   Int?     @map("publication_year")
+  format            String?
+  pageCount         Int?     @map("page_count")
+  isbn10            String?  @map("isbn_10")
+  isbn13            String?  @map("isbn_13")
+  coverUrl          String?  @map("cover_url")
+  description       String?
+  /// Lowercased, accents stripped, for fuzzy search. Trigram indexes in migration.
+  normalizedTitle   String   @map("normalized_title")
+  normalizedAuthors String   @map("normalized_authors")
+  metadataFetchedAt DateTime @default(now()) @map("metadata_fetched_at") @db.Timestamptz(3)
+  metadataExpiresAt DateTime @map("metadata_expires_at") @db.Timestamptz(3)
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  work              Work     @relation(fields: [workId], references: [id])
+
+  authors          EditionAuthor[]
+  genres           EditionGenre[]
+  externalIds      EditionExternalId[]
+  reviewFetches    ReviewFetch[]
+  reviews          Review[]
+  publicAnalyses   PublicAnalysis[]
+  analyses         Analysis[]
+  personalAnalyses PersonalAnalysis[]
+  similarBookUses  PersonalSimilarBook[]
+  profileRatings   ProfileRating[]
+  importMatches    RatingImportRow[]
+  embeddings       BookEmbedding[]
+  readingListItems ReadingListItem[]
+  refreshRequests  RefreshRequest[]
+
+  @@index([workId])
+  @@index([isbn13])
+  @@index([isbn10])
+  @@index([normalizedTitle(ops: raw("gin_trgm_ops"))], type: Gin, map: "editions_normalized_title_trgm")
+  @@index([normalizedAuthors(ops: raw("gin_trgm_ops"))], type: Gin, map: "editions_normalized_authors_trgm")
+  @@map("editions")
+}
+
+model EditionAuthor {
+  editionId String  @map("edition_id") @db.Uuid
+  authorId  String  @map("author_id") @db.Uuid
+  position  Int
+  role      String?
+  edition   Edition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  author    Author  @relation(fields: [authorId], references: [id])
+
+  @@id([editionId, authorId])
+  @@index([authorId])
+  @@map("edition_authors")
+}
+
+/// Genre votes per edition from the dataset's genre file (used by B1).
+model EditionGenre {
+  editionId String  @map("edition_id") @db.Uuid
+  genreId   Int     @map("genre_id")
+  votes     Int
+  edition   Edition @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  genre     Genre   @relation(fields: [genreId], references: [id])
+
+  @@id([editionId, genreId])
+  @@map("edition_genres")
+}
+
+model WorkExternalId {
+  workId     String       @map("work_id") @db.Uuid
+  sourceId   Int          @map("source_id")
+  externalId String       @map("external_id")
+  work       Work         @relation(fields: [workId], references: [id], onDelete: Cascade)
+  source     ReviewSource @relation(fields: [sourceId], references: [id])
+
+  @@id([workId, sourceId])
+  @@unique([sourceId, externalId])
+  @@map("work_external_ids")
+}
+
+model AuthorExternalId {
+  authorId   String       @map("author_id") @db.Uuid
+  sourceId   Int          @map("source_id")
+  externalId String       @map("external_id")
+  author     Author       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  source     ReviewSource @relation(fields: [sourceId], references: [id])
+
+  @@id([authorId, sourceId])
+  @@unique([sourceId, externalId])
+  @@map("author_external_ids")
+}
+
+model EditionExternalId {
+  editionId  String       @map("edition_id") @db.Uuid
+  sourceId   Int          @map("source_id")
+  externalId String       @map("external_id")
+  edition    Edition      @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  source     ReviewSource @relation(fields: [sourceId], references: [id])
+
+  @@id([editionId, sourceId])
+  @@unique([sourceId, externalId])
+  @@map("edition_external_ids")
+}
+
+// =====================================================================
+// Sources and reviews (shared) - spec 5, DATA_SOURCES.md
+// =====================================================================
+
+/// One row per data source with its terms (the `source_policies` of
+/// DATA_SOURCES.md). Filled from the audit, never from memory.
+model ReviewSource {
+  id             Int       @id @default(autoincrement())
+  /// Stable key used in the API, e.g. "goodreads_dataset".
+  key            String    @unique
+  name           String
+  providesText   Boolean   @map("provides_text")
+  storageAllowed Boolean   @map("storage_allowed")
+  displayAllowed Boolean   @map("display_allowed")
+  enabled        Boolean   @default(true)
+  termsUrl       String?   @map("terms_url")
+  termsCheckedAt DateTime? @map("terms_checked_at") @db.Timestamptz(3)
+  notes          String?
+
+  fetches            ReviewFetch[]
+  reviews            Review[]
+  evidenceItems      EvidenceItem[]
+  workExternalIds    WorkExternalId[]
+  authorExternalIds  AuthorExternalId[]
+  editionExternalIds EditionExternalId[]
+
+  @@map("review_sources")
+}
+
+/// One attempt to query one source for one edition. Failures and empty
+/// results get short expiries so they are retried, and are never read as
+/// "no reviews" (spec 8, 10).
+model ReviewFetch {
+  id             String        @id @default(uuid()) @db.Uuid
+  editionId      String        @map("edition_id") @db.Uuid
+  sourceId       Int           @map("source_id")
+  reviewsVersion Int           @map("reviews_version")
+  outcome        SourceOutcome
+  errorCode      String?       @map("error_code")
+  attemptCount   Int           @default(1) @map("attempt_count")
+  reviewCount    Int           @default(0) @map("review_count")
+  ratingAverage  Decimal?      @map("rating_average") @db.Decimal(3, 2)
+  ratingCount    Int?          @map("rating_count")
+  /// Reviews are for the work, not this specific edition.
+  workLevelOnly  Boolean       @default(false) @map("work_level_only")
+  fetchedAt      DateTime      @default(now()) @map("fetched_at") @db.Timestamptz(3)
+  expiresAt      DateTime      @map("expires_at") @db.Timestamptz(3)
+  edition        Edition       @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  source         ReviewSource  @relation(fields: [sourceId], references: [id])
+
+  @@unique([editionId, sourceId, reviewsVersion])
+  @@index([editionId, sourceId, expiresAt])
+  @@map("review_fetches")
+}
+
+/// `text` is null when the source does not allow storing it.
+model Review {
+  id                 String         @id @default(uuid()) @db.Uuid
+  editionId          String         @map("edition_id") @db.Uuid
+  sourceId           Int            @map("source_id")
+  externalReviewId   String         @map("external_review_id")
+  /// Anonymised reviewer ID from the source (the dataset's user hash).
+  reviewerExternalId String?        @map("reviewer_external_id")
+  /// 1 to 5, or null when the reviewer gave no rating (CHECK in migration).
+  rating             Int?           @db.SmallInt
+  text               String?
+  textLength         Int?           @map("text_length")
+  language           String?
+  postedAt           DateTime?      @map("posted_at") @db.Timestamptz(3)
+  createdAt          DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  edition            Edition        @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  source             ReviewSource   @relation(fields: [sourceId], references: [id])
+  evidenceItems      EvidenceItem[]
+
+  @@unique([sourceId, externalReviewId])
+  @@index([editionId, sourceId])
+  @@map("reviews")
+}
+
+// =====================================================================
+// Public analysis (shared, identical for every user) - spec 8
+// =====================================================================
+
+model PublicAnalysis {
+  id                String          @id @default(uuid()) @db.Uuid
+  editionId         String          @map("edition_id") @db.Uuid
+  reviewsVersion    Int             @map("reviews_version")
+  evidenceState     EvidenceState   @map("evidence_state")
+  /// Computed by code, never by the language model.
+  confidence        ConfidenceLevel
+  confidenceReasons String[]        @map("confidence_reasons")
+  /// Counts and coverage the confidence was computed from.
+  confidenceInputs  Json            @default("{}") @map("confidence_inputs")
+  /// Null when evidence is insufficient or unavailable (RES-3, CHECK in migration).
+  summary           String?
+  llmModel          String?         @map("llm_model")
+  promptVersion     String?         @map("prompt_version")
+  generatedAt       DateTime        @default(now()) @map("generated_at") @db.Timestamptz(3)
+  expiresAt         DateTime        @map("expires_at") @db.Timestamptz(3)
+  edition           Edition         @relation(fields: [editionId], references: [id], onDelete: Cascade)
+
+  evidenceItems    EvidenceItem[]
+  claims           AnalysisClaim[]
+  traits           BookTrait[]
+  analyses         Analysis[]
+  personalAnalyses PersonalAnalysis[]
+
+  @@unique([editionId, reviewsVersion])
+  @@index([editionId, expiresAt])
+  @@map("public_analyses")
+}
+
+/// The bounded evidence set of one public analysis (default max 75 reviews).
+/// Claims and traits cite these items. Composite foreign keys make it
+/// impossible to cite an item that does not exist or belongs to another
+/// analysis (RES-5).
+model EvidenceItem {
+  id               String          @id @default(uuid()) @db.Uuid
+  publicAnalysisId String          @map("public_analysis_id") @db.Uuid
+  /// 1..N, the stable "Review #12" number.
+  position         Int
+  kind             EvidenceKind
+  reviewId         String?         @map("review_id") @db.Uuid
+  sourceId         Int?            @map("source_id")
+  reviewCount      Int?            @map("review_count")
+  publicAnalysis   PublicAnalysis  @relation(fields: [publicAnalysisId], references: [id], onDelete: Cascade)
+  review           Review?         @relation(fields: [reviewId], references: [id])
+  source           ReviewSource?   @relation(fields: [sourceId], references: [id])
+  claimCitations   ClaimEvidence[]
+  traitCitations   TraitEvidence[]
+
+  @@unique([publicAnalysisId, position])
+  @@unique([publicAnalysisId, id])
+  @@map("evidence_items")
+}
+
+model AnalysisClaim {
+  id               String          @id @default(uuid()) @db.Uuid
+  publicAnalysisId String          @map("public_analysis_id") @db.Uuid
+  kind             ClaimKind
+  text             String
+  rank             Int
+  publicAnalysis   PublicAnalysis  @relation(fields: [publicAnalysisId], references: [id], onDelete: Cascade)
+  evidence         ClaimEvidence[]
+
+  @@unique([id, publicAnalysisId])
+  @@index([publicAnalysisId, kind, rank])
+  @@map("analysis_claims")
+}
+
+model ClaimEvidence {
+  claimId          String        @map("claim_id") @db.Uuid
+  publicAnalysisId String        @map("public_analysis_id") @db.Uuid
+  evidenceItemId   String        @map("evidence_item_id") @db.Uuid
+  claim            AnalysisClaim @relation(fields: [claimId, publicAnalysisId], references: [id, publicAnalysisId], onDelete: Cascade)
+  evidenceItem     EvidenceItem  @relation(fields: [publicAnalysisId, evidenceItemId], references: [publicAnalysisId, id], onDelete: Cascade)
+
+  @@id([claimId, evidenceItemId])
+  @@map("claim_evidence")
+}
+
+/// Book traits extracted once per public analysis, each with evidence.
+model BookTrait {
+  id               String             @id @default(uuid()) @db.Uuid
+  publicAnalysisId String             @map("public_analysis_id") @db.Uuid
+  trait            TraitKey
+  value            String
+  publicAnalysis   PublicAnalysis     @relation(fields: [publicAnalysisId], references: [id], onDelete: Cascade)
+  evidence         TraitEvidence[]
+  personalFits     PersonalTraitFit[]
+
+  @@unique([publicAnalysisId, trait, value])
+  @@unique([id, publicAnalysisId])
+  @@map("book_traits")
+}
+
+model TraitEvidence {
+  bookTraitId      String       @map("book_trait_id") @db.Uuid
+  publicAnalysisId String       @map("public_analysis_id") @db.Uuid
+  evidenceItemId   String       @map("evidence_item_id") @db.Uuid
+  bookTrait        BookTrait    @relation(fields: [bookTraitId, publicAnalysisId], references: [id, publicAnalysisId], onDelete: Cascade)
+  evidenceItem     EvidenceItem @relation(fields: [publicAnalysisId, evidenceItemId], references: [publicAnalysisId, id], onDelete: Cascade)
+
+  @@id([bookTraitId, evidenceItemId])
+  @@map("trait_evidence")
+}
+
+// =====================================================================
+// Analyses (user-owned) - spec 8, CONTRACT 4.4
+// =====================================================================
+
+/// One request to analyse one edition for one user. A partial unique index
+/// in the migration allows only one running analysis per user, edition and
+/// taste-profile version, so duplicate requests join the running one.
+model Analysis {
+  id                    String               @id @default(uuid()) @db.Uuid
+  userId                String               @map("user_id") @db.Uuid
+  editionId             String               @map("edition_id") @db.Uuid
+  /// Version in force when requested; null when the reader has none.
+  tasteProfileVersionId String?              @map("taste_profile_version_id") @db.Uuid
+  publicAnalysisId      String?              @map("public_analysis_id") @db.Uuid
+  status                AnalysisStatus       @default(running)
+  recalculatedFromId    String?              @map("recalculated_from_id") @db.Uuid
+  createdAt             DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  /// Set exactly when status leaves `running` (CHECK in migration).
+  finishedAt            DateTime?            @map("finished_at") @db.Timestamptz(3)
+  user                  User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edition               Edition              @relation(fields: [editionId], references: [id])
+  tasteProfileVersion   TasteProfileVersion? @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  publicAnalysis        PublicAnalysis?      @relation(fields: [publicAnalysisId], references: [id])
+  recalculatedFrom      Analysis?            @relation("Recalculation", fields: [recalculatedFromId], references: [id], onDelete: SetNull)
+  recalculations        Analysis[]           @relation("Recalculation")
+  steps                 AnalysisStep[]
+  personalAnalysis      PersonalAnalysis?
+  feedback              Feedback[]
+
+  @@index([userId, createdAt])
+  @@map("analyses")
+}
+
+/// Per-step status, visible in the API (RES-2). Retries rerun only failed steps.
+model AnalysisStep {
+  id           String     @id @default(uuid()) @db.Uuid
+  analysisId   String     @map("analysis_id") @db.Uuid
+  step         StepName
+  status       StepStatus @default(pending)
+  attemptCount Int        @default(0) @map("attempt_count")
+  errorCode    String?    @map("error_code")
+  durationMs   Int?       @map("duration_ms")
+  startedAt    DateTime?  @map("started_at") @db.Timestamptz(3)
+  finishedAt   DateTime?  @map("finished_at") @db.Timestamptz(3)
+  analysis     Analysis   @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@unique([analysisId, step])
+  @@map("analysis_steps")
+}
+
+// =====================================================================
+// Models and personal match - spec 7, D-006
+// =====================================================================
+
+/// A trained model artifact (B0 to B4). Every shipped model has recorded
+/// validation and test metrics (EVAL-2).
+model ModelVersion {
+  id               String    @id @default(uuid()) @db.Uuid
+  modelId          ModelId   @map("model_id")
+  version          String
+  artifactChecksum String?   @map("artifact_checksum")
+  seed             Int?
+  codeCommit       String?   @map("code_commit")
+  trainedAt        DateTime? @map("trained_at") @db.Timestamptz(3)
+  metrics          Json      @default("{}")
+  isShipped        Boolean   @default(false) @map("is_shipped")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  personalAnalyses PersonalAnalysis[]
+  tasteVectors     TasteVector[]
+  feedback         Feedback[]
+
+  @@unique([modelId, version])
+  @@map("model_versions")
+}
+
+/// Sentence embedding of a book. The vector dimension is fixed when the
+/// embedding model is chosen (BE-12); its index is added then.
+model BookEmbedding {
+  editionId      String                @map("edition_id") @db.Uuid
+  embeddingModel String                @map("embedding_model")
+  embedding      Unsupported("vector")
+  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  edition        Edition               @relation(fields: [editionId], references: [id], onDelete: Cascade)
+
+  @@id([editionId, embeddingModel])
+  @@map("book_embeddings")
+}
+
+/// A reader's taste vector for one profile version and model version (B2).
+model TasteVector {
+  tasteProfileVersionId String                @map("taste_profile_version_id") @db.Uuid
+  modelVersionId        String                @map("model_version_id") @db.Uuid
+  embedding             Unsupported("vector")
+  createdAt             DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  tasteProfileVersion   TasteProfileVersion   @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  modelVersion          ModelVersion          @relation(fields: [modelVersionId], references: [id])
+
+  @@id([tasteProfileVersionId, modelVersionId])
+  @@map("taste_vectors")
+}
+
+/// The personal match for one analysis. Immutable: recalculation creates a
+/// new analysis (spec 10). Records model version, profile version and
+/// generation time (MODEL-3). The score is on the 1 to 5 scale and is not a
+/// probability of enjoyment (D-007).
+model PersonalAnalysis {
+  id                    String                @id @default(uuid()) @db.Uuid
+  analysisId            String                @unique @map("analysis_id") @db.Uuid
+  userId                String                @map("user_id") @db.Uuid
+  editionId             String                @map("edition_id") @db.Uuid
+  tasteProfileVersionId String?               @map("taste_profile_version_id") @db.Uuid
+  publicAnalysisId      String?               @map("public_analysis_id") @db.Uuid
+  modelVersionId        String?               @map("model_version_id") @db.Uuid
+  outcome               PersonalOutcome
+  /// Set exactly when outcome = scored; between 1 and 5 (CHECK in migration).
+  score                 Decimal?              @db.Decimal(3, 2)
+  confidence            ConfidenceLevel?
+  confidenceReasons     String[]              @map("confidence_reasons")
+  notFactoredIn         String[]              @map("not_factored_in")
+  generatedAt           DateTime              @default(now()) @map("generated_at") @db.Timestamptz(3)
+  analysis              Analysis              @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  user                  User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edition               Edition               @relation(fields: [editionId], references: [id])
+  tasteProfileVersion   TasteProfileVersion?  @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  publicAnalysis        PublicAnalysis?       @relation(fields: [publicAnalysisId], references: [id])
+  modelVersion          ModelVersion?         @relation(fields: [modelVersionId], references: [id])
+  similarBooks          PersonalSimilarBook[]
+  traitFits             PersonalTraitFit[]
+
+  @@index([userId, generatedAt])
+  @@map("personal_analyses")
+}
+
+/// "Similar books you rated": the explanation comes from the model (spec 7).
+model PersonalSimilarBook {
+  personalAnalysisId String           @map("personal_analysis_id") @db.Uuid
+  rank               Int
+  editionId          String           @map("edition_id") @db.Uuid
+  /// 1 to 5 (CHECK in migration).
+  yourRating         Int              @map("your_rating") @db.SmallInt
+  similarity         Decimal?         @db.Decimal(6, 5)
+  personalAnalysis   PersonalAnalysis @relation(fields: [personalAnalysisId], references: [id], onDelete: Cascade)
+  edition            Edition          @relation(fields: [editionId], references: [id])
+
+  @@id([personalAnalysisId, rank])
+  @@map("personal_similar_books")
+}
+
+/// A trait that aligned, conflicted, or was not factored in. Evidence comes
+/// from the linked book trait.
+model PersonalTraitFit {
+  id                 String           @id @default(uuid()) @db.Uuid
+  personalAnalysisId String           @map("personal_analysis_id") @db.Uuid
+  trait              TraitKey
+  fit                TraitFit
+  bookTraitId        String?          @map("book_trait_id") @db.Uuid
+  personalAnalysis   PersonalAnalysis @relation(fields: [personalAnalysisId], references: [id], onDelete: Cascade)
+  bookTrait          BookTrait?       @relation(fields: [bookTraitId], references: [id])
+
+  @@index([personalAnalysisId])
+  @@map("personal_trait_fits")
+}
+
+// =====================================================================
+// Feedback, reading list, refresh limits (user-owned)
+// =====================================================================
+
+/// One value per user, analysis and target; changing it replaces it (FB-1).
+/// Always load the analysis by (id, userId) before writing (FB-2).
+model Feedback {
+  id                    String               @id @default(uuid()) @db.Uuid
+  userId                String               @map("user_id") @db.Uuid
+  analysisId            String               @map("analysis_id") @db.Uuid
+  target                FeedbackTarget
+  value                 FeedbackValue
+  /// Required when target = personal (CHECK in migration).
+  tasteProfileVersionId String?              @map("taste_profile_version_id") @db.Uuid
+  modelVersionId        String?              @map("model_version_id") @db.Uuid
+  createdAt             DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime             @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user                  User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analysis              Analysis             @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  tasteProfileVersion   TasteProfileVersion? @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  modelVersion          ModelVersion?        @relation(fields: [modelVersionId], references: [id])
+
+  @@unique([userId, analysisId, target])
+  @@map("feedback")
+}
+
+model ReadingListItem {
+  userId    String   @map("user_id") @db.Uuid
+  editionId String   @map("edition_id") @db.Uuid
+  addedAt   DateTime @default(now()) @map("added_at") @db.Timestamptz(3)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edition   Edition  @relation(fields: [editionId], references: [id])
+
+  @@id([userId, editionId])
+  @@map("reading_list_items")
+}
+
+/// Manual review refreshes, for the per-book daily limit.
+model RefreshRequest {
+  id          BigInt   @id @default(autoincrement())
+  userId      String   @map("user_id") @db.Uuid
+  editionId   String   @map("edition_id") @db.Uuid
+  requestedAt DateTime @default(now()) @map("requested_at") @db.Timestamptz(3)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edition     Edition  @relation(fields: [editionId], references: [id])
+
+  @@index([userId, editionId, requestedAt])
+  @@map("refresh_requests")
+}
