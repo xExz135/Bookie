@@ -68,7 +68,7 @@ Work on **one work package** per session (IDs like FE-4, BE-8 in `docs/STATUS.md
 ```
 apps/api/            NestJS backend
 apps/web/            Next.js frontend
-eval/                Python evaluation harness, labeled sets, results (not started)
+eval/                Python evaluation harness (BE-14), results in eval/results/; labeled sets later (BE-15)
 contract/            openapi.json (generated, never edited by hand) and fixtures/
 docs/                SPEC, CONTRACT, STATUS, DECISIONS, DATA_SOURCES, roles/, design/ (mockups), reference/ (old v1 schema)
 data/raw/            Dataset files: git-ignored, never committed (D-004)
@@ -90,7 +90,10 @@ pnpm --filter @bookie/api import:goodreads [--limit-books N]   # load the datase
 pnpm --filter @bookie/api embed:books [--limit N]   # embed the most popular editions with Gemini; re-runnable (D-015)
 pnpm --filter @bookie/api traits:sample [--limit N] [--model small|large]   # trait extraction sample to data/derived/
 pnpm --filter @bookie/api sources:check [--limit N | --edition ID | --title T --author A]   # ask the live rating sources (D-020)
-pnpm eval                # (planned, BE-14) one command reproduces every reported number (EVAL-1)
+pnpm --filter @bookie/api traits:extract --limit 1000   # traits for the evaluation books, cached in data/derived/traits/
+pnpm eval:setup          # once: eval/.venv with the pinned Python packages
+pnpm eval                # offline evaluation of B0 to B4: one command reproduces every reported number (EVAL-1)
+pnpm eval:test           # harness tests on synthetic data (CI)
 ```
 
 ## Technical notes

@@ -1,0 +1,1119 @@
+{
+  "data": {
+    "books": 982,
+    "booksWithEmbedding": 982,
+    "booksWithTraits": 344,
+    "qualifyingReaders": 20167,
+    "evaluatedReaders": 5000,
+    "populationReaders": 268832,
+    "populationRatings": 1581484,
+    "ratings": {
+      "train": 113379,
+      "validation": 37675,
+      "test": 37675
+    },
+    "medianProfileSize": 18.0,
+    "testBooksWithEmbedding": 1.0,
+    "testBooksWithTraits": 0.550949
+  },
+  "selection": {
+    "metric": "mean per-reader Spearman on validation, ties broken by NDCG@k",
+    "shipped": "B3",
+    "validationRanking": [
+      {
+        "model": "B3",
+        "spearman": 0.359175,
+        "ndcg": 0.902773
+      },
+      {
+        "model": "B4",
+        "spearman": 0.358936,
+        "ndcg": 0.903003
+      },
+      {
+        "model": "B0",
+        "spearman": 0.320298,
+        "ndcg": 0.896766
+      },
+      {
+        "model": "B2",
+        "spearman": 0.163373,
+        "ndcg": 0.868438
+      },
+      {
+        "model": "B1",
+        "spearman": 0.042846,
+        "ndcg": 0.841596
+      }
+    ]
+  },
+  "models": {
+    "B0": {
+      "validation": {
+        "spearman": {
+          "value": 0.320298,
+          "low": 0.3079,
+          "high": 0.332063,
+          "readers": 4820
+        },
+        "ndcg": {
+          "value": 0.896766,
+          "low": 0.894014,
+          "high": 0.899781,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.795328,
+          "low": 0.787131,
+          "high": 0.803695,
+          "readers": 5000
+        }
+      },
+      "test": {
+        "spearman": {
+          "value": 0.318882,
+          "low": 0.306916,
+          "high": 0.330796,
+          "readers": 4812
+        },
+        "ndcg": {
+          "value": 0.895688,
+          "low": 0.89239,
+          "high": 0.898616,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.78763,
+          "low": 0.779351,
+          "high": 0.795592,
+          "readers": 5000
+        }
+      }
+    },
+    "B1": {
+      "validation": {
+        "spearman": {
+          "value": 0.042846,
+          "low": 0.031073,
+          "high": 0.054242,
+          "readers": 4820
+        },
+        "ndcg": {
+          "value": 0.841596,
+          "low": 0.838479,
+          "high": 0.844649,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.808123,
+          "low": 0.799443,
+          "high": 0.816414,
+          "readers": 5000
+        }
+      },
+      "test": {
+        "spearman": {
+          "value": 0.033201,
+          "low": 0.021779,
+          "high": 0.043864,
+          "readers": 4812
+        },
+        "ndcg": {
+          "value": 0.841354,
+          "low": 0.838363,
+          "high": 0.844466,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.805568,
+          "low": 0.796411,
+          "high": 0.814209,
+          "readers": 5000
+        }
+      }
+    },
+    "B2": {
+      "validation": {
+        "spearman": {
+          "value": 0.163373,
+          "low": 0.149718,
+          "high": 0.175791,
+          "readers": 4820
+        },
+        "ndcg": {
+          "value": 0.868438,
+          "low": 0.865206,
+          "high": 0.871612,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.781523,
+          "low": 0.773596,
+          "high": 0.789833,
+          "readers": 5000
+        }
+      },
+      "test": {
+        "spearman": {
+          "value": 0.18298,
+          "low": 0.170214,
+          "high": 0.1951,
+          "readers": 4812
+        },
+        "ndcg": {
+          "value": 0.871612,
+          "low": 0.868368,
+          "high": 0.874868,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.774966,
+          "low": 0.766492,
+          "high": 0.783356,
+          "readers": 5000
+        }
+      }
+    },
+    "B3": {
+      "validation": {
+        "spearman": {
+          "value": 0.359175,
+          "low": 0.346963,
+          "high": 0.370561,
+          "readers": 4820
+        },
+        "ndcg": {
+          "value": 0.902773,
+          "low": 0.900053,
+          "high": 0.905493,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.715797,
+          "low": 0.707521,
+          "high": 0.723658,
+          "readers": 5000
+        }
+      },
+      "test": {
+        "spearman": {
+          "value": 0.353448,
+          "low": 0.340927,
+          "high": 0.365355,
+          "readers": 4812
+        },
+        "ndcg": {
+          "value": 0.902879,
+          "low": 0.899947,
+          "high": 0.905735,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.709762,
+          "low": 0.701807,
+          "high": 0.717936,
+          "readers": 5000
+        }
+      }
+    },
+    "B4": {
+      "validation": {
+        "spearman": {
+          "value": 0.358936,
+          "low": 0.346925,
+          "high": 0.370177,
+          "readers": 4820
+        },
+        "ndcg": {
+          "value": 0.903003,
+          "low": 0.900313,
+          "high": 0.905718,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.719542,
+          "low": 0.711466,
+          "high": 0.727521,
+          "readers": 5000
+        }
+      },
+      "test": {
+        "spearman": {
+          "value": 0.355762,
+          "low": 0.343938,
+          "high": 0.367872,
+          "readers": 4812
+        },
+        "ndcg": {
+          "value": 0.903518,
+          "low": 0.900635,
+          "high": 0.906354,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.713743,
+          "low": 0.705675,
+          "high": 0.721771,
+          "readers": 5000
+        }
+      }
+    }
+  },
+  "differenceFromB0OnTest": {
+    "B1": {
+      "spearman": {
+        "value": -0.285681,
+        "low": -0.302002,
+        "high": -0.269546,
+        "readers": 4812
+      },
+      "ndcg": {
+        "value": -0.054335,
+        "low": -0.057547,
+        "high": -0.051131,
+        "readers": 5000
+      },
+      "mae": {
+        "value": 0.017938,
+        "low": 0.010494,
+        "high": 0.025185,
+        "readers": 5000
+      }
+    },
+    "B2": {
+      "spearman": {
+        "value": -0.135902,
+        "low": -0.152448,
+        "high": -0.120133,
+        "readers": 4812
+      },
+      "ndcg": {
+        "value": -0.024077,
+        "low": -0.027364,
+        "high": -0.020808,
+        "readers": 5000
+      },
+      "mae": {
+        "value": -0.012664,
+        "low": -0.018764,
+        "high": -0.007064,
+        "readers": 5000
+      }
+    },
+    "B3": {
+      "spearman": {
+        "value": 0.034566,
+        "low": 0.027443,
+        "high": 0.042027,
+        "readers": 4812
+      },
+      "ndcg": {
+        "value": 0.00719,
+        "low": 0.005572,
+        "high": 0.008835,
+        "readers": 5000
+      },
+      "mae": {
+        "value": -0.077868,
+        "low": -0.082961,
+        "high": -0.072763,
+        "readers": 5000
+      }
+    },
+    "B4": {
+      "spearman": {
+        "value": 0.03688,
+        "low": 0.030006,
+        "high": 0.044259,
+        "readers": 4812
+      },
+      "ndcg": {
+        "value": 0.00783,
+        "low": 0.006193,
+        "high": 0.009527,
+        "readers": 5000
+      },
+      "mae": {
+        "value": -0.073887,
+        "low": -0.079226,
+        "high": -0.068817,
+        "readers": 5000
+      }
+    }
+  },
+  "ablations": {
+    "description": {
+      "B2": "embeddings only",
+      "B2-traits": "traits only (one-hot trait vectors in place of embeddings)",
+      "B4": "hybrid without the questionnaire prior",
+      "B4+prior": "hybrid with the derived questionnaire (B1) as a prior"
+    },
+    "validation": {
+      "B2": {
+        "spearman": {
+          "value": 0.163373,
+          "low": 0.149718,
+          "high": 0.175791,
+          "readers": 4820
+        },
+        "ndcg": {
+          "value": 0.868438,
+          "low": 0.865206,
+          "high": 0.871612,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.781523,
+          "low": 0.773596,
+          "high": 0.789833,
+          "readers": 5000
+        }
+      },
+      "B2-traits": {
+        "spearman": {
+          "value": 0.054189,
+          "low": 0.041752,
+          "high": 0.066759,
+          "readers": 4820
+        },
+        "ndcg": {
+          "value": 0.845016,
+          "low": 0.841574,
+          "high": 0.848597,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.796886,
+          "low": 0.788503,
+          "high": 0.805138,
+          "readers": 5000
+        }
+      },
+      "B4": {
+        "spearman": {
+          "value": 0.358936,
+          "low": 0.346925,
+          "high": 0.370177,
+          "readers": 4820
+        },
+        "ndcg": {
+          "value": 0.903003,
+          "low": 0.900313,
+          "high": 0.905718,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.719542,
+          "low": 0.711466,
+          "high": 0.727521,
+          "readers": 5000
+        }
+      },
+      "B4+prior": {
+        "spearman": {
+          "value": 0.359965,
+          "low": 0.348106,
+          "high": 0.371067,
+          "readers": 4820
+        },
+        "ndcg": {
+          "value": 0.903348,
+          "low": 0.90066,
+          "high": 0.90613,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.719384,
+          "low": 0.711207,
+          "high": 0.72725,
+          "readers": 5000
+        }
+      }
+    },
+    "test": {
+      "B2": {
+        "spearman": {
+          "value": 0.18298,
+          "low": 0.170214,
+          "high": 0.1951,
+          "readers": 4812
+        },
+        "ndcg": {
+          "value": 0.871612,
+          "low": 0.868368,
+          "high": 0.874868,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.774966,
+          "low": 0.766492,
+          "high": 0.783356,
+          "readers": 5000
+        }
+      },
+      "B2-traits": {
+        "spearman": {
+          "value": 0.052441,
+          "low": 0.040826,
+          "high": 0.064547,
+          "readers": 4812
+        },
+        "ndcg": {
+          "value": 0.84536,
+          "low": 0.841961,
+          "high": 0.848949,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.791552,
+          "low": 0.782548,
+          "high": 0.799776,
+          "readers": 5000
+        }
+      },
+      "B4": {
+        "spearman": {
+          "value": 0.355762,
+          "low": 0.343938,
+          "high": 0.367872,
+          "readers": 4812
+        },
+        "ndcg": {
+          "value": 0.903518,
+          "low": 0.900635,
+          "high": 0.906354,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.713743,
+          "low": 0.705675,
+          "high": 0.721771,
+          "readers": 5000
+        }
+      },
+      "B4+prior": {
+        "spearman": {
+          "value": 0.358395,
+          "low": 0.345974,
+          "high": 0.369895,
+          "readers": 4812
+        },
+        "ndcg": {
+          "value": 0.904135,
+          "low": 0.901171,
+          "high": 0.906858,
+          "readers": 5000
+        },
+        "mae": {
+          "value": 0.713145,
+          "low": 0.70518,
+          "high": 0.72123,
+          "readers": 5000
+        }
+      }
+    }
+  },
+  "learningCurve": {
+    "split": "test",
+    "points": [
+      {
+        "profileSize": 5,
+        "readers": 5000,
+        "models": {
+          "B0": {
+            "spearman": {
+              "value": 0.318882,
+              "low": 0.307031,
+              "high": 0.3306,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.895688,
+              "low": 0.892669,
+              "high": 0.898541,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.78763,
+              "low": 0.779855,
+              "high": 0.795464,
+              "readers": 5000
+            }
+          },
+          "B1": {
+            "spearman": {
+              "value": 0.02225,
+              "low": 0.01443,
+              "high": 0.031197,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.838101,
+              "low": 0.835023,
+              "high": 0.84113,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.842857,
+              "low": 0.833199,
+              "high": 0.852592,
+              "readers": 5000
+            }
+          },
+          "B2": {
+            "spearman": {
+              "value": 0.096899,
+              "low": 0.084625,
+              "high": 0.10898,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.852973,
+              "low": 0.849358,
+              "high": 0.856605,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.818342,
+              "low": 0.809512,
+              "high": 0.826952,
+              "readers": 5000
+            }
+          },
+          "B3": {
+            "spearman": {
+              "value": 0.32844,
+              "low": 0.316835,
+              "high": 0.340283,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.897612,
+              "low": 0.894511,
+              "high": 0.900564,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.746977,
+              "low": 0.739115,
+              "high": 0.754904,
+              "readers": 5000
+            }
+          },
+          "B4": {
+            "spearman": {
+              "value": 0.330559,
+              "low": 0.318704,
+              "high": 0.342202,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.897622,
+              "low": 0.894508,
+              "high": 0.900557,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.749582,
+              "low": 0.741672,
+              "high": 0.757564,
+              "readers": 5000
+            }
+          }
+        }
+      },
+      {
+        "profileSize": 10,
+        "readers": 5000,
+        "models": {
+          "B0": {
+            "spearman": {
+              "value": 0.318882,
+              "low": 0.307144,
+              "high": 0.330052,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.895688,
+              "low": 0.89277,
+              "high": 0.898601,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.78763,
+              "low": 0.779985,
+              "high": 0.795474,
+              "readers": 5000
+            }
+          },
+          "B1": {
+            "spearman": {
+              "value": 0.02056,
+              "low": 0.009545,
+              "high": 0.030951,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.838473,
+              "low": 0.835474,
+              "high": 0.841316,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.824261,
+              "low": 0.815134,
+              "high": 0.833357,
+              "readers": 5000
+            }
+          },
+          "B2": {
+            "spearman": {
+              "value": 0.13644,
+              "low": 0.124547,
+              "high": 0.149401,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.860488,
+              "low": 0.857182,
+              "high": 0.863825,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.794906,
+              "low": 0.786765,
+              "high": 0.802975,
+              "readers": 5000
+            }
+          },
+          "B3": {
+            "spearman": {
+              "value": 0.337943,
+              "low": 0.326188,
+              "high": 0.349962,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.899511,
+              "low": 0.896892,
+              "high": 0.902503,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.729577,
+              "low": 0.721532,
+              "high": 0.736925,
+              "readers": 5000
+            }
+          },
+          "B4": {
+            "spearman": {
+              "value": 0.33775,
+              "low": 0.325873,
+              "high": 0.349739,
+              "readers": 4812
+            },
+            "ndcg": {
+              "value": 0.899481,
+              "low": 0.896761,
+              "high": 0.902508,
+              "readers": 5000
+            },
+            "mae": {
+              "value": 0.733119,
+              "low": 0.725271,
+              "high": 0.740519,
+              "readers": 5000
+            }
+          }
+        }
+      },
+      {
+        "profileSize": 20,
+        "readers": 2199,
+        "models": {
+          "B0": {
+            "spearman": {
+              "value": 0.332091,
+              "low": 0.318557,
+              "high": 0.346305,
+              "readers": 2180
+            },
+            "ndcg": {
+              "value": 0.870669,
+              "low": 0.865912,
+              "high": 0.875106,
+              "readers": 2199
+            },
+            "mae": {
+              "value": 0.783864,
+              "low": 0.773258,
+              "high": 0.794718,
+              "readers": 2199
+            }
+          },
+          "B1": {
+            "spearman": {
+              "value": 0.02237,
+              "low": 0.008363,
+              "high": 0.035922,
+              "readers": 2180
+            },
+            "ndcg": {
+              "value": 0.798351,
+              "low": 0.793056,
+              "high": 0.803721,
+              "readers": 2199
+            },
+            "mae": {
+              "value": 0.813246,
+              "low": 0.802201,
+              "high": 0.824649,
+              "readers": 2199
+            }
+          },
+          "B2": {
+            "spearman": {
+              "value": 0.172434,
+              "low": 0.157199,
+              "high": 0.187022,
+              "readers": 2180
+            },
+            "ndcg": {
+              "value": 0.833326,
+              "low": 0.827604,
+              "high": 0.838572,
+              "readers": 2199
+            },
+            "mae": {
+              "value": 0.776886,
+              "low": 0.766695,
+              "high": 0.787418,
+              "readers": 2199
+            }
+          },
+          "B3": {
+            "spearman": {
+              "value": 0.357776,
+              "low": 0.343684,
+              "high": 0.372046,
+              "readers": 2180
+            },
+            "ndcg": {
+              "value": 0.876373,
+              "low": 0.871705,
+              "high": 0.880724,
+              "readers": 2199
+            },
+            "mae": {
+              "value": 0.712703,
+              "low": 0.702997,
+              "high": 0.722129,
+              "readers": 2199
+            }
+          },
+          "B4": {
+            "spearman": {
+              "value": 0.358577,
+              "low": 0.34467,
+              "high": 0.372772,
+              "readers": 2180
+            },
+            "ndcg": {
+              "value": 0.877428,
+              "low": 0.872698,
+              "high": 0.881848,
+              "readers": 2199
+            },
+            "mae": {
+              "value": 0.715979,
+              "low": 0.706368,
+              "high": 0.725598,
+              "readers": 2199
+            }
+          }
+        }
+      },
+      {
+        "profileSize": 40,
+        "readers": 473,
+        "models": {
+          "B0": {
+            "spearman": {
+              "value": 0.344334,
+              "low": 0.323285,
+              "high": 0.364486,
+              "readers": 473
+            },
+            "ndcg": {
+              "value": 0.787258,
+              "low": 0.777049,
+              "high": 0.797348,
+              "readers": 473
+            },
+            "mae": {
+              "value": 0.772996,
+              "low": 0.754143,
+              "high": 0.793296,
+              "readers": 473
+            }
+          },
+          "B1": {
+            "spearman": {
+              "value": 0.033488,
+              "low": 0.014245,
+              "high": 0.05465,
+              "readers": 473
+            },
+            "ndcg": {
+              "value": 0.673983,
+              "low": 0.663224,
+              "high": 0.684224,
+              "readers": 473
+            },
+            "mae": {
+              "value": 0.791895,
+              "low": 0.774536,
+              "high": 0.810973,
+              "readers": 473
+            }
+          },
+          "B2": {
+            "spearman": {
+              "value": 0.201774,
+              "low": 0.179944,
+              "high": 0.22246,
+              "readers": 473
+            },
+            "ndcg": {
+              "value": 0.73793,
+              "low": 0.726092,
+              "high": 0.749457,
+              "readers": 473
+            },
+            "mae": {
+              "value": 0.761217,
+              "low": 0.744112,
+              "high": 0.779483,
+              "readers": 473
+            }
+          },
+          "B3": {
+            "spearman": {
+              "value": 0.378503,
+              "low": 0.358312,
+              "high": 0.399452,
+              "readers": 473
+            },
+            "ndcg": {
+              "value": 0.802431,
+              "low": 0.79213,
+              "high": 0.812438,
+              "readers": 473
+            },
+            "mae": {
+              "value": 0.698323,
+              "low": 0.681866,
+              "high": 0.715185,
+              "readers": 473
+            }
+          },
+          "B4": {
+            "spearman": {
+              "value": 0.382248,
+              "low": 0.362604,
+              "high": 0.402578,
+              "readers": 473
+            },
+            "ndcg": {
+              "value": 0.803424,
+              "low": 0.792799,
+              "high": 0.813428,
+              "readers": 473
+            },
+            "mae": {
+              "value": 0.702236,
+              "low": 0.685871,
+              "high": 0.718876,
+              "readers": 473
+            }
+          }
+        }
+      }
+    ]
+  },
+  "calibration": {
+    "model": "B3",
+    "split": "test",
+    "binWidth": 0.5,
+    "bins": [
+      {
+        "from": 1.0,
+        "to": 1.5,
+        "count": 9,
+        "meanPredicted": 1.325961,
+        "meanActual": 1.444444
+      },
+      {
+        "from": 1.5,
+        "to": 2.0,
+        "count": 46,
+        "meanPredicted": 1.826789,
+        "meanActual": 1.608696
+      },
+      {
+        "from": 2.0,
+        "to": 2.5,
+        "count": 240,
+        "meanPredicted": 2.334883,
+        "meanActual": 2.158333
+      },
+      {
+        "from": 2.5,
+        "to": 3.0,
+        "count": 1408,
+        "meanPredicted": 2.81623,
+        "meanActual": 2.78196
+      },
+      {
+        "from": 3.0,
+        "to": 3.5,
+        "count": 5808,
+        "meanPredicted": 3.299564,
+        "meanActual": 3.281336
+      },
+      {
+        "from": 3.5,
+        "to": 4.0,
+        "count": 12347,
+        "meanPredicted": 3.769266,
+        "meanActual": 3.748846
+      },
+      {
+        "from": 4.0,
+        "to": 4.5,
+        "count": 12268,
+        "meanPredicted": 4.230581,
+        "meanActual": 4.211281
+      },
+      {
+        "from": 4.5,
+        "to": 5.0,
+        "count": 5549,
+        "meanPredicted": 4.714409,
+        "meanActual": 4.666967
+      }
+    ],
+    "expectedCalibrationError": 0.025474
+  },
+  "tuned": {
+    "B3": {
+      "weightDamping": 0.5
+    },
+    "B2": {
+      "intercept": 0.851148,
+      "readerMean": 0.773425,
+      "cosine": 3.040373
+    },
+    "B2-traits": {
+      "intercept": 0.818521,
+      "readerMean": 0.786734,
+      "cosine": 0.19861
+    },
+    "B4": {
+      "intercept": -0.186048,
+      "B2": 0.079891,
+      "B3": 0.958781
+    },
+    "B4+prior": {
+      "intercept": -0.21361,
+      "B2": 0.18182,
+      "B3": 0.967671,
+      "B1": -0.105087
+    }
+  },
+  "population": {
+    "globalMean": 4.007525
+  },
+  "provenance": {
+    "harnessChecksum": "4d1776ee14f78127163dda0c0dc26c062c6235423a832309e6b8892ca878abba",
+    "params": {
+      "data": {
+        "top_editions": 1000,
+        "min_ratings": 20,
+        "eval_readers": 5000,
+        "embedding_model": "gemini-embedding-001:768:text-v1",
+        "trait_model": "gemini-3.5-flash-lite",
+        "trait_prompt_version": "traits-v1"
+      },
+      "split": {
+        "seed": 20261021,
+        "test_fraction": 0.2,
+        "validation_fraction": 0.2
+      },
+      "metrics": {
+        "ndcg_k": 10,
+        "bootstrap_samples": 1000,
+        "interval": 0.95,
+        "learning_curve": [
+          5,
+          10,
+          20,
+          40
+        ],
+        "calibration_bin_width": 0.5
+      },
+      "models": {
+        "baseline": {
+          "item_shrinkage": 25.0,
+          "reader_shrinkage": 10.0
+        },
+        "b1": {
+          "preference_threshold": 0.5,
+          "min_books": 2,
+          "genre_share": 0.2,
+          "weight_genre": 0.25,
+          "weight_pace": 0.25,
+          "weight_theme_avoid": 0.25
+        },
+        "b3": {
+          "neighbours": 30,
+          "similarity_shrinkage": 100.0,
+          "weight_shrinkage_grid": [
+            0.0,
+            0.1,
+            0.25,
+            0.5,
+            1.0,
+            2.0
+          ]
+        }
+      }
+    },
+    "snapshot": {
+      "checksum": "f99ebdf912b4568c9bcca4916ece7cdca5ccac64562c74242fe72fe554f086ea",
+      "source": "dev database (Goodreads dataset, D-004) and the trait cache",
+      "topEditions": 1000,
+      "embeddingModel": "gemini-embedding-001:768:text-v1",
+      "traitModel": "gemini-3.5-flash-lite",
+      "traitPromptVersion": "traits-v1",
+      "traitFiles": {
+        "extracted": 344,
+        "failed": 6,
+        "missing": 632
+      },
+      "counts": {
+        "books": 982,
+        "readers": 273832,
+        "ratings": 1770213,
+        "booksWithEmbedding": 982,
+        "booksWithTraits": 344
+      }
+    },
+    "libraries": {
+      "python": "3.12.2",
+      "numpy": "2.5.4",
+      "scipy": "1.18.1"
+    }
+  }
+}

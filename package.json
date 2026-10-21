@@ -13,7 +13,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "generate": "pnpm --filter @bookie/api generate && pnpm --filter @bookie/web generate",
-    "generate:check": "pnpm --filter @bookie/api generate:check && pnpm --filter @bookie/web generate:check"
+    "generate:check": "pnpm --filter @bookie/api generate:check && pnpm --filter @bookie/web generate:check",
+    "eval": "node eval/run.mjs",
+    "eval:setup": "node eval/run.mjs setup",
+    "eval:test": "node eval/run.mjs test"
   },
   "devDependencies": {
     "prettier": "^3.9.10"

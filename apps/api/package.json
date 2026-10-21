@@ -18,6 +18,7 @@
     "import:goodreads": "nest build && node dist/tools/import-goodreads.js",
     "embed:books": "nest build && node dist/tools/embed-books.js",
     "traits:sample": "nest build && node dist/tools/sample-traits.js",
+    "traits:extract": "nest build && node dist/tools/extract-traits.js",
     "sources:check": "nest build && node dist/tools/check-sources.js"
   },
   "dependencies": {

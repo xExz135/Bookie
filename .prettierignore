@@ -12,3 +12,5 @@ apps/api/src/generated/
 next-env.d.ts
 # Generated from contract/openapi.json by pnpm generate
 apps/web/src/api/schema.d.ts
+# Written by the offline evaluation harness (pnpm eval)
+eval/results/

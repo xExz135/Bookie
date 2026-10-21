@@ -1,0 +1,62 @@
+# Parameters of the offline evaluation (BE-14, spec 9, D-023).
+# Every value is a configurable default, not a fact. Each says where it comes from.
+# Changing any of them changes the reported numbers: re-run `pnpm eval`.
+
+[data]
+# Books: the most-rated editions in the dev catalog (same order as `embed:books`),
+# one edition per work. Owner's choice, 2026-10-21.
+top_editions = 1000
+# Readers with at least this many ratings among those books are evaluated (spec 9: 20).
+min_ratings = 20
+# How many of them are evaluated. The rest only train the population models (B0, B3),
+# so nothing about an evaluated reader reaches the population (no leakage).
+# Hypothesis: 5,000 gives tight intervals and leaves most heavy readers for training.
+eval_readers = 5000
+# Embedding and trait versions read from the database and the trait cache (D-015).
+embedding_model = "gemini-embedding-001:768:text-v1"
+trait_model = "gemini-3.5-flash-lite"
+trait_prompt_version = "traits-v1"
+
+[split]
+# Per-reader holdout (spec 9, D-008: 20%) and a separate validation split for tuning.
+seed = 20261021
+test_fraction = 0.2
+validation_fraction = 0.2
+
+[metrics]
+ndcg_k = 10
+bootstrap_samples = 1000
+interval = 0.95
+# Learning curve: profile sizes (spec 9).
+learning_curve = [5, 10, 20, 40]
+# Calibration bins on the 1 to 5 scale.
+calibration_bin_width = 0.5
+
+[models.baseline]
+# Shrinkage of item and reader averages toward the global mean (B0, B3 baselines).
+# Common defaults for rating data; not tuned.
+item_shrinkage = 25.0
+reader_shrinkage = 10.0
+
+[models.b1]
+# The v1 questionnaire and trait match. Offline readers have no questionnaire, so one
+# is derived from their profile ratings (see D-023): a genre, pace or theme counts as
+# liked or disliked when the reader's average deviation on it is at least this far
+# from their own mean, over at least `min_books` books. Otherwise it is unknown and
+# contributes nothing (MODEL-2).
+preference_threshold = 0.5
+min_books = 2
+# A genre is one of a book's genres when it has at least this share of its genre votes.
+genre_share = 0.2
+# Hand-set weights, as in v1 (not learned).
+weight_genre = 0.25
+weight_pace = 0.25
+weight_theme_avoid = 0.25
+
+[models.b3]
+# Item-based collaborative filtering with baseline correction (Koren 2010).
+neighbours = 30
+similarity_shrinkage = 100.0
+# The neighbours' weighted average is divided by (sum of weights + damping). The damping
+# is chosen on the validation split from this grid (0 = no damping, Koren's formula).
+weight_shrinkage_grid = [0.0, 0.1, 0.25, 0.5, 1.0, 2.0]
