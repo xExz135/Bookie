@@ -1,5 +1,10 @@
 import { Alert } from '@/components/ui/alert';
-import type { Evidence, PublicReception as Reception, Step } from '@/lib/analysis/api';
+import type {
+  Evidence,
+  FeedbackValue,
+  PublicReception as Reception,
+  Step,
+} from '@/lib/analysis/api';
 import {
   formatCount,
   formatDate,
@@ -7,6 +12,7 @@ import {
   TRAIT_LABELS,
 } from '@/lib/analysis/labels';
 import { codeMessage } from '@/lib/api/errors';
+import { FeedbackControl } from './feedback-control';
 import { Citations, ConfidenceBlock, Section, SubHeading } from './parts';
 import { SectionRetry } from './section-retry';
 
@@ -28,11 +34,14 @@ export function PublicReceptionSection({
   failedSteps,
   evidence,
   retry,
+  feedback,
 }: {
   reception: Reception;
   failedSteps: Step[];
   evidence: ReadonlyMap<string, Evidence>;
   retry: RetryControl;
+  /** Shown only once the section is done (spec 6: hidden on sections not generated). */
+  feedback: { analysisId: string; value: FeedbackValue | null };
 }) {
   return (
     <Section id="public" eyebrow="What reviewers say" title="Public reception">
@@ -46,6 +55,13 @@ export function PublicReceptionSection({
         />
       ) : null}
       {reception.sources.length > 0 ? <SourceList sources={reception.sources} /> : null}
+      {reception.status === 'done' ? (
+        <FeedbackControl
+          analysisId={feedback.analysisId}
+          target="public"
+          initial={feedback.value}
+        />
+      ) : null}
     </Section>
   );
 }

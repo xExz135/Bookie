@@ -43,3 +43,18 @@ export function listAnalyses(cursor?: string): Promise<AnalysisList> {
 export function recalculateAnalysis(id: string): Promise<Analysis> {
   return call(api.POST('/api/v1/analyses/{id}/recalculate', { params: { path: { id } } }));
 }
+
+export type FeedbackTarget = Schemas['FeedbackRequest']['target'];
+export type FeedbackValue = Schemas['FeedbackRequest']['value'];
+
+/**
+ * The reader's judgement of one section (CONTRACT 4.5, FB-1): saving again
+ * replaces it. `409` means the section was not generated.
+ */
+export function saveFeedback(
+  analysisId: string,
+  target: FeedbackTarget,
+  value: FeedbackValue,
+): Promise<Schemas['FeedbackSaved']> {
+  return call(api.PUT('/api/v1/feedback', { body: { analysisId, target, value } }));
+}

@@ -210,6 +210,7 @@ export function AnalysisScreen({ id }: { id: string }) {
             'public',
             publicFailed.map((s) => s.name),
           )}
+          feedback={{ analysisId: id, value: analysis.feedback.public }}
         />
         <PersonalMatchSection
           match={analysis.personalMatch}
@@ -219,6 +220,7 @@ export function AnalysisScreen({ id }: { id: string }) {
             'personal',
             personalFailed.map((s) => s.name),
           )}
+          feedback={{ analysisId: id, value: analysis.feedback.personal }}
         />
       </div>
 

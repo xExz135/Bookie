@@ -161,7 +161,9 @@ describe('Failures and retry', () => {
     expect(
       within(publicSection()).getByText(/Readers describe a fast, tense survival story/),
     ).toBeVisible();
-    expect(within(publicSection()).queryByRole('button')).not.toBeInTheDocument();
+    expect(
+      within(publicSection()).queryByRole('button', { name: 'Retry public reception' }),
+    ).not.toBeInTheDocument();
     expect(within(personalSection()).getByRole('alert')).toHaveTextContent(
       'The personal match could not be made. Something went wrong on our side',
     );

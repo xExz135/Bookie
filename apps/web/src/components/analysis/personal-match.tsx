@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { Alert } from '@/components/ui/alert';
-import type { Evidence, PersonalMatch, Step } from '@/lib/analysis/api';
+import type { Evidence, FeedbackValue, PersonalMatch, Step } from '@/lib/analysis/api';
 import { formatDateTime, MODEL_NAMES, TRAIT_LABELS } from '@/lib/analysis/labels';
 import { codeMessage } from '@/lib/api/errors';
+import { FeedbackControl } from './feedback-control';
 import { Citations, ConfidenceBlock, Cover, Section, SubHeading } from './parts';
 import type { RetryControl } from './public-reception';
 import { SectionRetry } from './section-retry';
@@ -22,11 +23,14 @@ export function PersonalMatchSection({
   failedStep,
   evidence,
   retry,
+  feedback,
 }: {
   match: PersonalMatch;
   failedStep: Step | undefined;
   evidence: ReadonlyMap<string, Evidence>;
   retry: RetryControl;
+  /** Shown only when there is a score to judge (spec 6). */
+  feedback: { analysisId: string; value: FeedbackValue | null };
 }) {
   return (
     <Section id="personal" eyebrow="For you" title="Your personal match">
@@ -40,6 +44,13 @@ export function PersonalMatchSection({
           busy={retry.busy}
           error={retry.error}
           onRetry={retry.onRetry}
+        />
+      ) : null}
+      {match.status === 'done' ? (
+        <FeedbackControl
+          analysisId={feedback.analysisId}
+          target="personal"
+          initial={feedback.value}
         />
       ) : null}
     </Section>
