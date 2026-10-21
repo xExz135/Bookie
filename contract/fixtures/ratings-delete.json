@@ -1,0 +1,46 @@
+{
+  "endpoint": "DELETE /api/v1/ratings/{editionId}",
+  "outcomes": {
+    "removed": {
+      "status": 200,
+      "schema": "ProfileSaved",
+      "body": {
+        "tasteProfileVersion": 9,
+        "ratedCount": 6
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "notAnId": {
+      "status": 404,
+      "body": {
+        "code": "NOT_FOUND",
+        "message": "Not found.",
+        "retryable": false
+      }
+    },
+    "rateLimited": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 30
+      }
+    }
+  }
+}

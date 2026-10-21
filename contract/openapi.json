@@ -230,6 +230,170 @@
         ],
         "type": "object"
       },
+      "CatalogItem": {
+        "additionalProperties": false,
+        "properties": {
+          "author": {
+            "nullable": true,
+            "type": "string"
+          },
+          "coverUrl": {
+            "nullable": true,
+            "type": "string"
+          },
+          "editionId": {
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "type": "string"
+          },
+          "format": {
+            "nullable": true,
+            "type": "string"
+          },
+          "language": {
+            "nullable": true,
+            "type": "string"
+          },
+          "publisher": {
+            "nullable": true,
+            "type": "string"
+          },
+          "subtitle": {
+            "nullable": true,
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "year": {
+            "maximum": 9007199254740991,
+            "minimum": -9007199254740991,
+            "nullable": true,
+            "type": "integer"
+          },
+          "yourRating": {
+            "maximum": 5,
+            "minimum": 1,
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "editionId",
+          "title",
+          "subtitle",
+          "author",
+          "year",
+          "language",
+          "publisher",
+          "format",
+          "coverUrl",
+          "yourRating"
+        ],
+        "type": "object"
+      },
+      "CatalogSearchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "external": {
+            "additionalProperties": false,
+            "nullable": true,
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "ok",
+                  "empty",
+                  "failed",
+                  "rate_limited",
+                  "not_permitted"
+                ],
+                "type": "string"
+              },
+              "source": {
+                "enum": [
+                  "open_library"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "source",
+              "outcome"
+            ],
+            "type": "object"
+          },
+          "items": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "author": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "coverUrl": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "editionId": {
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                  "type": "string"
+                },
+                "format": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "language": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "publisher": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "subtitle": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "year": {
+                  "maximum": 9007199254740991,
+                  "minimum": -9007199254740991,
+                  "nullable": true,
+                  "type": "integer"
+                },
+                "yourRating": {
+                  "maximum": 5,
+                  "minimum": 1,
+                  "nullable": true,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "editionId",
+                "title",
+                "subtitle",
+                "author",
+                "year",
+                "language",
+                "publisher",
+                "format",
+                "coverUrl",
+                "yourRating"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items",
+          "external"
+        ],
+        "type": "object"
+      },
       "ConfidenceLevel": {
         "enum": [
           "low",
@@ -331,6 +495,77 @@
         ],
         "type": "object"
       },
+      "ImportConfirmRequest": {
+        "properties": {
+          "resolutions": {
+            "default": [],
+            "items": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "editionId": {
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "type": "string"
+                    },
+                    "rowIndex": {
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991,
+                      "minimum": 0,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "rowIndex",
+                    "editionId"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "rowIndex": {
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991,
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "skip": {
+                      "enum": [
+                        true
+                      ],
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "rowIndex",
+                    "skip"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 20000,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ImportStarted": {
+        "additionalProperties": false,
+        "properties": {
+          "importId": {
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "importId"
+        ],
+        "type": "object"
+      },
       "LoginRequest": {
         "properties": {
           "email": {
@@ -370,6 +605,424 @@
           "below_floor"
         ],
         "type": "string"
+      },
+      "ProfileSaved": {
+        "additionalProperties": false,
+        "properties": {
+          "ratedCount": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "tasteProfileVersion": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tasteProfileVersion",
+          "ratedCount"
+        ],
+        "type": "object"
+      },
+      "QuestionnaireOptions": {
+        "additionalProperties": false,
+        "properties": {
+          "genres": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "paces": {
+            "items": {
+              "enum": [
+                "slow",
+                "moderate",
+                "fast"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "themes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "genres",
+          "themes",
+          "paces"
+        ],
+        "type": "object"
+      },
+      "QuestionnaireRequest": {
+        "properties": {
+          "dislikedGenres": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "likedGenres": {
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "type": "array"
+          },
+          "pace": {
+            "enum": [
+              "slow",
+              "moderate",
+              "fast"
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "themesToAvoid": {
+            "items": {
+              "properties": {
+                "sensitivity": {
+                  "enum": [
+                    "high",
+                    "moderate",
+                    "low"
+                  ],
+                  "type": "string"
+                },
+                "theme": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "theme",
+                "sensitivity"
+              ],
+              "type": "object"
+            },
+            "nullable": true,
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "RatedBook": {
+        "additionalProperties": false,
+        "properties": {
+          "author": {
+            "nullable": true,
+            "type": "string"
+          },
+          "coverUrl": {
+            "nullable": true,
+            "type": "string"
+          },
+          "editionId": {
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "type": "string"
+          },
+          "format": {
+            "nullable": true,
+            "type": "string"
+          },
+          "language": {
+            "nullable": true,
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "quick_rate",
+              "imported"
+            ],
+            "type": "string"
+          },
+          "publisher": {
+            "nullable": true,
+            "type": "string"
+          },
+          "rating": {
+            "maximum": 5,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "subtitle": {
+            "nullable": true,
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "year": {
+            "maximum": 9007199254740991,
+            "minimum": -9007199254740991,
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "editionId",
+          "title",
+          "subtitle",
+          "author",
+          "year",
+          "language",
+          "publisher",
+          "format",
+          "coverUrl",
+          "rating",
+          "origin"
+        ],
+        "type": "object"
+      },
+      "RatingImport": {
+        "additionalProperties": false,
+        "properties": {
+          "format": {
+            "enum": [
+              "goodreads",
+              "storygraph"
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "ignoredRows": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "importId": {
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "type": "string"
+          },
+          "matchedCount": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "processing",
+              "needs_review",
+              "confirmed",
+              "failed"
+            ],
+            "type": "string"
+          },
+          "totalRows": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "unmatched": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "candidates": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "author": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "coverUrl": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "editionId": {
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                        "type": "string"
+                      },
+                      "format": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "language": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "publisher": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "subtitle": {
+                        "nullable": true,
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "year": {
+                        "maximum": 9007199254740991,
+                        "minimum": -9007199254740991,
+                        "nullable": true,
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "editionId",
+                      "title",
+                      "subtitle",
+                      "author",
+                      "year",
+                      "language",
+                      "publisher",
+                      "format",
+                      "coverUrl"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "rating": {
+                  "maximum": 5,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "rawAuthor": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "rawTitle": {
+                  "type": "string"
+                },
+                "rowIndex": {
+                  "exclusiveMinimum": true,
+                  "maximum": 9007199254740991,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "rowIndex",
+                "rawTitle",
+                "rawAuthor",
+                "rating",
+                "candidates"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "importId",
+          "status",
+          "format",
+          "totalRows",
+          "matchedCount",
+          "ignoredRows",
+          "unmatched"
+        ],
+        "type": "object"
+      },
+      "RatingList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "author": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "coverUrl": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "editionId": {
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                  "type": "string"
+                },
+                "format": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "language": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "origin": {
+                  "enum": [
+                    "quick_rate",
+                    "imported"
+                  ],
+                  "type": "string"
+                },
+                "publisher": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "rating": {
+                  "maximum": 5,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "subtitle": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "year": {
+                  "maximum": 9007199254740991,
+                  "minimum": -9007199254740991,
+                  "nullable": true,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "editionId",
+                "title",
+                "subtitle",
+                "author",
+                "year",
+                "language",
+                "publisher",
+                "format",
+                "coverUrl",
+                "rating",
+                "origin"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "nextCursor": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ],
+        "type": "object"
+      },
+      "RatingRequest": {
+        "properties": {
+          "rating": {
+            "maximum": 5,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rating"
+        ],
+        "type": "object"
       },
       "RegisterRequest": {
         "properties": {
@@ -577,6 +1230,108 @@
           "skipped"
         ],
         "type": "string"
+      },
+      "TasteProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "nullable": true,
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "type": "string"
+          },
+          "hardFloor": {
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "minForConfidence": {
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "questionnaire": {
+            "additionalProperties": false,
+            "properties": {
+              "dislikedGenres": {
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "type": "array"
+              },
+              "likedGenres": {
+                "items": {
+                  "type": "string"
+                },
+                "nullable": true,
+                "type": "array"
+              },
+              "pace": {
+                "enum": [
+                  "slow",
+                  "moderate",
+                  "fast"
+                ],
+                "nullable": true,
+                "type": "string"
+              },
+              "themesToAvoid": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "sensitivity": {
+                      "enum": [
+                        "high",
+                        "moderate",
+                        "low"
+                      ],
+                      "type": "string"
+                    },
+                    "theme": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "theme",
+                    "sensitivity"
+                  ],
+                  "type": "object"
+                },
+                "nullable": true,
+                "type": "array"
+              }
+            },
+            "required": [
+              "likedGenres",
+              "dislikedGenres",
+              "pace",
+              "themesToAvoid"
+            ],
+            "type": "object"
+          },
+          "ratedCount": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "version": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "ratedCount",
+          "minForConfidence",
+          "hardFloor",
+          "questionnaire",
+          "createdAt"
+        ],
+        "type": "object"
       },
       "TraitFit": {
         "enum": [
@@ -959,6 +1714,72 @@
         ]
       }
     },
+    "/api/v1/catalog/search": {
+      "get": {
+        "operationId": "TasteController_catalogSearch",
+        "parameters": [
+          {
+            "description": "1 to 50",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {}
+          },
+          {
+            "description": "Leave out for the most-rated books",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogSearchResult"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
+          }
+        },
+        "tags": [
+          "taste"
+        ]
+      }
+    },
     "/api/v1/me": {
       "get": {
         "operationId": "MeController_me",
@@ -987,6 +1808,546 @@
         },
         "tags": [
           "account"
+        ]
+      }
+    },
+    "/api/v1/onboarding/skip": {
+      "post": {
+        "operationId": "TasteController_skipOnboarding",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Onboarding is not shown again (D-002)"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "CONFLICT"
+          }
+        },
+        "tags": [
+          "taste"
+        ]
+      }
+    },
+    "/api/v1/questionnaire": {
+      "put": {
+        "operationId": "TasteController_saveQuestionnaire",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileSaved"
+                }
+              }
+            },
+            "description": "A new profile version"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
+          }
+        },
+        "tags": [
+          "taste"
+        ]
+      }
+    },
+    "/api/v1/questionnaire/options": {
+      "get": {
+        "operationId": "TasteController_questionnaireOptions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireOptions"
+                }
+              }
+            },
+            "description": ""
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          }
+        },
+        "tags": [
+          "taste"
+        ]
+      }
+    },
+    "/api/v1/ratings": {
+      "get": {
+        "operationId": "TasteController_ratings",
+        "parameters": [
+          {
+            "description": "1 to 200, default 50",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {}
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RatingList"
+                }
+              }
+            },
+            "description": "Current version, by title"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          }
+        },
+        "tags": [
+          "taste"
+        ]
+      }
+    },
+    "/api/v1/ratings/import": {
+      "post": {
+        "operationId": "TasteController_startImport",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "file": {
+                    "description": "Goodreads or StoryGraph export (CSV)",
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportStarted"
+                }
+              }
+            },
+            "description": "Poll GET /ratings/import/{importId}"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UPLOAD_TOO_LARGE"
+          },
+          "415": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNSUPPORTED_TYPE"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
+          }
+        },
+        "tags": [
+          "taste"
+        ]
+      }
+    },
+    "/api/v1/ratings/import/{importId}": {
+      "get": {
+        "operationId": "TasteController_getImport",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "importId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RatingImport"
+                }
+              }
+            },
+            "description": ""
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          }
+        },
+        "tags": [
+          "taste"
+        ]
+      }
+    },
+    "/api/v1/ratings/import/{importId}/confirm": {
+      "post": {
+        "operationId": "TasteController_confirmImport",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "importId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportConfirmRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileSaved"
+                }
+              }
+            },
+            "description": "A new profile version"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "CONFLICT"
+          }
+        },
+        "tags": [
+          "taste"
+        ]
+      }
+    },
+    "/api/v1/ratings/{editionId}": {
+      "delete": {
+        "operationId": "TasteController_unrate",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "editionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileSaved"
+                }
+              }
+            },
+            "description": "A new profile version"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
+          }
+        },
+        "tags": [
+          "taste"
+        ]
+      },
+      "put": {
+        "operationId": "TasteController_rate",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "editionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RatingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileSaved"
+                }
+              }
+            },
+            "description": "A new profile version"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
+          }
+        },
+        "tags": [
+          "taste"
         ]
       }
     },
@@ -1098,6 +2459,37 @@
         },
         "tags": [
           "discovery"
+        ]
+      }
+    },
+    "/api/v1/taste-profile": {
+      "get": {
+        "operationId": "TasteController_profile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TasteProfile"
+                }
+              }
+            },
+            "description": ""
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          }
+        },
+        "tags": [
+          "taste"
         ]
       }
     }

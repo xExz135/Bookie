@@ -72,10 +72,58 @@ const DISPLAY_COLUMNS = `
  */
 @Injectable()
 export class CatalogSearch {
+  private popularCache: { at: number; limit: number; hits: CatalogHit[] } | null = null;
+
   constructor(
     private readonly prisma: PrismaService,
     @InjectConfig() private readonly config: AppConfig,
   ) {}
+
+  /** Display fields for these editions, in the order given. Unknown ids are left out. */
+  async describe(editionIds: string[]): Promise<CatalogHit[]> {
+    if (editionIds.length === 0) return [];
+    const rows = await this.prisma.$queryRawUnsafe<RawHit[]>(
+      `SELECT ${DISPLAY_COLUMNS}, 1::float8 AS score, NULL::float8 AS "titleScore",
+         NULL::float8 AS "authorScore"
+       FROM editions e WHERE e.id = ANY($1::uuid[])`,
+      editionIds,
+    );
+    const byId = new Map(rows.map((r) => [r.editionId, toHit(r)]));
+    return editionIds.map((id) => byId.get(id)).filter((h): h is CatalogHit => h !== undefined);
+  }
+
+  /**
+   * The most-rated books in the dataset, one edition per work: the starting
+   * list for quick rate before anything is typed. Kept for 10 minutes.
+   */
+  async popular(limit: number): Promise<CatalogHit[]> {
+    const cached = this.popularCache;
+    if (cached && cached.limit >= limit && Date.now() - cached.at < 600_000) {
+      return cached.hits.slice(0, limit);
+    }
+    const rows = await this.prisma.$queryRawUnsafe<RawHit[]>(
+      `WITH top AS (
+         SELECT f.edition_id, f.rating_count FROM review_fetches f
+          WHERE f.reviews_version = 1
+            AND f.source_id = (SELECT id FROM review_sources WHERE key = 'goodreads_dataset')
+            AND f.rating_count IS NOT NULL
+          ORDER BY f.rating_count DESC LIMIT $1
+       ), best AS (
+         SELECT DISTINCT ON (e.work_id) e.id, t.rating_count
+           FROM top t JOIN editions e ON e.id = t.edition_id
+          ORDER BY e.work_id, t.rating_count DESC, e.id
+       )
+       SELECT ${DISPLAY_COLUMNS}, 1::float8 AS score, NULL::float8 AS "titleScore",
+         NULL::float8 AS "authorScore"
+       FROM best b JOIN editions e ON e.id = b.id
+       ORDER BY b.rating_count DESC, e.id LIMIT $2`,
+      limit * 5,
+      limit,
+    );
+    const hits = rows.map(toHit);
+    this.popularCache = { at: Date.now(), limit, hits };
+    return hits;
+  }
 
   async search(input: SearchInput): Promise<CatalogHit[]> {
     const isbn = parseIsbn(input.query);

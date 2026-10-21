@@ -1,0 +1,33 @@
+{
+  "endpoint": "POST /api/v1/onboarding/skip",
+  "outcomes": {
+    "skipped": {
+      "status": 204,
+      "body": null
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "skippingTurnedOff": {
+      "status": 409,
+      "body": {
+        "code": "CONFLICT",
+        "message": "This action conflicts with the current state.",
+        "retryable": false
+      }
+    }
+  }
+}

@@ -12,6 +12,7 @@ import { LlmError } from '../../src/llm/gemini.client';
 import type { OpenLibraryWork } from '../../src/sources/open-library/open-library.client';
 import { SourceError } from '../../src/sources/open-library/open-library.client';
 import { jpeg } from '../helpers/images';
+import { hyphenate, randomIsbn13 } from '../helpers/isbn';
 import { createTestApp, uniqueEmail } from './test-app';
 import { TEST_DATABASE_URL } from './test-database';
 
@@ -209,12 +210,13 @@ describe('discovery: search and scan (BE-6)', () => {
 
     it('finds a book by ISBN, with or without hyphens', async () => {
       const tag = word();
+      const isbn13 = randomIsbn13();
       const book = await seedBook({
         title: `${tag} Isbn Book`,
         authors: ['I. S. Bean'],
-        isbn13: '9780306406157',
+        isbn13,
       });
-      const res = await search('978-0-306-40615-7').expect(200);
+      const res = await search(hyphenate(isbn13)).expect(200);
       expect(res.body.candidates.map((c: { editionId: string }) => c.editionId)).toContain(
         book.editionId,
       );
@@ -281,10 +283,11 @@ describe('discovery: search and scan (BE-6)', () => {
 
     it('does not duplicate a book the catalog already has (same ISBN)', async () => {
       const tag = word();
+      const knownIsbn = randomIsbn13();
       const existing = await seedBook({
         title: `${tag} Known Book`,
         authors: ['Kay Known'],
-        isbn13: '9781861972712',
+        isbn13: knownIsbn,
       });
       openLibrary.works = [
         {
@@ -298,7 +301,7 @@ describe('discovery: search and scan (BE-6)', () => {
             subtitle: null,
             language: 'eng',
             isbn10: null,
-            isbn13: '9781861972712',
+            isbn13: knownIsbn,
             publisher: null,
             year: 2001,
             format: null,

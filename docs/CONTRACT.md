@@ -98,16 +98,32 @@
 
 ### 4.2 Taste capture
 
+Every save (rating, removal, questionnaire, confirmed import) creates a new immutable taste-profile version, numbered from 1 per reader. A save that changes nothing creates no version. `tasteProfileVersion: 0` means the reader has never saved anything.
+
 | Method and path | Request | Response |
 |---|---|---|
-| `GET /taste-profile` | none | `{ version, ratedCount, minForConfidence, hardFloor, questionnaire, createdAt }` (`minForConfidence` default 10, `hardFloor` default 3, both from server config) |
-| `GET /catalog/search?q=` | query | `{ items: [{ editionId, title, author, year, coverUrl }] }` for the Quick rate list |
-| `PUT /ratings/:editionId` | `{ rating: 1 to 5 }` | `{ tasteProfileVersion, ratedCount }`. Each save creates a new immutable version. |
-| `POST /ratings/import` | multipart file | `202 { importId }` |
-| `GET /ratings/import/:importId` | none | `{ status, matchedCount, unmatched: [{ rowIndex, rawTitle, rawAuthor, candidates: [Candidate] }] }` |
-| `POST /ratings/import/:importId/confirm` | `{ resolutions: [{ rowIndex, editionId \| skip }] }` | `{ tasteProfileVersion, ratedCount }` |
+| `GET /taste-profile` | none | `{ version, ratedCount, minForConfidence, hardFloor, questionnaire: { likedGenres, dislikedGenres, pace, themesToAvoid }, createdAt }` (`minForConfidence` default 10, `hardFloor` default 3, both from server config). Unanswered questionnaire fields are `null`. |
+| `GET /ratings?cursor=&limit=` | query | `{ items: [Candidate + { rating, origin: 'quick_rate' \| 'imported' }], nextCursor }`: the current version's ratings, by title. `limit` 1 to 200, default 50. |
+| `PUT /ratings/:editionId` | `{ rating: 1 to 5 }` | `{ tasteProfileVersion, ratedCount }`. `404` for an unknown edition. |
+| `DELETE /ratings/:editionId` | none | `{ tasteProfileVersion, ratedCount }`. Removing a book that is not rated changes nothing. |
+| `GET /catalog/search?q=&limit=` | query | `{ items: [Candidate + { yourRating }], external }` for the Quick rate list. Without `q`: the most-rated books. With `q`: the same search as 4.3, more results (default 20, at most 50). `yourRating` is the reader's current rating or `null`. |
+| `POST /ratings/import` | multipart, field `file`: a Goodreads or StoryGraph CSV export, at most 10 MB by default | `202 { importId }`. Rows are matched in the background. |
+| `GET /ratings/import/:importId` | none | `{ importId, status, format, totalRows, matchedCount, ignoredRows, unmatched: [{ rowIndex, rawTitle, rawAuthor, rating, candidates: [Candidate] }] }`. `status`: `processing`, `needs_review`, `confirmed`, `failed`. `unmatched` is filled once `status` is `needs_review`. |
+| `POST /ratings/import/:importId/confirm` | `{ resolutions: [{ rowIndex, editionId } \| { rowIndex, skip: true }] }` | `{ tasteProfileVersion, ratedCount }` |
 | `GET /questionnaire/options` | none | `{ genres: [string], themes: [string], paces: ['slow', 'moderate', 'fast'] }` |
-| `PUT /questionnaire` | `{ likedGenres, dislikedGenres, pace, themesToAvoid }` (D-011). Any field may be `null` for unknown. `themesToAvoid` = `[{ theme, sensitivity: 'high' \| 'moderate' \| 'low' }]`; a theme not listed is unknown. | `{ tasteProfileVersion }`. **Unknown is never a dislike.** |
+| `PUT /questionnaire` | `{ likedGenres, dislikedGenres, pace, themesToAvoid }` (D-011). Any field may be `null` or left out for unknown. `themesToAvoid` = `[{ theme, sensitivity: 'high' \| 'moderate' \| 'low' }]`; a theme not listed is unknown. Replaces all four answers; ratings are kept. | `{ tasteProfileVersion, ratedCount }`. **Unknown is never a dislike.** |
+| `POST /onboarding/skip` | none | `204`. The reader's `onboardingState` becomes `skipped` (D-002). `409 CONFLICT` if skipping is turned off. Saving any taste input sets it to `completed`. |
+
+**Import rules the frontend relies on (ONB-1)**
+- Poll `GET /ratings/import/:importId` until `status` is not `processing` (usually a few seconds).
+- `matchedCount` rows were matched without asking (Goodreads book id, ISBN, or exactly one book with that title and author). `unmatched` rows need the reader: pick one of the `candidates`, search for the book (4.3) and send its `editionId`, or skip.
+- Rows left out of `resolutions` are skipped on confirm; they were listed, so nothing is dropped silently.
+- `ignoredRows`: rows in the file with no rating (for example "to-read"). Say how many.
+- Imported ratings replace earlier ratings of the same book. StoryGraph quarter stars are rounded to whole stars (halves up).
+- Errors: `400 VALIDATION_FAILED` with `fields.file` (not a known export, no rated books, too many rows), `413 UPLOAD_TOO_LARGE`, `415 UNSUPPORTED_TYPE` (not a text file), `429 RATE_LIMITED` (default 10 imports a day). Confirming twice, or before matching ends, is `409 CONFLICT`.
+- The file is read in memory. Only title, author and rating are kept; reviews, notes, shelves and dates are never stored.
+
+**Version rules (ONB-4):** earlier versions never change. An analysis made with an older version is outdated; the analysis API reports this as `isOutdated` (4.4).
 
 ### 4.3 Discovery
 
@@ -222,3 +238,4 @@
 | 2026-10-20 | v0.2: auth per D-001 (register signs in, `EMAIL_IN_USE`, refresh rotation); questionnaire fields per D-011 and `GET /questionnaire/options`; display rules per D-010 | n/a |
 | 2026-10-21 | BE-3: added `GET /me`, the `User` shape, session rules (cookie attributes, one refresh at a time, reset-link format) and `400` for an invalid reset link. Fixtures for every auth outcome in `contract/fixtures/`. Proposed by backend; frontend to approve | n/a |
 | 2026-10-21 | BE-6: `Candidate` gains `publisher` and `format`, and its fields are nullable; search and scan responses gain `external`; scan gains `recognized`; one candidate per work; meaning rules and scan error rules in 4.3. Fixtures added. Proposed by backend; frontend to approve | n/a |
+| 2026-10-21 | BE-7: 4.2 filled in: `GET /ratings`, `DELETE /ratings/:editionId`, `POST /onboarding/skip`, `yourRating` and `external` on catalog search, `importId`, `format`, `totalRows`, `ignoredRows` and `rating` on the import view, `tasteProfileVersion: 0` before the first save, import and version rules. Fixtures added. Proposed by backend; frontend to approve | n/a |

@@ -182,6 +182,51 @@ export const PARAMS = {
     source: 'Spec 6, D-008',
   },
 
+  // --- Taste capture (spec 6, D-018) ---
+  IMPORT_MAX_BYTES: {
+    schema: int(10_000_000, 100_000),
+    description: 'Largest accepted rating export file.',
+    source: 'D-018 (hypothesis)',
+  },
+  IMPORT_MAX_ROWS: {
+    schema: int(5000, 10),
+    description: 'Most rated books accepted from one import file.',
+    source: 'D-018 (hypothesis)',
+  },
+  IMPORT_MIN_TITLE_MATCH: {
+    schema: num(0.8, 0, 1),
+    description:
+      'Title match (trigram similarity) an imported row needs to be matched without asking. Stricter than a scan, since nobody looks at it.',
+    source: 'Spec 6, D-018 (hypothesis)',
+  },
+  IMPORT_MIN_AUTHOR_MATCH: {
+    schema: num(0.6, 0, 1),
+    description: 'Author match an imported row needs to be matched without asking.',
+    source: 'D-018 (hypothesis)',
+  },
+  IMPORT_MAX_PER_DAY: {
+    schema: int(10),
+    description: 'Imports allowed per reader per day.',
+    source: 'D-018 (hypothesis)',
+  },
+  IMPORT_STALE_SECONDS: {
+    schema: int(120, 10),
+    description:
+      'An import still processing after this long (for example after a restart) is resumed.',
+    source: 'D-018',
+  },
+  RATING_SAVES_PER_MINUTE: {
+    schema: int(120),
+    description:
+      'Rating and questionnaire saves allowed per reader per minute. Each save is a new profile version.',
+    source: 'D-018 (hypothesis)',
+  },
+  QUICK_RATE_LIST_SIZE: {
+    schema: int(20, 1),
+    description: 'Books returned by the quick-rate list and catalog search.',
+    source: 'D-018',
+  },
+
   // --- Discovery (spec 6) ---
   SEARCH_MAX_CANDIDATES: {
     schema: int(3),

@@ -38,6 +38,24 @@ export class BookSearchService {
   ) {}
 
   async search(userId: string, query: string): Promise<BookSearchResult> {
+    const { hits, external } = await this.searchFor(
+      userId,
+      query,
+      this.config.SEARCH_MAX_CANDIDATES,
+    );
+    return { candidates: hits.map(toCandidate), external };
+  }
+
+  /**
+   * A reader's typed search with `size` results: rate-limited per reader,
+   * catalog first, Open Library when nothing matches well. Also used by the
+   * quick-rate list, which shows more results.
+   */
+  async searchFor(
+    userId: string,
+    query: string,
+    size: number,
+  ): Promise<{ hits: CatalogHit[]; external: ExternalLookup }> {
     const limit = await this.limiter.hit(`search:user:${userId}`, {
       max: this.config.SEARCH_RATE_LIMIT_PER_MINUTE,
       windowSeconds: 60,
@@ -45,11 +63,9 @@ export class BookSearchService {
     if (!limit.allowed) {
       throw new ApiError('RATE_LIMITED', { retryAfterSeconds: limit.retryAfterSeconds });
     }
-    const input = { query, limit: this.config.SEARCH_MAX_CANDIDATES };
-    const { hits, external } = await this.searchWithFallback(input, (found) =>
+    return this.searchWithFallback({ query, limit: size }, (found) =>
       found.some((h) => h.score >= this.config.SEARCH_EXTERNAL_BELOW_SCORE),
     );
-    return { candidates: hits.map(toCandidate), external };
   }
 
   /**

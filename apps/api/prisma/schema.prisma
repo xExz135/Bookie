@@ -382,6 +382,10 @@ model RatingImport {
   status             ImportStatus         @default(processing)
   totalRows          Int                  @default(0) @map("total_rows")
   matchedCount       Int                  @default(0) @map("matched_count")
+  /// Rows left out at parse time: no rating, or not read yet.
+  ignoredRows        Int                  @default(0) @map("ignored_rows")
+  /// "goodreads" or "storygraph" (CHECK in migration).
+  fileFormat         String?              @map("file_format")
   createdAt          DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
   confirmedAt        DateTime?            @map("confirmed_at") @db.Timestamptz(3)
   resultingVersionId String?              @unique @map("resulting_version_id") @db.Uuid

@@ -1,0 +1,106 @@
+{
+  "endpoint": "GET /api/v1/ratings/import/{importId}",
+  "outcomes": {
+    "processing": {
+      "status": 200,
+      "schema": "RatingImport",
+      "body": {
+        "importId": "e9e67b9e-6f6b-4bf2-a918-930c3a99173b",
+        "status": "processing",
+        "format": "goodreads",
+        "totalRows": 212,
+        "matchedCount": 180,
+        "ignoredRows": 37,
+        "unmatched": []
+      }
+    },
+    "needsReview": {
+      "status": 200,
+      "schema": "RatingImport",
+      "body": {
+        "importId": "e9e67b9e-6f6b-4bf2-a918-930c3a99173b",
+        "status": "needs_review",
+        "format": "goodreads",
+        "totalRows": 212,
+        "matchedCount": 205,
+        "ignoredRows": 37,
+        "unmatched": [
+          {
+            "rowIndex": 14,
+            "rawTitle": "Pride and Prejudice",
+            "rawAuthor": "Jane Austen",
+            "rating": 3,
+            "candidates": [
+              {
+                "editionId": "4d5e6f7a-8b9c-4d0e-9f1a-2b3c4d5e6f7a",
+                "title": "Pride and Prejudice",
+                "subtitle": null,
+                "author": "Jane Austen",
+                "year": 2000,
+                "language": "en",
+                "publisher": "Modern Library",
+                "format": "Paperback",
+                "coverUrl": null
+              },
+              {
+                "editionId": "5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b",
+                "title": "Pride and Prejudice",
+                "subtitle": null,
+                "author": "Jane Austen",
+                "year": 2003,
+                "language": "en",
+                "publisher": "Penguin",
+                "format": "Paperback",
+                "coverUrl": null
+              }
+            ]
+          },
+          {
+            "rowIndex": 88,
+            "rawTitle": "A Book Nobody Has",
+            "rawAuthor": "Small Press Author",
+            "rating": 4,
+            "candidates": []
+          }
+        ]
+      }
+    },
+    "failed": {
+      "status": 200,
+      "schema": "RatingImport",
+      "body": {
+        "importId": "e9e67b9e-6f6b-4bf2-a918-930c3a99173b",
+        "status": "failed",
+        "format": "storygraph",
+        "totalRows": 12,
+        "matchedCount": 0,
+        "ignoredRows": 0,
+        "unmatched": []
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "notYours": {
+      "status": 404,
+      "body": {
+        "code": "NOT_FOUND",
+        "message": "Not found.",
+        "retryable": false
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ import { DiscoveryModule } from './discovery/discovery.module';
 import { HealthController } from './health/health.controller';
 import { MailModule } from './mail/mailer';
 import { RedisModule } from './redis/redis.module';
+import { TasteModule } from './taste/taste.module';
 
 @Module({})
 export class AppModule {
@@ -20,6 +21,7 @@ export class AppModule {
         MailModule,
         AuthModule,
         DiscoveryModule,
+        TasteModule,
       ],
       controllers: [HealthController],
     };

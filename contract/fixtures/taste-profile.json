@@ -1,0 +1,60 @@
+{
+  "endpoint": "GET /api/v1/taste-profile",
+  "outcomes": {
+    "newReader": {
+      "status": 200,
+      "schema": "TasteProfile",
+      "body": {
+        "version": 0,
+        "ratedCount": 0,
+        "minForConfidence": 10,
+        "hardFloor": 3,
+        "questionnaire": {
+          "likedGenres": null,
+          "dislikedGenres": null,
+          "pace": null,
+          "themesToAvoid": null
+        },
+        "createdAt": null
+      }
+    },
+    "withAnswers": {
+      "status": 200,
+      "schema": "TasteProfile",
+      "body": {
+        "version": 7,
+        "ratedCount": 6,
+        "minForConfidence": 10,
+        "hardFloor": 3,
+        "questionnaire": {
+          "likedGenres": ["fantasy, paranormal", "young-adult"],
+          "dislikedGenres": null,
+          "pace": "fast",
+          "themesToAvoid": [
+            {
+              "theme": "Graphic violence and physical harm",
+              "sensitivity": "high"
+            }
+          ]
+        },
+        "createdAt": "2026-10-21T08:30:00.000Z"
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    }
+  }
+}

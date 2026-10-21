@@ -1,0 +1,75 @@
+{
+  "endpoint": "POST /api/v1/ratings/import",
+  "outcomes": {
+    "started": {
+      "status": 202,
+      "schema": "ImportStarted",
+      "body": {
+        "importId": "e9e67b9e-6f6b-4bf2-a918-930c3a99173b"
+      }
+    },
+    "unknownFormat": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "file": "Upload a Goodreads or StoryGraph export (CSV)."
+        }
+      }
+    },
+    "noRatings": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "file": "No rated books were found in this file."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "tooLarge": {
+      "status": 413,
+      "body": {
+        "code": "UPLOAD_TOO_LARGE",
+        "message": "The file is too large.",
+        "retryable": false
+      }
+    },
+    "notText": {
+      "status": 415,
+      "body": {
+        "code": "UNSUPPORTED_TYPE",
+        "message": "This file type is not supported.",
+        "retryable": false
+      }
+    },
+    "tooManyImports": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 30
+      }
+    }
+  }
+}

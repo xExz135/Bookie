@@ -1,0 +1,57 @@
+{
+  "endpoint": "PUT /api/v1/ratings/{editionId}",
+  "outcomes": {
+    "saved": {
+      "status": 200,
+      "schema": "ProfileSaved",
+      "body": {
+        "tasteProfileVersion": 8,
+        "ratedCount": 7
+      }
+    },
+    "outOfRange": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "rating": "Rate from 1 to 5."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "unknownBook": {
+      "status": 404,
+      "body": {
+        "code": "NOT_FOUND",
+        "message": "Not found.",
+        "retryable": false
+      }
+    },
+    "rateLimited": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 30
+      }
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "endpoint": "GET /api/v1/catalog/search",
+  "outcomes": {
+    "popular": {
+      "status": 200,
+      "schema": "CatalogSearchResult",
+      "body": {
+        "items": [
+          {
+            "editionId": "6c0e2a1b-4d3f-4a5b-8c7d-9e0f1a2b3c4d",
+            "title": "The Hunger Games",
+            "subtitle": null,
+            "author": "Suzanne Collins",
+            "year": 2008,
+            "language": "en",
+            "publisher": "Scholastic Press",
+            "format": "Hardcover",
+            "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+            "yourRating": 5
+          },
+          {
+            "editionId": "6b1f0c2a-3d4e-4f5a-8b6c-7d8e9f0a1b2c",
+            "title": "Harry Potter and the Sorcerer's Stone",
+            "subtitle": null,
+            "author": "J.K. Rowling",
+            "year": 1997,
+            "language": "en",
+            "publisher": "Scholastic Inc",
+            "format": "Hardcover",
+            "coverUrl": "https://images.gr-assets.com/books/1474154022m/3.jpg",
+            "yourRating": null
+          },
+          {
+            "editionId": "3a2b1c0d-9e8f-4a7b-8c6d-5e4f3a2b1c0d",
+            "title": "Twilight",
+            "subtitle": null,
+            "author": "Stephenie Meyer",
+            "year": 2006,
+            "language": "en",
+            "publisher": "Little, Brown and Company",
+            "format": "Paperback",
+            "coverUrl": null,
+            "yourRating": null
+          }
+        ],
+        "external": null
+      }
+    },
+    "typed": {
+      "status": 200,
+      "schema": "CatalogSearchResult",
+      "body": {
+        "items": [
+          {
+            "editionId": "6b1f0c2a-3d4e-4f5a-8b6c-7d8e9f0a1b2c",
+            "title": "Harry Potter and the Sorcerer's Stone",
+            "subtitle": null,
+            "author": "J.K. Rowling",
+            "year": 1997,
+            "language": "en",
+            "publisher": "Scholastic Inc",
+            "format": "Hardcover",
+            "coverUrl": "https://images.gr-assets.com/books/1474154022m/3.jpg",
+            "yourRating": 4
+          }
+        ],
+        "external": null
+      }
+    },
+    "tooLong": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "q": "Use at most 200 characters."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "rateLimited": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 30
+      }
+    }
+  }
+}

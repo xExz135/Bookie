@@ -1,0 +1,56 @@
+{
+  "endpoint": "POST /api/v1/ratings/import/{importId}/confirm",
+  "outcomes": {
+    "confirmed": {
+      "status": 200,
+      "schema": "ProfileSaved",
+      "body": {
+        "tasteProfileVersion": 2,
+        "ratedCount": 209
+      }
+    },
+    "badRow": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "resolutions.0.rowIndex": "No such row in this import."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "notYours": {
+      "status": 404,
+      "body": {
+        "code": "NOT_FOUND",
+        "message": "Not found.",
+        "retryable": false
+      }
+    },
+    "alreadyConfirmed": {
+      "status": 409,
+      "body": {
+        "code": "CONFLICT",
+        "message": "This action conflicts with the current state.",
+        "retryable": false
+      }
+    }
+  }
+}

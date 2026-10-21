@@ -1,0 +1,49 @@
+{
+  "endpoint": "PUT /api/v1/questionnaire",
+  "outcomes": {
+    "saved": {
+      "status": 200,
+      "schema": "ProfileSaved",
+      "body": {
+        "tasteProfileVersion": 3,
+        "ratedCount": 2
+      }
+    },
+    "likedAndDisliked": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "dislikedGenres": "\"fiction\" cannot be both liked and disliked."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "rateLimited": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 30
+      }
+    }
+  }
+}

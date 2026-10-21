@@ -1,0 +1,46 @@
+{
+  "endpoint": "GET /api/v1/questionnaire/options",
+  "outcomes": {
+    "options": {
+      "status": 200,
+      "schema": "QuestionnaireOptions",
+      "body": {
+        "genres": [
+          "children",
+          "comics, graphic",
+          "fantasy, paranormal",
+          "fiction",
+          "history, historical fiction, biography",
+          "mystery, thriller, crime",
+          "non-fiction",
+          "poetry",
+          "romance",
+          "young-adult"
+        ],
+        "themes": [
+          "Graphic violence and physical harm",
+          "Grief and bereavement",
+          "Substance abuse and addiction",
+          "Tragedy and bleak themes"
+        ],
+        "paces": ["slow", "moderate", "fast"]
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "endpoint": "GET /api/v1/ratings",
+  "outcomes": {
+    "firstPage": {
+      "status": 200,
+      "schema": "RatingList",
+      "body": {
+        "items": [
+          {
+            "editionId": "6b1f0c2a-3d4e-4f5a-8b6c-7d8e9f0a1b2c",
+            "title": "Harry Potter and the Sorcerer's Stone",
+            "subtitle": null,
+            "author": "J.K. Rowling",
+            "year": 1997,
+            "language": "en",
+            "publisher": "Scholastic Inc",
+            "format": "Hardcover",
+            "coverUrl": "https://images.gr-assets.com/books/1474154022m/3.jpg",
+            "rating": 4,
+            "origin": "imported"
+          },
+          {
+            "editionId": "6c0e2a1b-4d3f-4a5b-8c7d-9e0f1a2b3c4d",
+            "title": "The Hunger Games",
+            "subtitle": null,
+            "author": "Suzanne Collins",
+            "year": 2008,
+            "language": "en",
+            "publisher": "Scholastic Press",
+            "format": "Hardcover",
+            "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+            "rating": 5,
+            "origin": "quick_rate"
+          }
+        ],
+        "nextCursor": "WyJUaGUgSHVuZ2VyIEdhbWVzIiwiNmMwZTJhMWItNGQzZi00YTViLThjN2QtOWUwZjFhMmIzYzRkIl0"
+      }
+    },
+    "empty": {
+      "status": 200,
+      "schema": "RatingList",
+      "body": {
+        "items": [],
+        "nextCursor": null
+      }
+    },
+    "badCursor": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "cursor": "Invalid cursor."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    }
+  }
+}
