@@ -17,7 +17,8 @@
     "db:generate": "prisma generate",
     "import:goodreads": "nest build && node dist/tools/import-goodreads.js",
     "embed:books": "nest build && node dist/tools/embed-books.js",
-    "traits:sample": "nest build && node dist/tools/sample-traits.js"
+    "traits:sample": "nest build && node dist/tools/sample-traits.js",
+    "sources:check": "nest build && node dist/tools/check-sources.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.2.0",

@@ -3,8 +3,8 @@ import { MulterModule } from '@nestjs/platform-express';
 import type { AppConfig } from '../config/app-config';
 import { APP_CONFIG } from '../config/config.module';
 import { GeminiClient } from '../llm/gemini.client';
-import { OpenLibraryClient } from '../sources/open-library/open-library.client';
-import { BookSearchService, OPEN_LIBRARY } from './book-search.service';
+import { SourcesModule } from '../sources/sources.module';
+import { BookSearchService } from './book-search.service';
 import { CatalogSearch } from './catalog-search';
 import { DiscoveryController } from './discovery.controller';
 import { OpenLibraryImport } from './open-library-import';
@@ -13,6 +13,8 @@ import { ScanQuota } from './scan-quota';
 
 @Module({
   imports: [
+    // The shared Open Library client (OPEN_LIBRARY).
+    SourcesModule,
     MulterModule.registerAsync({
       inject: [APP_CONFIG],
       // No storage option: multer keeps the file in memory (DISC-3). The size
@@ -29,16 +31,6 @@ import { ScanQuota } from './scan-quota';
     OpenLibraryImport,
     ScanQuota,
     ScanService,
-    {
-      provide: OPEN_LIBRARY,
-      inject: [APP_CONFIG],
-      useFactory: (config: AppConfig) =>
-        new OpenLibraryClient({
-          userAgent: config.OPEN_LIBRARY_USER_AGENT,
-          timeoutMs: config.SOURCE_TIMEOUT_MS,
-          minIntervalMs: config.OPEN_LIBRARY_MIN_INTERVAL_MS,
-        }),
-    },
     {
       provide: COVER_VISION,
       inject: [APP_CONFIG],

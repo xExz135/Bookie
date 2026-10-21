@@ -89,6 +89,7 @@ pnpm --filter @bookie/api db:deploy    # apply migrations (CI and fresh database
 pnpm --filter @bookie/api import:goodreads [--limit-books N]   # load the dataset from data/raw (D-014)
 pnpm --filter @bookie/api embed:books [--limit N]   # embed the most popular editions with Gemini; re-runnable (D-015)
 pnpm --filter @bookie/api traits:sample [--limit N] [--model small|large]   # trait extraction sample to data/derived/
+pnpm --filter @bookie/api sources:check [--limit N | --edition ID | --title T --author A]   # ask the live rating sources (D-020)
 pnpm eval                # (planned, BE-14) one command reproduces every reported number (EVAL-1)
 ```
 

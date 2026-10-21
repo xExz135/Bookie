@@ -1,9 +1,13 @@
 /**
- * Open Library search (D-003: metadata and covers, cached, at most one
- * request per second, identified by a User-Agent). Used when the catalog has
- * no good match (spec 6). Responses are untrusted: every field is checked,
- * trimmed and capped.
+ * Open Library search and work ratings (D-003: metadata, covers and ratings,
+ * cached, at most one request per second, identified by a User-Agent). Search
+ * is used when the catalog has no good match (spec 6), ratings by the rating
+ * adapter (BE-5). Responses are untrusted: every field is checked, trimmed
+ * and capped.
  */
+import { PacedHttp, readJson } from '../paced-http';
+import { SourceError } from '../source-error';
+
 export interface OpenLibraryEdition {
   /** Edition key, e.g. "OL35547833M". */
   key: string;
@@ -29,16 +33,12 @@ export interface OpenLibraryWork {
   edition: OpenLibraryEdition | null;
 }
 
-export type SourceFailure = 'failed' | 'rate_limited';
+export { SourceError, type SourceFailure } from '../source-error';
 
-export class SourceError extends Error {
-  constructor(
-    readonly outcome: SourceFailure,
-    message: string,
-  ) {
-    super(message);
-    this.name = 'SourceError';
-  }
+/** A work's rating summary (`/works/{key}/ratings.json`). Covers every edition. */
+export interface OpenLibraryRatings {
+  average: number | null;
+  count: number;
 }
 
 export interface OpenLibraryOptions {
@@ -71,63 +71,62 @@ const FIELDS = [
 
 const MAX_TEXT = 500;
 
+/**
+ * One client per process (SourcesModule), so search (BE-6) and ratings
+ * (BE-5) share the one-request-per-second spacing.
+ */
 export class OpenLibraryClient {
-  private readonly fetchImpl: typeof fetch;
-  private readonly sleep: (ms: number) => Promise<void>;
-  private readonly now: () => number;
-  private nextSlot = 0;
+  private readonly http: PacedHttp;
 
   constructor(private readonly options: OpenLibraryOptions) {
-    this.fetchImpl = options.fetchImpl ?? fetch;
-    this.sleep = options.sleep ?? ((ms) => new Promise((resolve) => setTimeout(resolve, ms)));
-    this.now = options.now ?? Date.now;
+    this.http = new PacedHttp(options);
   }
 
   /** Searches works. `language` (ISO 639-1) asks Open Library to prefer editions in it. */
   async searchWorks(
     query: string,
-    options: { limit: number; language?: string },
+    options: { limit: number; language?: string; signal?: AbortSignal },
   ): Promise<OpenLibraryWork[]> {
-    const url = new URL('/search.json', this.options.baseUrl ?? 'https://openlibrary.org');
+    const url = this.url('/search.json');
     url.searchParams.set('q', query);
     url.searchParams.set('limit', String(options.limit));
     url.searchParams.set('fields', FIELDS);
     if (options.language) url.searchParams.set('lang', options.language);
-    const body = (await this.get(url)) as { docs?: unknown };
-    if (!Array.isArray(body.docs)) throw new SourceError('failed', 'Unexpected response shape');
+    const body = (await this.get(url, options.signal)) as { docs?: unknown };
+    if (!Array.isArray(body.docs))
+      throw new SourceError('failed', 'Unexpected response shape', 'bad_response');
     return body.docs.map(parseWork).filter((w): w is OpenLibraryWork => w !== null);
   }
 
-  private async get(url: URL): Promise<unknown> {
-    // One request at a time, spaced by the minimum interval.
-    const now = this.now();
-    const wait = this.nextSlot - now;
-    this.nextSlot = Math.max(now, this.nextSlot) + this.options.minIntervalMs;
-    if (wait > 0) await this.sleep(wait);
+  /** The work's ratings. An unknown work answers like an unrated one (count 0). */
+  async workRatings(workKey: string, signal?: AbortSignal): Promise<OpenLibraryRatings> {
+    if (!/^OL\d+W$/.test(workKey)) throw new Error(`Not an Open Library work key: ${workKey}`);
+    const body = (await this.get(this.url(`/works/${workKey}/ratings.json`), signal)) as {
+      summary?: { average?: unknown; count?: unknown };
+    } | null;
+    const count = body?.summary?.count;
+    const average = body?.summary?.average;
+    if (typeof count !== 'number' || !Number.isInteger(count) || count < 0)
+      throw new SourceError('failed', 'Unexpected response shape', 'bad_response');
+    return {
+      count,
+      average: typeof average === 'number' && Number.isFinite(average) ? average : null,
+    };
+  }
 
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), this.options.timeoutMs);
-    let response: Response;
-    try {
-      response = await this.fetchImpl(url, {
-        headers: { 'User-Agent': this.options.userAgent, Accept: 'application/json' },
-        signal: controller.signal,
-      });
-    } catch (error) {
-      throw new SourceError(
-        'failed',
-        controller.signal.aborted ? 'Timed out' : `Network error: ${(error as Error).message}`,
-      );
-    } finally {
-      clearTimeout(timer);
-    }
-    if (response.status === 429) throw new SourceError('rate_limited', 'HTTP 429');
-    if (!response.ok) throw new SourceError('failed', `HTTP ${response.status}`);
-    try {
-      return await response.json();
-    } catch {
-      throw new SourceError('failed', 'Response is not JSON');
-    }
+  private url(path: string): URL {
+    return new URL(path, this.options.baseUrl ?? 'https://openlibrary.org');
+  }
+
+  private async get(url: URL, signal?: AbortSignal): Promise<unknown> {
+    const response = await this.http.send(
+      url,
+      { headers: { 'User-Agent': this.options.userAgent, Accept: 'application/json' } },
+      signal,
+    );
+    if (!response.ok)
+      throw new SourceError('failed', `HTTP ${response.status}`, `http_${response.status}`);
+    return readJson(response);
   }
 }
 

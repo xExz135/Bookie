@@ -6,12 +6,15 @@ import type { AppConfig } from '../config/app-config';
 import { InjectConfig } from '../config/config.module';
 import { RateLimiter } from '../redis/rate-limiter';
 import { RedisService } from '../redis/redis.service';
-import { type OpenLibraryClient, SourceError } from '../sources/open-library/open-library.client';
+import type { OpenLibraryClient } from '../sources/open-library/open-library.client';
+import { SourceError } from '../sources/source-error';
+import { OPEN_LIBRARY } from '../sources/sources.tokens';
 import { type CatalogHit, CatalogSearch, type SearchInput } from './catalog-search';
 import { type BookSearchResult, type ExternalLookup, toCandidate } from './discovery.schemas';
 import { OpenLibraryImport } from './open-library-import';
 
-export const OPEN_LIBRARY = Symbol('OPEN_LIBRARY');
+/** Re-exported for tests; the client is provided once by SourcesModule. */
+export { OPEN_LIBRARY } from '../sources/sources.tokens';
 
 /** Open Library results asked for per lookup. Only the best edition of each work is used. */
 const EXTERNAL_RESULTS = 5;

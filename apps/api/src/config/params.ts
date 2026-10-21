@@ -320,6 +320,53 @@ export const PARAMS = {
     source: 'D-003, docs/DATA_SOURCES.md',
   },
 
+  // --- Live rating sources (BE-5, D-003, D-020) ---
+  SOURCE_DEADLINE_MS: {
+    schema: int(12000, 1000),
+    description:
+      'Time limit for one source to answer for one book, across all its requests (an ISBN lookup, then a search, then ratings). Past it the source is reported as failed.',
+    source: 'Spec 8, spec 10 cold-analysis target (hypothesis)',
+  },
+  SOURCE_MATCH_MIN_TITLE: {
+    schema: num(0.75, 0, 1),
+    description:
+      'Title similarity (pg_trgm scale) a live source result needs to count as the same book. 0.75 keeps box sets ("The Hunger Games Trilogy", 0.71) out.',
+    source: 'D-020 (hypothesis; measure with sources:check)',
+  },
+  SOURCE_MATCH_MIN_AUTHOR: {
+    schema: num(0.5, 0, 1),
+    description: 'Author similarity a live source result needs to count as the same book.',
+    source: 'D-020 (hypothesis; measure with sources:check)',
+  },
+  SOURCE_SEARCH_RESULTS: {
+    schema: int(5),
+    description:
+      'Results asked for when Open Library or Hardcover is searched by title and author.',
+    source: 'D-020 (hypothesis)',
+  },
+  GOOGLE_BOOKS_ENABLED: {
+    schema: z.stringbool().default(false),
+    description:
+      'Ask Google Books for ratings. Off by default: it matched 0 of the 12 most-rated books on 2026-10-21 (ISBN search returns nothing, and only the same edition may be used). Also needs GOOGLE_BOOKS_API_KEY.',
+    source: 'D-020 (owner, 2026-10-21)',
+  },
+  GOOGLE_BOOKS_MAX_RESULTS: {
+    schema: int(20),
+    description:
+      'Volumes asked for per Google Books search. Only the one with the edition ISBN is used, so more results mean more chances to find it.',
+    source: 'D-020, docs/DATA_SOURCES.md test log',
+  },
+  GOOGLE_BOOKS_MIN_INTERVAL_MS: {
+    schema: int(250, 50),
+    description: 'Minimum time between Google Books requests (the free quota is per day).',
+    source: 'D-020 (hypothesis)',
+  },
+  HARDCOVER_MIN_INTERVAL_MS: {
+    schema: int(1000, 100),
+    description: 'Minimum time between Hardcover requests (free plan: 60 a minute, burst 10).',
+    source: 'D-003, docs/DATA_SOURCES.md',
+  },
+
   // --- Analysis pipeline (spec 8) ---
   EVIDENCE_MAX_REVIEWS: {
     schema: int(75),
