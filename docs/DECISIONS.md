@@ -328,3 +328,19 @@ Decision:
 - **Questionnaire:** a `PUT` replaces all four answers. Missing or `null` fields, and empty lists, are stored as nothing and read back as `null`: unknown, never a dislike (ONB-3). Names must come from `GET /questionnaire/options`; a genre cannot be both liked and disliked.
 - **Quick rate list:** `GET /catalog/search` without `q` lists the most-rated books (cached 10 minutes); with `q` it is the discovery search with more results. Each item carries the reader's current rating.
 Not covered here: ONB-3's "never affect the score" is proven where the score is computed (BE-13, MODEL-2). ONB-2's invitation card comes from the analysis (`personalMatch.status = needs_taste_data`, BE-8).
+
+## D-019 The Analysis object (result screen and history)
+Status: **DECIDED** (approved by the owner for both roles on 2026-10-21)
+Date: 2026-10-21
+Affects: BE-8, BE-10, BE-13, FE-5, FE-6, FE-7, FE-8; spec sections 6 to 8; CONTRACT 4.4
+Context: the v0.2 draft of the `Analysis` object predates the decisions on sources (D-003), traits (D-015) and taste versions (D-018), and could not drive the result-screen mockup without the browser computing things (retry availability, which rating covers which edition, which traits were not factored in).
+Options:
+- A. Keep the v0.2 draft and fill gaps during BE-8 and FE-5.
+- B. Agree the full shape now, published as schemas and planned fixtures before the endpoints exist, so FE-5 can build against fixtures while BE-8 builds the pipeline.
+Decision: **B.** Main choices, all in CONTRACT 4.4:
+- **Cited evidence travels with the analysis**, replacing the per-item evidence endpoint. The screen needs every excerpt anyway (quotes under praises, the excerpts section), one request is simpler than dozens, and including exactly the cited items makes RES-5 checkable on every response. Size is bounded by the 75-review evidence set and 1,000-character excerpts.
+- **One `sources` list** with outcome and rating per source, instead of separate `ratings` and `sources`. `ratingScope` says when a rating covers the whole work (Open Library), since spec 4 says reviews of one edition are not assumed to apply to another.
+- **"Not factored in" is a trait fit of `unknown`**, with `bookValues` and `yourValues` saying which side is missing, instead of free-text `notFactoredIn` strings. Explanations stay model output, not prose (spec 7). The `personal_analyses.not_factored_in` column is then unused; BE-8 may drop it.
+- **The server decides, the browser displays:** `canRetry`, `isFallback`, `isOutdated` with `currentTasteProfileVersion`, the score already rounded to one decimal, and the thresholds for the below-floor message.
+- **Rules a JSON schema cannot express are checked in code** by the `Analysis` schema (`apps/api/src/analysis/analysis.schemas.ts`): citations resolve, no summary without evidence, no score below the floor, fallback means low confidence, and others. BE-8 validates its output against the same schema.
+Consequences: FE-5 to FE-8 can start against `contract/fixtures/analyses-*.json`. The fixture test accepts `"planned"` fixtures until their endpoint exists, and fails if the mark stays after it is built.

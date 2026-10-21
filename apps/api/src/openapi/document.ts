@@ -3,6 +3,8 @@ import { DocumentBuilder, type OpenAPIObject, SwaggerModule } from '@nestjs/swag
 import { ErrorResponseDto } from '../common/error-response.dto';
 import { CONTRACT_ENUMS } from '../contract/enums';
 import { registeredComponentSchemas } from './contract-schemas';
+// Published ahead of its endpoints (BE-8), so both roles build against one shape.
+import '../analysis/analysis.schemas';
 
 /** Matches the status line of docs/CONTRACT.md. */
 export const CONTRACT_VERSION = '0.2.0-draft';

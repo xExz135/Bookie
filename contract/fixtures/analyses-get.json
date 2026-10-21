@@ -1,0 +1,2550 @@
+{
+  "endpoint": "GET /api/v1/analyses/{id}",
+  "planned": "BE-8",
+  "outcomes": {
+    "running": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "6b66c974-b3d6-55d8-a9c1-317846698f90",
+        "status": "running",
+        "pollAfterMs": 1500,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": null,
+        "recalculatedFromId": null,
+        "canRetry": false,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "running",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "pending",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "pending",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "pending",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "pending",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "running",
+          "evidenceState": null,
+          "summary": null,
+          "praises": [],
+          "complaints": [],
+          "traits": [],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 4.34,
+              "ratingCount": 4899965,
+              "ratingScope": "edition",
+              "reviewsUsed": 75,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "ok",
+              "providesText": false,
+              "ratingAverage": 4.21,
+              "ratingCount": 1402,
+              "ratingScope": "work",
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-21T08:30:02Z"
+            }
+          ],
+          "evidence": [],
+          "evidenceConfidence": null,
+          "generatedAt": null
+        },
+        "personalMatch": {
+          "status": "running",
+          "score": null,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": null,
+          "modelVersion": null,
+          "isFallback": false,
+          "evidenceConfidence": null,
+          "tasteProfileVersion": 4,
+          "currentTasteProfileVersion": 4,
+          "isOutdated": false,
+          "ratedCount": 24,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": null,
+          "similarRatedBooks": [],
+          "traits": [],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": null,
+          "personal": null
+        }
+      }
+    },
+    "complete": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "0b10b26f-04e1-598b-a2ac-cdac933ae226",
+        "status": "complete",
+        "pollAfterMs": null,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": "2026-10-21T08:30:11Z",
+        "recalculatedFromId": null,
+        "canRetry": false,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "done",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "done",
+          "evidenceState": "sufficient",
+          "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+          "praises": [
+            {
+              "text": "Fast pacing that is hard to put down",
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "text": "A strong, believable narrator",
+              "evidenceIds": ["1bd05d29-e6d3-5d09-977f-a22ce524f0cc"]
+            }
+          ],
+          "complaints": [
+            {
+              "text": "The love triangle slows the second half",
+              "evidenceIds": ["4de829d7-ed5f-5ea3-97a9-8423e77470fe"]
+            },
+            {
+              "text": "Plain, flat writing style",
+              "evidenceIds": ["8934fbe7-8b6a-599f-93e9-ae578c8d0e5f"]
+            },
+            {
+              "text": "Violence involving children is hard to read",
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "values": ["fast"],
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "trait": "tone",
+              "values": ["tense"],
+              "evidenceIds": ["c9c329c6-a21b-5080-8007-eb20b6a7b09c"]
+            },
+            {
+              "trait": "themes",
+              "values": ["survival", "power and politics", "violence"],
+              "evidenceIds": [
+                "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+                "1a710e30-08fc-5ff7-8880-765f5e243b22"
+              ]
+            },
+            {
+              "trait": "contentIntensity",
+              "values": ["high"],
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 4.34,
+              "ratingCount": 4899965,
+              "ratingScope": "edition",
+              "reviewsUsed": 75,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "ok",
+              "providesText": false,
+              "ratingAverage": 4.21,
+              "ratingCount": 1402,
+              "ratingScope": "work",
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-21T08:30:02Z"
+            }
+          ],
+          "evidence": [
+            {
+              "id": "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+              "number": 1,
+              "kind": "description",
+              "source": null,
+              "rating": null,
+              "excerpt": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": null
+            },
+            {
+              "id": "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+              "number": 4,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "I read it in two sittings. Every chapter ends on something that makes you turn the page.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-03-14T00:00:00Z"
+            },
+            {
+              "id": "1bd05d29-e6d3-5d09-977f-a22ce524f0cc",
+              "number": 9,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "Katniss is a narrator you trust: practical, guarded, and fierce about her sister.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2011-07-02T00:00:00Z"
+            },
+            {
+              "id": "c9c329c6-a21b-5080-8007-eb20b6a7b09c",
+              "number": 12,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 4,
+              "excerpt": "Fast and tense, with a sharp point about entertainment and cruelty.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2013-01-20T00:00:00Z"
+            },
+            {
+              "id": "4de829d7-ed5f-5ea3-97a9-8423e77470fe",
+              "number": 17,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The love triangle felt forced and slowed the second half for me.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2014-05-09T00:00:00Z"
+            },
+            {
+              "id": "1a710e30-08fc-5ff7-8880-765f5e243b22",
+              "number": 23,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 3,
+              "excerpt": "Gripping, but the violence against children was hard to read at times.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-11-30T00:00:00Z"
+            },
+            {
+              "id": "8934fbe7-8b6a-599f-93e9-ae578c8d0e5f",
+              "number": 31,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The writing is plain; the present tense never stopped feeling flat.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2015-08-18T00:00:00Z"
+            }
+          ],
+          "evidenceConfidence": {
+            "level": "high",
+            "reasons": [
+              "75 reviews with text from 1 source",
+              "Ratings from 2 sources",
+              "Praise and complaints both represented"
+            ]
+          },
+          "generatedAt": "2026-10-21T08:30:09Z"
+        },
+        "personalMatch": {
+          "status": "done",
+          "score": 4.2,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": "B4",
+          "modelVersion": "2026-10-20.1",
+          "isFallback": false,
+          "evidenceConfidence": {
+            "level": "medium",
+            "reasons": ["24 rated books", "75 reviews describe this book"]
+          },
+          "tasteProfileVersion": 4,
+          "currentTasteProfileVersion": 4,
+          "isOutdated": false,
+          "ratedCount": 24,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": "2026-10-21T08:30:10Z",
+          "similarRatedBooks": [
+            {
+              "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+              "title": "Divergent",
+              "author": "Veronica Roth",
+              "coverUrl": "https://images.gr-assets.com/books/1328559506m/13335037.jpg",
+              "yourRating": 5
+            },
+            {
+              "editionId": "79be2d25-b411-5bb6-b28c-4e05a69375fe",
+              "title": "The Maze Runner",
+              "author": "James Dashner",
+              "coverUrl": null,
+              "yourRating": 4
+            },
+            {
+              "editionId": "0cd80021-63a8-5050-a0f2-aa25725c9417",
+              "title": "Ender's Game",
+              "author": "Orson Scott Card",
+              "coverUrl": "https://images.gr-assets.com/books/1408303130m/375802.jpg",
+              "yourRating": 4
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "fit": "aligned",
+              "bookValues": ["fast"],
+              "yourValues": ["fast"],
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "trait": "themes",
+              "fit": "aligned",
+              "bookValues": ["survival"],
+              "yourValues": ["survival"],
+              "evidenceIds": ["2240b891-0494-58be-bb75-a4f5e0a7a4a8"]
+            },
+            {
+              "trait": "themes",
+              "fit": "conflicting",
+              "bookValues": ["violence"],
+              "yourValues": ["violence"],
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            },
+            {
+              "trait": "tone",
+              "fit": "unknown",
+              "bookValues": ["tense"],
+              "yourValues": [],
+              "evidenceIds": []
+            },
+            {
+              "trait": "contentIntensity",
+              "fit": "unknown",
+              "bookValues": ["high"],
+              "yourValues": [],
+              "evidenceIds": []
+            }
+          ],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": "accurate",
+          "personal": null
+        }
+      }
+    },
+    "limitedEvidence": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "8c1490d4-e4d4-5c0b-8e89-d74ab52261f5",
+        "status": "partial",
+        "pollAfterMs": null,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": "2026-10-21T08:30:11Z",
+        "recalculatedFromId": null,
+        "canRetry": false,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "done",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "done",
+          "evidenceState": "limited",
+          "summary": "Only a few reviews were available. Those readers found it fast and tense, and one found the love triangle slowed the second half.",
+          "praises": [
+            {
+              "text": "Fast pacing that is hard to put down",
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            }
+          ],
+          "complaints": [
+            {
+              "text": "The love triangle slows the second half",
+              "evidenceIds": ["4de829d7-ed5f-5ea3-97a9-8423e77470fe"]
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "values": ["fast"],
+              "evidenceIds": ["345bf7d6-4e9d-52e2-b4d4-edb7ee731563"]
+            },
+            {
+              "trait": "tone",
+              "values": ["tense"],
+              "evidenceIds": ["c9c329c6-a21b-5080-8007-eb20b6a7b09c"]
+            },
+            {
+              "trait": "themes",
+              "values": ["survival"],
+              "evidenceIds": ["2240b891-0494-58be-bb75-a4f5e0a7a4a8"]
+            },
+            {
+              "trait": "contentIntensity",
+              "values": [],
+              "evidenceIds": []
+            }
+          ],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 4.1,
+              "ratingCount": 41,
+              "ratingScope": "edition",
+              "reviewsUsed": 9,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "failed",
+              "providesText": false,
+              "ratingAverage": null,
+              "ratingCount": null,
+              "ratingScope": null,
+              "reviewsUsed": 0,
+              "fetchedAt": null
+            }
+          ],
+          "evidence": [
+            {
+              "id": "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+              "number": 1,
+              "kind": "description",
+              "source": null,
+              "rating": null,
+              "excerpt": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": null
+            },
+            {
+              "id": "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+              "number": 4,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "I read it in two sittings. Every chapter ends on something that makes you turn the page.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-03-14T00:00:00Z"
+            },
+            {
+              "id": "c9c329c6-a21b-5080-8007-eb20b6a7b09c",
+              "number": 12,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 4,
+              "excerpt": "Fast and tense, with a sharp point about entertainment and cruelty.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2013-01-20T00:00:00Z"
+            },
+            {
+              "id": "4de829d7-ed5f-5ea3-97a9-8423e77470fe",
+              "number": 17,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The love triangle felt forced and slowed the second half for me.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2014-05-09T00:00:00Z"
+            }
+          ],
+          "evidenceConfidence": {
+            "level": "low",
+            "reasons": ["9 reviews with text from 1 source", "Open Library could not be reached"]
+          },
+          "generatedAt": "2026-10-21T08:30:09Z"
+        },
+        "personalMatch": {
+          "status": "done",
+          "score": 4.2,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": "B4",
+          "modelVersion": "2026-10-20.1",
+          "isFallback": false,
+          "evidenceConfidence": {
+            "level": "low",
+            "reasons": ["24 rated books", "Only 9 reviews describe this book"]
+          },
+          "tasteProfileVersion": 4,
+          "currentTasteProfileVersion": 4,
+          "isOutdated": false,
+          "ratedCount": 24,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": "2026-10-21T08:30:10Z",
+          "similarRatedBooks": [
+            {
+              "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+              "title": "Divergent",
+              "author": "Veronica Roth",
+              "coverUrl": "https://images.gr-assets.com/books/1328559506m/13335037.jpg",
+              "yourRating": 5
+            },
+            {
+              "editionId": "79be2d25-b411-5bb6-b28c-4e05a69375fe",
+              "title": "The Maze Runner",
+              "author": "James Dashner",
+              "coverUrl": null,
+              "yourRating": 4
+            },
+            {
+              "editionId": "0cd80021-63a8-5050-a0f2-aa25725c9417",
+              "title": "Ender's Game",
+              "author": "Orson Scott Card",
+              "coverUrl": "https://images.gr-assets.com/books/1408303130m/375802.jpg",
+              "yourRating": 4
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "fit": "aligned",
+              "bookValues": ["fast"],
+              "yourValues": ["fast"],
+              "evidenceIds": ["345bf7d6-4e9d-52e2-b4d4-edb7ee731563"]
+            },
+            {
+              "trait": "themes",
+              "fit": "aligned",
+              "bookValues": ["survival"],
+              "yourValues": ["survival"],
+              "evidenceIds": ["2240b891-0494-58be-bb75-a4f5e0a7a4a8"]
+            },
+            {
+              "trait": "tone",
+              "fit": "unknown",
+              "bookValues": ["tense"],
+              "yourValues": [],
+              "evidenceIds": []
+            },
+            {
+              "trait": "contentIntensity",
+              "fit": "unknown",
+              "bookValues": [],
+              "yourValues": ["low"],
+              "evidenceIds": []
+            }
+          ],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": "accurate",
+          "personal": null
+        }
+      }
+    },
+    "insufficientEvidence": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "73d81585-2c66-5cb4-bda7-898d25bf49a4",
+        "status": "partial",
+        "pollAfterMs": null,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": "2026-10-21T08:30:11Z",
+        "recalculatedFromId": null,
+        "canRetry": false,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "done",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "done",
+          "evidenceState": "insufficient",
+          "summary": null,
+          "praises": [],
+          "complaints": [],
+          "traits": [
+            {
+              "trait": "pace",
+              "values": [],
+              "evidenceIds": []
+            },
+            {
+              "trait": "tone",
+              "values": [],
+              "evidenceIds": []
+            },
+            {
+              "trait": "themes",
+              "values": [],
+              "evidenceIds": []
+            },
+            {
+              "trait": "contentIntensity",
+              "values": [],
+              "evidenceIds": []
+            }
+          ],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 3.9,
+              "ratingCount": 12,
+              "ratingScope": "edition",
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "empty",
+              "providesText": false,
+              "ratingAverage": null,
+              "ratingCount": null,
+              "ratingScope": null,
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-21T08:30:02Z"
+            }
+          ],
+          "evidence": [],
+          "evidenceConfidence": {
+            "level": "low",
+            "reasons": ["No reviews with text", "12 ratings from 1 source"]
+          },
+          "generatedAt": "2026-10-21T08:30:09Z"
+        },
+        "personalMatch": {
+          "status": "done",
+          "score": 3.4,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": "B4",
+          "modelVersion": "2026-10-20.1",
+          "isFallback": false,
+          "evidenceConfidence": {
+            "level": "low",
+            "reasons": [
+              "24 rated books",
+              "No reviews describe this book; scored from its description"
+            ]
+          },
+          "tasteProfileVersion": 4,
+          "currentTasteProfileVersion": 4,
+          "isOutdated": false,
+          "ratedCount": 24,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": "2026-10-21T08:30:10Z",
+          "similarRatedBooks": [
+            {
+              "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+              "title": "Divergent",
+              "author": "Veronica Roth",
+              "coverUrl": "https://images.gr-assets.com/books/1328559506m/13335037.jpg",
+              "yourRating": 5
+            },
+            {
+              "editionId": "79be2d25-b411-5bb6-b28c-4e05a69375fe",
+              "title": "The Maze Runner",
+              "author": "James Dashner",
+              "coverUrl": null,
+              "yourRating": 4
+            },
+            {
+              "editionId": "0cd80021-63a8-5050-a0f2-aa25725c9417",
+              "title": "Ender's Game",
+              "author": "Orson Scott Card",
+              "coverUrl": "https://images.gr-assets.com/books/1408303130m/375802.jpg",
+              "yourRating": 4
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "fit": "unknown",
+              "bookValues": [],
+              "yourValues": ["fast"],
+              "evidenceIds": []
+            },
+            {
+              "trait": "tone",
+              "fit": "unknown",
+              "bookValues": [],
+              "yourValues": [],
+              "evidenceIds": []
+            },
+            {
+              "trait": "themes",
+              "fit": "unknown",
+              "bookValues": [],
+              "yourValues": ["violence"],
+              "evidenceIds": []
+            },
+            {
+              "trait": "contentIntensity",
+              "fit": "unknown",
+              "bookValues": [],
+              "yourValues": [],
+              "evidenceIds": []
+            }
+          ],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": "accurate",
+          "personal": null
+        }
+      }
+    },
+    "allSourcesFailed": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "f3546e72-fb64-592c-a2aa-2aec4002cd3e",
+        "status": "failed",
+        "pollAfterMs": null,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": "2026-10-21T08:30:11Z",
+        "recalculatedFromId": null,
+        "canRetry": true,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "failed",
+            "errorCode": "SOURCES_UNAVAILABLE"
+          },
+          {
+            "name": "selectReviews",
+            "status": "skipped",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "skipped",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "skipped",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "skipped",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "skipped",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "done",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "failed",
+          "evidenceState": "unavailable",
+          "summary": null,
+          "praises": [],
+          "complaints": [],
+          "traits": [],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "failed",
+              "providesText": true,
+              "ratingAverage": null,
+              "ratingCount": null,
+              "ratingScope": null,
+              "reviewsUsed": 0,
+              "fetchedAt": null
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "rate_limited",
+              "providesText": false,
+              "ratingAverage": null,
+              "ratingCount": null,
+              "ratingScope": null,
+              "reviewsUsed": 0,
+              "fetchedAt": null
+            }
+          ],
+          "evidence": [],
+          "evidenceConfidence": null,
+          "generatedAt": null
+        },
+        "personalMatch": {
+          "status": "skipped",
+          "score": null,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": null,
+          "modelVersion": null,
+          "isFallback": false,
+          "evidenceConfidence": null,
+          "tasteProfileVersion": 4,
+          "currentTasteProfileVersion": 4,
+          "isOutdated": false,
+          "ratedCount": 24,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": null,
+          "similarRatedBooks": [],
+          "traits": [],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": null,
+          "personal": null
+        }
+      }
+    },
+    "personalFailed": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "1cd3d9e1-0ab2-59b6-9d18-c5172100ec46",
+        "status": "partial",
+        "pollAfterMs": null,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": "2026-10-21T08:30:11Z",
+        "recalculatedFromId": null,
+        "canRetry": true,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "failed",
+            "errorCode": "INTERNAL_ERROR"
+          },
+          {
+            "name": "finalize",
+            "status": "done",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "done",
+          "evidenceState": "sufficient",
+          "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+          "praises": [
+            {
+              "text": "Fast pacing that is hard to put down",
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "text": "A strong, believable narrator",
+              "evidenceIds": ["1bd05d29-e6d3-5d09-977f-a22ce524f0cc"]
+            }
+          ],
+          "complaints": [
+            {
+              "text": "The love triangle slows the second half",
+              "evidenceIds": ["4de829d7-ed5f-5ea3-97a9-8423e77470fe"]
+            },
+            {
+              "text": "Plain, flat writing style",
+              "evidenceIds": ["8934fbe7-8b6a-599f-93e9-ae578c8d0e5f"]
+            },
+            {
+              "text": "Violence involving children is hard to read",
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "values": ["fast"],
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "trait": "tone",
+              "values": ["tense"],
+              "evidenceIds": ["c9c329c6-a21b-5080-8007-eb20b6a7b09c"]
+            },
+            {
+              "trait": "themes",
+              "values": ["survival", "power and politics", "violence"],
+              "evidenceIds": [
+                "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+                "1a710e30-08fc-5ff7-8880-765f5e243b22"
+              ]
+            },
+            {
+              "trait": "contentIntensity",
+              "values": ["high"],
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 4.34,
+              "ratingCount": 4899965,
+              "ratingScope": "edition",
+              "reviewsUsed": 75,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "ok",
+              "providesText": false,
+              "ratingAverage": 4.21,
+              "ratingCount": 1402,
+              "ratingScope": "work",
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-21T08:30:02Z"
+            }
+          ],
+          "evidence": [
+            {
+              "id": "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+              "number": 1,
+              "kind": "description",
+              "source": null,
+              "rating": null,
+              "excerpt": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": null
+            },
+            {
+              "id": "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+              "number": 4,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "I read it in two sittings. Every chapter ends on something that makes you turn the page.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-03-14T00:00:00Z"
+            },
+            {
+              "id": "1bd05d29-e6d3-5d09-977f-a22ce524f0cc",
+              "number": 9,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "Katniss is a narrator you trust: practical, guarded, and fierce about her sister.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2011-07-02T00:00:00Z"
+            },
+            {
+              "id": "c9c329c6-a21b-5080-8007-eb20b6a7b09c",
+              "number": 12,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 4,
+              "excerpt": "Fast and tense, with a sharp point about entertainment and cruelty.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2013-01-20T00:00:00Z"
+            },
+            {
+              "id": "4de829d7-ed5f-5ea3-97a9-8423e77470fe",
+              "number": 17,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The love triangle felt forced and slowed the second half for me.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2014-05-09T00:00:00Z"
+            },
+            {
+              "id": "1a710e30-08fc-5ff7-8880-765f5e243b22",
+              "number": 23,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 3,
+              "excerpt": "Gripping, but the violence against children was hard to read at times.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-11-30T00:00:00Z"
+            },
+            {
+              "id": "8934fbe7-8b6a-599f-93e9-ae578c8d0e5f",
+              "number": 31,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The writing is plain; the present tense never stopped feeling flat.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2015-08-18T00:00:00Z"
+            }
+          ],
+          "evidenceConfidence": {
+            "level": "high",
+            "reasons": [
+              "75 reviews with text from 1 source",
+              "Ratings from 2 sources",
+              "Praise and complaints both represented"
+            ]
+          },
+          "generatedAt": "2026-10-21T08:30:09Z"
+        },
+        "personalMatch": {
+          "status": "failed",
+          "score": null,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": null,
+          "modelVersion": null,
+          "isFallback": false,
+          "evidenceConfidence": null,
+          "tasteProfileVersion": 4,
+          "currentTasteProfileVersion": 4,
+          "isOutdated": false,
+          "ratedCount": 24,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": null,
+          "similarRatedBooks": [],
+          "traits": [],
+          "errorCode": "INTERNAL_ERROR"
+        },
+        "feedback": {
+          "public": "accurate",
+          "personal": null
+        }
+      }
+    },
+    "belowFloor": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "421a2aa4-21ab-5745-be61-4d9eb15d58bb",
+        "status": "complete",
+        "pollAfterMs": null,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": "2026-10-21T08:30:11Z",
+        "recalculatedFromId": null,
+        "canRetry": false,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "done",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "done",
+          "evidenceState": "sufficient",
+          "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+          "praises": [
+            {
+              "text": "Fast pacing that is hard to put down",
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "text": "A strong, believable narrator",
+              "evidenceIds": ["1bd05d29-e6d3-5d09-977f-a22ce524f0cc"]
+            }
+          ],
+          "complaints": [
+            {
+              "text": "The love triangle slows the second half",
+              "evidenceIds": ["4de829d7-ed5f-5ea3-97a9-8423e77470fe"]
+            },
+            {
+              "text": "Plain, flat writing style",
+              "evidenceIds": ["8934fbe7-8b6a-599f-93e9-ae578c8d0e5f"]
+            },
+            {
+              "text": "Violence involving children is hard to read",
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "values": ["fast"],
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "trait": "tone",
+              "values": ["tense"],
+              "evidenceIds": ["c9c329c6-a21b-5080-8007-eb20b6a7b09c"]
+            },
+            {
+              "trait": "themes",
+              "values": ["survival", "power and politics", "violence"],
+              "evidenceIds": [
+                "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+                "1a710e30-08fc-5ff7-8880-765f5e243b22"
+              ]
+            },
+            {
+              "trait": "contentIntensity",
+              "values": ["high"],
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 4.34,
+              "ratingCount": 4899965,
+              "ratingScope": "edition",
+              "reviewsUsed": 75,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "ok",
+              "providesText": false,
+              "ratingAverage": 4.21,
+              "ratingCount": 1402,
+              "ratingScope": "work",
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-21T08:30:02Z"
+            }
+          ],
+          "evidence": [
+            {
+              "id": "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+              "number": 1,
+              "kind": "description",
+              "source": null,
+              "rating": null,
+              "excerpt": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": null
+            },
+            {
+              "id": "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+              "number": 4,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "I read it in two sittings. Every chapter ends on something that makes you turn the page.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-03-14T00:00:00Z"
+            },
+            {
+              "id": "1bd05d29-e6d3-5d09-977f-a22ce524f0cc",
+              "number": 9,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "Katniss is a narrator you trust: practical, guarded, and fierce about her sister.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2011-07-02T00:00:00Z"
+            },
+            {
+              "id": "c9c329c6-a21b-5080-8007-eb20b6a7b09c",
+              "number": 12,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 4,
+              "excerpt": "Fast and tense, with a sharp point about entertainment and cruelty.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2013-01-20T00:00:00Z"
+            },
+            {
+              "id": "4de829d7-ed5f-5ea3-97a9-8423e77470fe",
+              "number": 17,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The love triangle felt forced and slowed the second half for me.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2014-05-09T00:00:00Z"
+            },
+            {
+              "id": "1a710e30-08fc-5ff7-8880-765f5e243b22",
+              "number": 23,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 3,
+              "excerpt": "Gripping, but the violence against children was hard to read at times.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-11-30T00:00:00Z"
+            },
+            {
+              "id": "8934fbe7-8b6a-599f-93e9-ae578c8d0e5f",
+              "number": 31,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The writing is plain; the present tense never stopped feeling flat.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2015-08-18T00:00:00Z"
+            }
+          ],
+          "evidenceConfidence": {
+            "level": "high",
+            "reasons": [
+              "75 reviews with text from 1 source",
+              "Ratings from 2 sources",
+              "Praise and complaints both represented"
+            ]
+          },
+          "generatedAt": "2026-10-21T08:30:09Z"
+        },
+        "personalMatch": {
+          "status": "below_floor",
+          "score": null,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": null,
+          "modelVersion": null,
+          "isFallback": false,
+          "evidenceConfidence": null,
+          "tasteProfileVersion": 2,
+          "currentTasteProfileVersion": 2,
+          "isOutdated": false,
+          "ratedCount": 2,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": null,
+          "similarRatedBooks": [],
+          "traits": [],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": null,
+          "personal": null
+        }
+      }
+    },
+    "needsTasteData": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "2ea1987c-0d8a-5c5e-9bd8-e5c6905f0942",
+        "status": "complete",
+        "pollAfterMs": null,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": "2026-10-21T08:30:11Z",
+        "recalculatedFromId": null,
+        "canRetry": false,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "done",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "done",
+          "evidenceState": "sufficient",
+          "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+          "praises": [
+            {
+              "text": "Fast pacing that is hard to put down",
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "text": "A strong, believable narrator",
+              "evidenceIds": ["1bd05d29-e6d3-5d09-977f-a22ce524f0cc"]
+            }
+          ],
+          "complaints": [
+            {
+              "text": "The love triangle slows the second half",
+              "evidenceIds": ["4de829d7-ed5f-5ea3-97a9-8423e77470fe"]
+            },
+            {
+              "text": "Plain, flat writing style",
+              "evidenceIds": ["8934fbe7-8b6a-599f-93e9-ae578c8d0e5f"]
+            },
+            {
+              "text": "Violence involving children is hard to read",
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "values": ["fast"],
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "trait": "tone",
+              "values": ["tense"],
+              "evidenceIds": ["c9c329c6-a21b-5080-8007-eb20b6a7b09c"]
+            },
+            {
+              "trait": "themes",
+              "values": ["survival", "power and politics", "violence"],
+              "evidenceIds": [
+                "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+                "1a710e30-08fc-5ff7-8880-765f5e243b22"
+              ]
+            },
+            {
+              "trait": "contentIntensity",
+              "values": ["high"],
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 4.34,
+              "ratingCount": 4899965,
+              "ratingScope": "edition",
+              "reviewsUsed": 75,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "ok",
+              "providesText": false,
+              "ratingAverage": 4.21,
+              "ratingCount": 1402,
+              "ratingScope": "work",
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-21T08:30:02Z"
+            }
+          ],
+          "evidence": [
+            {
+              "id": "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+              "number": 1,
+              "kind": "description",
+              "source": null,
+              "rating": null,
+              "excerpt": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": null
+            },
+            {
+              "id": "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+              "number": 4,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "I read it in two sittings. Every chapter ends on something that makes you turn the page.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-03-14T00:00:00Z"
+            },
+            {
+              "id": "1bd05d29-e6d3-5d09-977f-a22ce524f0cc",
+              "number": 9,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "Katniss is a narrator you trust: practical, guarded, and fierce about her sister.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2011-07-02T00:00:00Z"
+            },
+            {
+              "id": "c9c329c6-a21b-5080-8007-eb20b6a7b09c",
+              "number": 12,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 4,
+              "excerpt": "Fast and tense, with a sharp point about entertainment and cruelty.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2013-01-20T00:00:00Z"
+            },
+            {
+              "id": "4de829d7-ed5f-5ea3-97a9-8423e77470fe",
+              "number": 17,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The love triangle felt forced and slowed the second half for me.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2014-05-09T00:00:00Z"
+            },
+            {
+              "id": "1a710e30-08fc-5ff7-8880-765f5e243b22",
+              "number": 23,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 3,
+              "excerpt": "Gripping, but the violence against children was hard to read at times.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-11-30T00:00:00Z"
+            },
+            {
+              "id": "8934fbe7-8b6a-599f-93e9-ae578c8d0e5f",
+              "number": 31,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The writing is plain; the present tense never stopped feeling flat.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2015-08-18T00:00:00Z"
+            }
+          ],
+          "evidenceConfidence": {
+            "level": "high",
+            "reasons": [
+              "75 reviews with text from 1 source",
+              "Ratings from 2 sources",
+              "Praise and complaints both represented"
+            ]
+          },
+          "generatedAt": "2026-10-21T08:30:09Z"
+        },
+        "personalMatch": {
+          "status": "needs_taste_data",
+          "score": null,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": null,
+          "modelVersion": null,
+          "isFallback": false,
+          "evidenceConfidence": null,
+          "tasteProfileVersion": null,
+          "currentTasteProfileVersion": 0,
+          "isOutdated": false,
+          "ratedCount": 0,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": null,
+          "similarRatedBooks": [],
+          "traits": [],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": null,
+          "personal": null
+        }
+      }
+    },
+    "fallbackModel": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "0c00d70d-925f-5e78-b9a4-9178063e3c26",
+        "status": "complete",
+        "pollAfterMs": null,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": "2026-10-21T08:30:11Z",
+        "recalculatedFromId": null,
+        "canRetry": false,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "done",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "done",
+          "evidenceState": "sufficient",
+          "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+          "praises": [
+            {
+              "text": "Fast pacing that is hard to put down",
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "text": "A strong, believable narrator",
+              "evidenceIds": ["1bd05d29-e6d3-5d09-977f-a22ce524f0cc"]
+            }
+          ],
+          "complaints": [
+            {
+              "text": "The love triangle slows the second half",
+              "evidenceIds": ["4de829d7-ed5f-5ea3-97a9-8423e77470fe"]
+            },
+            {
+              "text": "Plain, flat writing style",
+              "evidenceIds": ["8934fbe7-8b6a-599f-93e9-ae578c8d0e5f"]
+            },
+            {
+              "text": "Violence involving children is hard to read",
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "values": ["fast"],
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "trait": "tone",
+              "values": ["tense"],
+              "evidenceIds": ["c9c329c6-a21b-5080-8007-eb20b6a7b09c"]
+            },
+            {
+              "trait": "themes",
+              "values": ["survival", "power and politics", "violence"],
+              "evidenceIds": [
+                "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+                "1a710e30-08fc-5ff7-8880-765f5e243b22"
+              ]
+            },
+            {
+              "trait": "contentIntensity",
+              "values": ["high"],
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 4.34,
+              "ratingCount": 4899965,
+              "ratingScope": "edition",
+              "reviewsUsed": 75,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "ok",
+              "providesText": false,
+              "ratingAverage": 4.21,
+              "ratingCount": 1402,
+              "ratingScope": "work",
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-21T08:30:02Z"
+            }
+          ],
+          "evidence": [
+            {
+              "id": "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+              "number": 1,
+              "kind": "description",
+              "source": null,
+              "rating": null,
+              "excerpt": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": null
+            },
+            {
+              "id": "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+              "number": 4,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "I read it in two sittings. Every chapter ends on something that makes you turn the page.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-03-14T00:00:00Z"
+            },
+            {
+              "id": "1bd05d29-e6d3-5d09-977f-a22ce524f0cc",
+              "number": 9,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "Katniss is a narrator you trust: practical, guarded, and fierce about her sister.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2011-07-02T00:00:00Z"
+            },
+            {
+              "id": "c9c329c6-a21b-5080-8007-eb20b6a7b09c",
+              "number": 12,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 4,
+              "excerpt": "Fast and tense, with a sharp point about entertainment and cruelty.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2013-01-20T00:00:00Z"
+            },
+            {
+              "id": "4de829d7-ed5f-5ea3-97a9-8423e77470fe",
+              "number": 17,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The love triangle felt forced and slowed the second half for me.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2014-05-09T00:00:00Z"
+            },
+            {
+              "id": "1a710e30-08fc-5ff7-8880-765f5e243b22",
+              "number": 23,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 3,
+              "excerpt": "Gripping, but the violence against children was hard to read at times.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-11-30T00:00:00Z"
+            },
+            {
+              "id": "8934fbe7-8b6a-599f-93e9-ae578c8d0e5f",
+              "number": 31,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The writing is plain; the present tense never stopped feeling flat.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2015-08-18T00:00:00Z"
+            }
+          ],
+          "evidenceConfidence": {
+            "level": "high",
+            "reasons": [
+              "75 reviews with text from 1 source",
+              "Ratings from 2 sources",
+              "Praise and complaints both represented"
+            ]
+          },
+          "generatedAt": "2026-10-21T08:30:09Z"
+        },
+        "personalMatch": {
+          "status": "done",
+          "score": 3.6,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": "B1",
+          "modelVersion": "2026-10-20.1",
+          "isFallback": true,
+          "evidenceConfidence": {
+            "level": "low",
+            "reasons": [
+              "6 rated books; 10 are needed for a confident match",
+              "Scored by questionnaire and trait match (B1), not the learned model"
+            ]
+          },
+          "tasteProfileVersion": 3,
+          "currentTasteProfileVersion": 3,
+          "isOutdated": false,
+          "ratedCount": 6,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": "2026-10-21T08:30:10Z",
+          "similarRatedBooks": [
+            {
+              "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+              "title": "Divergent",
+              "author": "Veronica Roth",
+              "coverUrl": "https://images.gr-assets.com/books/1328559506m/13335037.jpg",
+              "yourRating": 5
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "fit": "aligned",
+              "bookValues": ["fast"],
+              "yourValues": ["fast"],
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "trait": "themes",
+              "fit": "aligned",
+              "bookValues": ["survival"],
+              "yourValues": ["survival"],
+              "evidenceIds": ["2240b891-0494-58be-bb75-a4f5e0a7a4a8"]
+            },
+            {
+              "trait": "themes",
+              "fit": "conflicting",
+              "bookValues": ["violence"],
+              "yourValues": ["violence"],
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            },
+            {
+              "trait": "tone",
+              "fit": "unknown",
+              "bookValues": ["tense"],
+              "yourValues": [],
+              "evidenceIds": []
+            },
+            {
+              "trait": "contentIntensity",
+              "fit": "unknown",
+              "bookValues": ["high"],
+              "yourValues": [],
+              "evidenceIds": []
+            }
+          ],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": null,
+          "personal": null
+        }
+      }
+    },
+    "outdated": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "15c6cc3b-4509-589a-a12b-35b7b1ccae49",
+        "status": "complete",
+        "pollAfterMs": null,
+        "createdAt": "2026-10-14T18:02:00Z",
+        "finishedAt": "2026-10-14T18:02:12Z",
+        "recalculatedFromId": null,
+        "canRetry": false,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "done",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "done",
+          "evidenceState": "sufficient",
+          "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+          "praises": [
+            {
+              "text": "Fast pacing that is hard to put down",
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "text": "A strong, believable narrator",
+              "evidenceIds": ["1bd05d29-e6d3-5d09-977f-a22ce524f0cc"]
+            }
+          ],
+          "complaints": [
+            {
+              "text": "The love triangle slows the second half",
+              "evidenceIds": ["4de829d7-ed5f-5ea3-97a9-8423e77470fe"]
+            },
+            {
+              "text": "Plain, flat writing style",
+              "evidenceIds": ["8934fbe7-8b6a-599f-93e9-ae578c8d0e5f"]
+            },
+            {
+              "text": "Violence involving children is hard to read",
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "values": ["fast"],
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "trait": "tone",
+              "values": ["tense"],
+              "evidenceIds": ["c9c329c6-a21b-5080-8007-eb20b6a7b09c"]
+            },
+            {
+              "trait": "themes",
+              "values": ["survival", "power and politics", "violence"],
+              "evidenceIds": [
+                "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+                "1a710e30-08fc-5ff7-8880-765f5e243b22"
+              ]
+            },
+            {
+              "trait": "contentIntensity",
+              "values": ["high"],
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            }
+          ],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 4.34,
+              "ratingCount": 4899965,
+              "ratingScope": "edition",
+              "reviewsUsed": 75,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "ok",
+              "providesText": false,
+              "ratingAverage": 4.21,
+              "ratingCount": 1402,
+              "ratingScope": "work",
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-21T08:30:02Z"
+            }
+          ],
+          "evidence": [
+            {
+              "id": "2240b891-0494-58be-bb75-a4f5e0a7a4a8",
+              "number": 1,
+              "kind": "description",
+              "source": null,
+              "rating": null,
+              "excerpt": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": null
+            },
+            {
+              "id": "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+              "number": 4,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "I read it in two sittings. Every chapter ends on something that makes you turn the page.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-03-14T00:00:00Z"
+            },
+            {
+              "id": "1bd05d29-e6d3-5d09-977f-a22ce524f0cc",
+              "number": 9,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 5,
+              "excerpt": "Katniss is a narrator you trust: practical, guarded, and fierce about her sister.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2011-07-02T00:00:00Z"
+            },
+            {
+              "id": "c9c329c6-a21b-5080-8007-eb20b6a7b09c",
+              "number": 12,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 4,
+              "excerpt": "Fast and tense, with a sharp point about entertainment and cruelty.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2013-01-20T00:00:00Z"
+            },
+            {
+              "id": "4de829d7-ed5f-5ea3-97a9-8423e77470fe",
+              "number": 17,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The love triangle felt forced and slowed the second half for me.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2014-05-09T00:00:00Z"
+            },
+            {
+              "id": "1a710e30-08fc-5ff7-8880-765f5e243b22",
+              "number": 23,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 3,
+              "excerpt": "Gripping, but the violence against children was hard to read at times.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2012-11-30T00:00:00Z"
+            },
+            {
+              "id": "8934fbe7-8b6a-599f-93e9-ae578c8d0e5f",
+              "number": 31,
+              "kind": "review",
+              "source": "goodreads_dataset",
+              "rating": 2,
+              "excerpt": "The writing is plain; the present tense never stopped feeling flat.",
+              "displayAllowed": true,
+              "reviewCount": null,
+              "postedAt": "2015-08-18T00:00:00Z"
+            }
+          ],
+          "evidenceConfidence": {
+            "level": "high",
+            "reasons": [
+              "75 reviews with text from 1 source",
+              "Ratings from 2 sources",
+              "Praise and complaints both represented"
+            ]
+          },
+          "generatedAt": "2026-10-21T08:30:09Z"
+        },
+        "personalMatch": {
+          "status": "done",
+          "score": 4.2,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": "B4",
+          "modelVersion": "2026-10-20.1",
+          "isFallback": false,
+          "evidenceConfidence": {
+            "level": "medium",
+            "reasons": ["24 rated books", "75 reviews describe this book"]
+          },
+          "tasteProfileVersion": 3,
+          "currentTasteProfileVersion": 4,
+          "isOutdated": true,
+          "ratedCount": 24,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": "2026-10-14T18:02:11Z",
+          "similarRatedBooks": [
+            {
+              "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+              "title": "Divergent",
+              "author": "Veronica Roth",
+              "coverUrl": "https://images.gr-assets.com/books/1328559506m/13335037.jpg",
+              "yourRating": 5
+            },
+            {
+              "editionId": "79be2d25-b411-5bb6-b28c-4e05a69375fe",
+              "title": "The Maze Runner",
+              "author": "James Dashner",
+              "coverUrl": null,
+              "yourRating": 4
+            },
+            {
+              "editionId": "0cd80021-63a8-5050-a0f2-aa25725c9417",
+              "title": "Ender's Game",
+              "author": "Orson Scott Card",
+              "coverUrl": "https://images.gr-assets.com/books/1408303130m/375802.jpg",
+              "yourRating": 4
+            }
+          ],
+          "traits": [
+            {
+              "trait": "pace",
+              "fit": "aligned",
+              "bookValues": ["fast"],
+              "yourValues": ["fast"],
+              "evidenceIds": [
+                "345bf7d6-4e9d-52e2-b4d4-edb7ee731563",
+                "c9c329c6-a21b-5080-8007-eb20b6a7b09c"
+              ]
+            },
+            {
+              "trait": "themes",
+              "fit": "aligned",
+              "bookValues": ["survival"],
+              "yourValues": ["survival"],
+              "evidenceIds": ["2240b891-0494-58be-bb75-a4f5e0a7a4a8"]
+            },
+            {
+              "trait": "themes",
+              "fit": "conflicting",
+              "bookValues": ["violence"],
+              "yourValues": ["violence"],
+              "evidenceIds": ["1a710e30-08fc-5ff7-8880-765f5e243b22"]
+            },
+            {
+              "trait": "tone",
+              "fit": "unknown",
+              "bookValues": ["tense"],
+              "yourValues": [],
+              "evidenceIds": []
+            },
+            {
+              "trait": "contentIntensity",
+              "fit": "unknown",
+              "bookValues": ["high"],
+              "yourValues": [],
+              "evidenceIds": []
+            }
+          ],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": "accurate",
+          "personal": "not_for_me"
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "notYours": {
+      "status": 404,
+      "body": {
+        "code": "NOT_FOUND",
+        "message": "Not found.",
+        "retryable": false
+      }
+    }
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "endpoint": "POST /api/v1/analyses/{id}/retry",
+  "planned": "BE-8",
+  "outcomes": {
+    "retrying": {
+      "status": 200,
+      "schema": "Analysis",
+      "body": {
+        "id": "f3546e72-fb64-592c-a2aa-2aec4002cd3e",
+        "status": "running",
+        "pollAfterMs": 1500,
+        "createdAt": "2026-10-21T08:30:00Z",
+        "finishedAt": null,
+        "recalculatedFromId": null,
+        "canRetry": false,
+        "edition": {
+          "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+          "title": "The Hunger Games",
+          "subtitle": null,
+          "author": "Suzanne Collins",
+          "year": 2008,
+          "language": "en",
+          "publisher": "Scholastic Press",
+          "format": "Hardcover",
+          "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+          "isbn13": "9780439023481",
+          "pageCount": 374,
+          "description": "In the ruins of a place once known as North America lies the nation of Panem. Each year, its twelve districts must send one boy and one girl to compete in the Hunger Games, a fight to the death on live television."
+        },
+        "steps": [
+          {
+            "name": "resolve",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "fetchReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "selectReviews",
+            "status": "done",
+            "errorCode": null
+          },
+          {
+            "name": "extractTraits",
+            "status": "running",
+            "errorCode": null
+          },
+          {
+            "name": "publicSummary",
+            "status": "pending",
+            "errorCode": null
+          },
+          {
+            "name": "evidenceConfidence",
+            "status": "pending",
+            "errorCode": null
+          },
+          {
+            "name": "personalMatch",
+            "status": "pending",
+            "errorCode": null
+          },
+          {
+            "name": "finalize",
+            "status": "pending",
+            "errorCode": null
+          }
+        ],
+        "publicReception": {
+          "status": "running",
+          "evidenceState": null,
+          "summary": null,
+          "praises": [],
+          "complaints": [],
+          "traits": [],
+          "sources": [
+            {
+              "key": "goodreads_dataset",
+              "name": "Goodreads (UCSD Book Graph dataset)",
+              "outcome": "ok",
+              "providesText": true,
+              "ratingAverage": 4.34,
+              "ratingCount": 4899965,
+              "ratingScope": "edition",
+              "reviewsUsed": 75,
+              "fetchedAt": "2026-10-20T09:12:00Z"
+            },
+            {
+              "key": "open_library",
+              "name": "Open Library",
+              "outcome": "ok",
+              "providesText": false,
+              "ratingAverage": 4.21,
+              "ratingCount": 1402,
+              "ratingScope": "work",
+              "reviewsUsed": 0,
+              "fetchedAt": "2026-10-21T08:30:02Z"
+            }
+          ],
+          "evidence": [],
+          "evidenceConfidence": null,
+          "generatedAt": null
+        },
+        "personalMatch": {
+          "status": "running",
+          "score": null,
+          "scale": {
+            "min": 1,
+            "max": 5
+          },
+          "modelId": null,
+          "modelVersion": null,
+          "isFallback": false,
+          "evidenceConfidence": null,
+          "tasteProfileVersion": 4,
+          "currentTasteProfileVersion": 4,
+          "isOutdated": false,
+          "ratedCount": 24,
+          "hardFloor": 3,
+          "minForConfidence": 10,
+          "generatedAt": null,
+          "similarRatedBooks": [],
+          "traits": [],
+          "errorCode": null
+        },
+        "feedback": {
+          "public": null,
+          "personal": null
+        }
+      }
+    },
+    "badStep": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "steps": "Only failed steps can run again."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "notYours": {
+      "status": 404,
+      "body": {
+        "code": "NOT_FOUND",
+        "message": "Not found.",
+        "retryable": false
+      }
+    },
+    "nothingToRetry": {
+      "status": 409,
+      "body": {
+        "code": "CONFLICT",
+        "message": "This action conflicts with the current state.",
+        "retryable": false
+      }
+    },
+    "rateLimited": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 60
+      }
+    }
+  }
+}

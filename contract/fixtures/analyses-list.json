@@ -1,0 +1,375 @@
+{
+  "endpoint": "GET /api/v1/analyses",
+  "planned": "BE-8",
+  "outcomes": {
+    "history": {
+      "status": 200,
+      "schema": "AnalysisList",
+      "body": {
+        "items": [
+          {
+            "id": "6b66c974-b3d6-55d8-a9c1-317846698f90",
+            "status": "running",
+            "createdAt": "2026-10-21T08:30:00Z",
+            "finishedAt": null,
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "publicReception": {
+              "status": "running",
+              "evidenceState": null,
+              "summary": null,
+              "evidenceConfidence": null
+            },
+            "personalMatch": {
+              "status": "running",
+              "score": null,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": null,
+              "isFallback": false,
+              "evidenceConfidence": null,
+              "tasteProfileVersion": 4,
+              "currentTasteProfileVersion": 4,
+              "isOutdated": false
+            },
+            "feedback": {
+              "public": null,
+              "personal": null
+            }
+          },
+          {
+            "id": "0b10b26f-04e1-598b-a2ac-cdac933ae226",
+            "status": "complete",
+            "createdAt": "2026-10-21T08:30:00Z",
+            "finishedAt": "2026-10-21T08:30:11Z",
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "publicReception": {
+              "status": "done",
+              "evidenceState": "sufficient",
+              "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+              "evidenceConfidence": {
+                "level": "high",
+                "reasons": [
+                  "75 reviews with text from 1 source",
+                  "Ratings from 2 sources",
+                  "Praise and complaints both represented"
+                ]
+              }
+            },
+            "personalMatch": {
+              "status": "done",
+              "score": 4.2,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": "B4",
+              "isFallback": false,
+              "evidenceConfidence": {
+                "level": "medium",
+                "reasons": ["24 rated books", "75 reviews describe this book"]
+              },
+              "tasteProfileVersion": 4,
+              "currentTasteProfileVersion": 4,
+              "isOutdated": false
+            },
+            "feedback": {
+              "public": "accurate",
+              "personal": null
+            }
+          },
+          {
+            "id": "8c1490d4-e4d4-5c0b-8e89-d74ab52261f5",
+            "status": "partial",
+            "createdAt": "2026-10-21T08:30:00Z",
+            "finishedAt": "2026-10-21T08:30:11Z",
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "publicReception": {
+              "status": "done",
+              "evidenceState": "limited",
+              "summary": "Only a few reviews were available. Those readers found it fast and tense, and one found the love triangle slowed the second half.",
+              "evidenceConfidence": {
+                "level": "low",
+                "reasons": [
+                  "9 reviews with text from 1 source",
+                  "Open Library could not be reached"
+                ]
+              }
+            },
+            "personalMatch": {
+              "status": "done",
+              "score": 4.2,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": "B4",
+              "isFallback": false,
+              "evidenceConfidence": {
+                "level": "low",
+                "reasons": ["24 rated books", "Only 9 reviews describe this book"]
+              },
+              "tasteProfileVersion": 4,
+              "currentTasteProfileVersion": 4,
+              "isOutdated": false
+            },
+            "feedback": {
+              "public": "accurate",
+              "personal": null
+            }
+          },
+          {
+            "id": "f3546e72-fb64-592c-a2aa-2aec4002cd3e",
+            "status": "failed",
+            "createdAt": "2026-10-21T08:30:00Z",
+            "finishedAt": "2026-10-21T08:30:11Z",
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "publicReception": {
+              "status": "failed",
+              "evidenceState": "unavailable",
+              "summary": null,
+              "evidenceConfidence": null
+            },
+            "personalMatch": {
+              "status": "skipped",
+              "score": null,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": null,
+              "isFallback": false,
+              "evidenceConfidence": null,
+              "tasteProfileVersion": 4,
+              "currentTasteProfileVersion": 4,
+              "isOutdated": false
+            },
+            "feedback": {
+              "public": null,
+              "personal": null
+            }
+          },
+          {
+            "id": "421a2aa4-21ab-5745-be61-4d9eb15d58bb",
+            "status": "complete",
+            "createdAt": "2026-10-21T08:30:00Z",
+            "finishedAt": "2026-10-21T08:30:11Z",
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "publicReception": {
+              "status": "done",
+              "evidenceState": "sufficient",
+              "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+              "evidenceConfidence": {
+                "level": "high",
+                "reasons": [
+                  "75 reviews with text from 1 source",
+                  "Ratings from 2 sources",
+                  "Praise and complaints both represented"
+                ]
+              }
+            },
+            "personalMatch": {
+              "status": "below_floor",
+              "score": null,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": null,
+              "isFallback": false,
+              "evidenceConfidence": null,
+              "tasteProfileVersion": 2,
+              "currentTasteProfileVersion": 2,
+              "isOutdated": false
+            },
+            "feedback": {
+              "public": null,
+              "personal": null
+            }
+          },
+          {
+            "id": "0c00d70d-925f-5e78-b9a4-9178063e3c26",
+            "status": "complete",
+            "createdAt": "2026-10-21T08:30:00Z",
+            "finishedAt": "2026-10-21T08:30:11Z",
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "publicReception": {
+              "status": "done",
+              "evidenceState": "sufficient",
+              "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+              "evidenceConfidence": {
+                "level": "high",
+                "reasons": [
+                  "75 reviews with text from 1 source",
+                  "Ratings from 2 sources",
+                  "Praise and complaints both represented"
+                ]
+              }
+            },
+            "personalMatch": {
+              "status": "done",
+              "score": 3.6,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": "B1",
+              "isFallback": true,
+              "evidenceConfidence": {
+                "level": "low",
+                "reasons": [
+                  "6 rated books; 10 are needed for a confident match",
+                  "Scored by questionnaire and trait match (B1), not the learned model"
+                ]
+              },
+              "tasteProfileVersion": 3,
+              "currentTasteProfileVersion": 3,
+              "isOutdated": false
+            },
+            "feedback": {
+              "public": null,
+              "personal": null
+            }
+          },
+          {
+            "id": "15c6cc3b-4509-589a-a12b-35b7b1ccae49",
+            "status": "complete",
+            "createdAt": "2026-10-14T18:02:00Z",
+            "finishedAt": "2026-10-14T18:02:12Z",
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "publicReception": {
+              "status": "done",
+              "evidenceState": "sufficient",
+              "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
+              "evidenceConfidence": {
+                "level": "high",
+                "reasons": [
+                  "75 reviews with text from 1 source",
+                  "Ratings from 2 sources",
+                  "Praise and complaints both represented"
+                ]
+              }
+            },
+            "personalMatch": {
+              "status": "done",
+              "score": 4.2,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": "B4",
+              "isFallback": false,
+              "evidenceConfidence": {
+                "level": "medium",
+                "reasons": ["24 rated books", "75 reviews describe this book"]
+              },
+              "tasteProfileVersion": 3,
+              "currentTasteProfileVersion": 4,
+              "isOutdated": true
+            },
+            "feedback": {
+              "public": "accurate",
+              "personal": "not_for_me"
+            }
+          }
+        ],
+        "nextCursor": "eyJjcmVhdGVkQXQiOiIyMDI2LTEwLTE0VDE4OjAyOjAwWiJ9"
+      }
+    },
+    "empty": {
+      "status": 200,
+      "schema": "AnalysisList",
+      "body": {
+        "items": [],
+        "nextCursor": null
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    }
+  }
+}

@@ -6,7 +6,7 @@
 
 - **Two files, one truth.** `contract/openapi.json` (generated from the backend) holds the exact shapes. This document holds the conventions, meanings and rules that a schema cannot express. If they differ, the OpenAPI file wins for shapes and this file wins for meaning. Fix the difference in the same pull request.
 - **Contract first.** The backend publishes or updates `contract/openapi.json` before implementing an endpoint. The frontend builds against it, using mocks from `contract/fixtures/` until the endpoint exists.
-- **Fixtures.** Every endpoint has at least one fixture per outcome (success, partial, failed, empty). The frontend mocks and the backend contract tests use the **same** fixtures.
+- **Fixtures.** Every endpoint has at least one fixture per outcome (success, partial, failed, empty). The frontend mocks and the backend contract tests use the **same** fixtures. A fixture marked `"planned": "<work package>"` publishes an agreed shape before its endpoint exists; its bodies are checked against the schema like any other, and the mark is removed when the endpoint is built.
 - **Who may change it.** Either role may propose a change by pull request. The other role must approve it. Neither role merges contract changes alone.
 - **Breaking changes** (removing or renaming a field, changing a type or meaning, changing an enum value) need a new version prefix or a coordinated release. Adding an optional field is not breaking.
 
@@ -149,63 +149,86 @@ Every save (rating, removal, questionnaire, confirmed import) creates a new immu
 
 ### 4.4 Analyses
 
-| Method and path | Request | Response |
-|---|---|---|
-| `POST /analyses` | `{ editionId }` | `201` or `200 Analysis` (existing one if a duplicate is running) |
-| `GET /analyses/:id` | none | `Analysis` |
-| `POST /analyses/:id/retry` | `{ steps?: [stepName] }` | `Analysis`. Only failed steps rerun. |
-| `POST /analyses/:id/recalculate` | none | new `Analysis` for the current taste profile. The old one is unchanged. |
-| `GET /analyses` | cursor | `{ items: [AnalysisSummary], nextCursor }` (history) |
-| `GET /analyses/:id/evidence/:evidenceId` | none | `{ source, rating, excerpt \| null, displayAllowed }`. `excerpt` is null where the source's terms do not allow display. |
+**Status: agreed 2026-10-21** (D-019; approved by the owner for both roles). Shapes are published in `contract/openapi.json` (`Analysis`, `AnalysisSummary`, `AnalysisList`, `StartAnalysis`, `RetryAnalysis`) ahead of the endpoints (BE-8). Examples of every outcome are in `contract/fixtures/analyses-*.json`, marked `"planned": "BE-8"`.
 
-**`Analysis` object**
+| Method and path | Request | Response | Errors |
+|---|---|---|---|
+| `POST /analyses` | `{ editionId }` | `201 Analysis` (new), or `200 Analysis` when the reader already has one running for this edition and taste-profile version (joined, not duplicated) | `400`, `404` unknown edition, `429` |
+| `GET /analyses/:id` | none | `Analysis` | `404` |
+| `POST /analyses/:id/retry` | `{ steps?: [stepName] }` (all failed steps when left out) | `200 Analysis`, running again. Done steps are never repeated (RES-2) | `400` a step that did not fail, `404`, `409` nothing failed or still running, `429` |
+| `POST /analyses/:id/recalculate` | none | `201 Analysis`: a new analysis for the current taste profile, with `recalculatedFromId`. The old one is unchanged | `404`, `409` already uses the current profile, `429` |
+| `GET /analyses` | `?cursor=&limit=` | `AnalysisList`: `{ items: [AnalysisSummary], nextCursor }`, newest first (history) | none beyond auth |
+
+The separate evidence endpoint in v0.2 is dropped: the evidence a section cites is inside the `Analysis` (see below).
+
+**`Analysis` object** (full examples in `contract/fixtures/analyses-get.json`)
 
 ```json
 {
-  "id": "uuid",
-  "status": "partial",
-  "pollAfterMs": 1500,
-  "createdAt": "...", "finishedAt": null,
-  "steps": { "resolve": "done", "fetchReviews": "done", "publicSummary": "running", "personalMatch": "pending" },
-  "edition": { "editionId": "uuid", "title": "", "subtitle": "", "author": "", "year": 2019, "language": "en", "coverUrl": "", "summary": "" },
+  "id": "uuid", "status": "complete", "pollAfterMs": null,
+  "createdAt": "...", "finishedAt": "...", "recalculatedFromId": null, "canRetry": false,
+  "edition": { "...Candidate fields": "", "isbn13": "9780439023481", "pageCount": 374, "description": "" },
+  "steps": [ { "name": "resolve", "status": "done", "errorCode": null }, "... all eight, in stepName order" ],
   "publicReception": {
-    "status": "done",
-    "summary": "written verdict, or null when evidence is insufficient",
+    "status": "done", "evidenceState": "sufficient",
+    "summary": "written verdict, or null",
     "praises":    [ { "text": "", "evidenceIds": ["uuid"] } ],
     "complaints": [ { "text": "", "evidenceIds": ["uuid"] } ],
-    "ratings":    [ { "source": "goodreads_dataset", "average": 4.1, "count": 1203 } ],
-    "sources":    [ { "source": "", "outcome": "ok" } ],
-    "evidenceState": "limited",
-    "evidenceConfidence": { "level": "medium", "reasons": ["38 reviews from 1 source"] }
+    "traits":     [ { "trait": "pace", "values": ["fast"], "evidenceIds": ["uuid"] } ],
+    "sources":    [ { "key": "open_library", "name": "Open Library", "outcome": "ok", "providesText": false,
+                      "ratingAverage": 4.21, "ratingCount": 1402, "ratingScope": "work", "reviewsUsed": 0, "fetchedAt": "..." } ],
+    "evidence":   [ { "id": "uuid", "number": 12, "kind": "review", "source": "goodreads_dataset", "rating": 4,
+                      "excerpt": "", "displayAllowed": true, "reviewCount": null, "postedAt": "..." } ],
+    "evidenceConfidence": { "level": "high", "reasons": ["75 reviews with text from 1 source"] },
+    "generatedAt": "..."
   },
   "personalMatch": {
-    "status": "done",
-    "score": 4.2,
-    "scale": { "min": 1, "max": 5 },
-    "modelId": "B4",
-    "modelVersion": "2026-10-20.1",
-    "tasteProfileVersion": 7,
-    "isOutdated": false,
-    "generatedAt": "...",
-    "evidenceConfidence": { "level": "low", "reasons": ["6 rated books"] },
-    "similarRatedBooks": [ { "editionId": "uuid", "title": "", "yourRating": 5 } ],
-    "traits": [ { "trait": "pace", "fit": "aligned", "evidenceIds": ["uuid"] } ],
-    "notFactoredIn": ["preferred length"]
-  }
+    "status": "done", "score": 4.2, "scale": { "min": 1, "max": 5 },
+    "modelId": "B4", "modelVersion": "2026-10-20.1", "isFallback": false,
+    "evidenceConfidence": { "level": "medium", "reasons": ["24 rated books"] },
+    "tasteProfileVersion": 4, "currentTasteProfileVersion": 4, "isOutdated": false,
+    "ratedCount": 24, "hardFloor": 3, "minForConfidence": 10, "generatedAt": "...",
+    "similarRatedBooks": [ { "editionId": "uuid", "title": "", "author": "", "coverUrl": null, "yourRating": 5 } ],
+    "traits": [ { "trait": "themes", "fit": "conflicting", "bookValues": ["violence"], "yourValues": ["violence"], "evidenceIds": ["uuid"] } ],
+    "errorCode": null
+  },
+  "feedback": { "public": "accurate", "personal": null }
 }
 ```
 
-**Meaning rules the frontend relies on**
-- `personalMatch.status = needs_taste_data`: no usable taste profile. Show the invitation to rate books. `score` is null.
-- `personalMatch.status = below_floor`: fewer rated books than the hard floor. **No score is shown.** `score` is null.
-- Low confidence with a score: show the score, label it low confidence, and show which fallback `modelId` (B0 or B1) produced it.
-- `publicReception.summary = null` with `evidenceState = insufficient`: no written verdict exists. Do not display placeholder prose that looks like one.
-- `evidenceState = unavailable` means every source failed: the analysis is `failed` with retry. It is **never** presented as 'no reviews'.
+**`AnalysisSummary`** (a history row): `id`, `status`, `createdAt`, `finishedAt`, `edition` (a `Candidate`), `publicReception` with `status`, `evidenceState`, `summary` and `evidenceConfidence`, `personalMatch` with `status`, `score`, `scale`, `modelId`, `isFallback`, `evidenceConfidence`, `tasteProfileVersion`, `currentTasteProfileVersion` and `isOutdated`, and `feedback`. No evidence, claims or traits.
+
+**Meaning rules the frontend relies on.** The `Analysis` schema checks the starred rules (★) in code, so the backend's output and the fixtures cannot break them.
+
+*Status and progress*
+- `status`: `running` while any step is pending or running; `complete` when everything that applies is done; `partial` when the public reception is shown with something missing (limited or insufficient evidence, or the personal match failed); `failed` when no public reception can be shown (all sources failed, or a public step failed after its retry).
+- ★ `pollAfterMs` is set exactly while `running`: poll `GET /analyses/:id` after that long, and stop when it is null. ★ `finishedAt` is set exactly when the analysis is no longer running. Leaving the screen never cancels (RES-1).
+- ★ `steps` always lists all eight steps in `stepName` order, for the progress rail (D-010 point 7). ★ `errorCode` is set exactly on failed steps (an error code from section 2).
+- ★ `canRetry` is true only when a step failed and `POST /analyses/:id/retry` will run it again. Show retry only when it is true.
+
+*Public reception*
+- `publicReception.status` uses `stepStatus` (never `skipped`). ★ Summary, praises and complaints are present only once it is `done`.
+- ★ `summary = null` with `evidenceState = insufficient`: no written verdict exists. Do not display placeholder prose that looks like one (RES-3).
+- ★ `evidenceState = unavailable` means every source failed: the analysis is `failed`, with retry. It is **never** presented as "no reviews" (RES-4).
+- `sources` lists every source asked, with its outcome, so failures are disclosed (spec 11). Show the rating average and count per source, named by `name`; no combined public score (D-010 point 3). `ratingScope = work` means the rating covers every edition of the book: label it so. `providesText = false` marks rating-only sources. `fetchedAt` dates older data (PERF-3).
+- ★ `evidence` holds exactly the items cited by `praises`, `complaints` and both `traits` lists, so every `evidenceIds` entry resolves within the response (RES-5). `number` is the stable "Review #12" label. `excerpt` is untrusted text of at most 1,000 characters: render it as plain text. ★ `excerpt` is null when `displayAllowed` is false; it is also null for `source_aggregate` items, which stand for `reviewCount` reviews. The book description can be cited (`kind = description`, `source = null`).
+- `traits` describe the book (D-015 vocabularies). Empty `values` means unknown, and ★ an unknown trait cites nothing.
+
+*Personal match*
+- `personalMatch.status = needs_taste_data`: no taste profile yet. Show the invitation to rate books (ONB-2). `score` is null.
+- `personalMatch.status = below_floor`: fewer than `hardFloor` rated books. **No score is shown** (MODEL-4); say how many books are rated (`ratedCount`) and how many are needed.
+- `running` covers both waiting and running; `failed` comes with `errorCode` and, if retryable, `canRetry`; `skipped` means a step it needs failed.
+- ★ `score` is set exactly when `status = done`. ★ It is on `scale` (1 to 5) and already rounded to one decimal: display it as given, for example "4.2 / 5", never as a percentage (D-007, D-010).
+- ★ A score always comes with `modelId`, `modelVersion` and `evidenceConfidence` (MODEL-3). ★ `isFallback = true` means B0 or B1 produced it (cold start), and its confidence is always `low`: show the score, label it low confidence, and name the fallback model.
+- Explanations come from the model (spec 7). ★ They exist only with a score. `similarRatedBooks` are the reader's rated books most similar to this one. `traits` group as: `aligned` → "Why it fits", `conflicting` → "Things to keep in mind", `unknown` → "Not factored in". For `unknown`, empty `yourValues` means the reader has no preference on record, and empty `bookValues` means the book's trait is unknown. Unknown preferences never affect the score (MODEL-2).
+- `isOutdated` is computed by the server when read (ONB-4). ★ When true, `currentTasteProfileVersion` is newer than `tasteProfileVersion`: show the recalculate banner with both numbers.
 - A personal failure never removes the public reception (RES-7).
-- `isOutdated` is computed by the server. The frontend shows the recalculate banner when it is true.
-- All three signals stay separate fields. No combined score or combined verdict label exists anywhere (D-010).
-- `personalMatch.score` is on `scale` (1 to 5). Display it as a rating such as "4.2 / 5", never as a percentage (D-007, D-010).
-- Evidence confidence is exposed only as `level` plus `reasons`. There is no numeric confidence score.
+
+*Everything else*
+- All three signals stay separate fields. No combined score or combined verdict label exists anywhere (D-010). Evidence confidence is only `level` plus `reasons`; there is no numeric confidence score.
+- `edition` is the edition analysed, so the screen can name it (DISC-5).
+- `feedback` holds the reader's current choice per section, or null. ★ It is null on sections that were not generated; hide the buttons there (spec 6, Feedback).
+- Elements of the result and history mockups with no field here are not shown: "Critical score", percentages, "/100" numbers, consensus labels, "access type", reviewer names and publication bylines, "sensitivity noted" badges (D-010).
 
 ### 4.5 Feedback, lists, account
 
@@ -239,3 +262,4 @@ Every save (rating, removal, questionnaire, confirmed import) creates a new immu
 | 2026-10-21 | BE-3: added `GET /me`, the `User` shape, session rules (cookie attributes, one refresh at a time, reset-link format) and `400` for an invalid reset link. Fixtures for every auth outcome in `contract/fixtures/`. Proposed by backend; approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-21 | BE-6: `Candidate` gains `publisher` and `format`, and its fields are nullable; search and scan responses gain `external`; scan gains `recognized`; one candidate per work; meaning rules and scan error rules in 4.3. Fixtures added. Proposed by backend; approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-21 | BE-7: 4.2 filled in: `GET /ratings`, `DELETE /ratings/:editionId`, `POST /onboarding/skip`, `yourRating` and `external` on catalog search, `importId`, `format`, `totalRows`, `ignoredRows` and `rating` on the import view, `tasteProfileVersion: 0` before the first save, import and version rules. Fixtures added. Proposed by backend; approved by the owner for both roles on 2026-10-21 | n/a |
+| 2026-10-21 | 4.4 rewritten with the result-screen and history mockups: `steps` as an ordered list with `errorCode`; `canRetry`; `edition` gains `isbn13`, `pageCount`, `description` (was `summary`); `ratings` merged into `sources` (with `ratingScope`, `providesText`, `reviewsUsed`, `fetchedAt`); cited `evidence` included in the analysis, replacing `GET /analyses/:id/evidence/:evidenceId`; book `traits` on the public side; personal `isFallback`, `currentTasteProfileVersion`, `ratedCount`, `hardFloor`, `minForConfidence`, `errorCode`, trait fits with `bookValues` and `yourValues`; `notFactoredIn` replaced by `unknown` trait fits; `feedback`; `AnalysisSummary`; error statuses per endpoint; rules checked in code. Planned fixtures (`analyses-*.json`). Proposed with D-019; approved by the owner for both roles on 2026-10-21 | n/a |

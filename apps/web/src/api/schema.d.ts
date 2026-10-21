@@ -316,8 +316,281 @@ export interface components {
             accessToken: string;
             expiresInSeconds: number;
         };
+        Analysis: {
+            canRetry: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            edition: {
+                author: string | null;
+                coverUrl: string | null;
+                description: string | null;
+                /** Format: uuid */
+                editionId: string;
+                format: string | null;
+                isbn13: string | null;
+                language: string | null;
+                pageCount: number | null;
+                publisher: string | null;
+                subtitle: string | null;
+                title: string;
+                year: number | null;
+            };
+            feedback: {
+                /** @enum {string|null} */
+                personal: "accurate" | "not_for_me" | null;
+                /** @enum {string|null} */
+                public: "accurate" | "not_for_me" | null;
+            };
+            /** Format: date-time */
+            finishedAt: string | null;
+            /** Format: uuid */
+            id: string;
+            personalMatch: {
+                currentTasteProfileVersion: number;
+                /** @enum {string|null} */
+                errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
+                evidenceConfidence: {
+                    /** @enum {string} */
+                    level: "low" | "medium" | "high";
+                    reasons: string[];
+                } | null;
+                /** Format: date-time */
+                generatedAt: string | null;
+                hardFloor: number;
+                isFallback: boolean;
+                isOutdated: boolean;
+                minForConfidence: number;
+                /** @enum {string|null} */
+                modelId: "B0" | "B1" | "B2" | "B3" | "B4" | null;
+                modelVersion: string | null;
+                ratedCount: number;
+                scale: {
+                    /** @enum {number} */
+                    max: 5;
+                    /** @enum {number} */
+                    min: 1;
+                };
+                score: number | null;
+                similarRatedBooks: {
+                    author: string | null;
+                    coverUrl: string | null;
+                    /** Format: uuid */
+                    editionId: string;
+                    title: string;
+                    yourRating: number;
+                }[];
+                /** @enum {string} */
+                status: "done" | "running" | "failed" | "skipped" | "needs_taste_data" | "below_floor";
+                tasteProfileVersion: number | null;
+                traits: {
+                    bookValues: string[];
+                    evidenceIds: string[];
+                    /** @enum {string} */
+                    fit: "aligned" | "conflicting" | "unknown";
+                    /** @enum {string} */
+                    trait: "pace" | "tone" | "themes" | "contentIntensity";
+                    yourValues: string[];
+                }[];
+            };
+            pollAfterMs: number | null;
+            publicReception: {
+                complaints: {
+                    evidenceIds: string[];
+                    text: string;
+                }[];
+                evidence: {
+                    displayAllowed: boolean;
+                    excerpt: string | null;
+                    /** Format: uuid */
+                    id: string;
+                    /** @enum {string} */
+                    kind: "review" | "description" | "source_aggregate";
+                    number: number;
+                    /** Format: date-time */
+                    postedAt: string | null;
+                    rating: number | null;
+                    reviewCount: number | null;
+                    source: string | null;
+                }[];
+                evidenceConfidence: {
+                    /** @enum {string} */
+                    level: "low" | "medium" | "high";
+                    reasons: string[];
+                } | null;
+                /** @enum {string|null} */
+                evidenceState: "sufficient" | "limited" | "insufficient" | "unavailable" | null;
+                /** Format: date-time */
+                generatedAt: string | null;
+                praises: {
+                    evidenceIds: string[];
+                    text: string;
+                }[];
+                sources: {
+                    /** Format: date-time */
+                    fetchedAt: string | null;
+                    key: string;
+                    name: string;
+                    /** @enum {string} */
+                    outcome: "ok" | "empty" | "failed" | "rate_limited" | "not_permitted";
+                    providesText: boolean;
+                    ratingAverage: number | null;
+                    ratingCount: number | null;
+                    /** @enum {string|null} */
+                    ratingScope: "edition" | "work" | null;
+                    reviewsUsed: number;
+                }[];
+                /** @enum {string} */
+                status: "pending" | "running" | "done" | "failed" | "skipped";
+                summary: string | null;
+                traits: {
+                    evidenceIds: string[];
+                    /** @enum {string} */
+                    trait: "pace" | "tone" | "themes" | "contentIntensity";
+                    values: string[];
+                }[];
+            };
+            /** Format: uuid */
+            recalculatedFromId: string | null;
+            /** @enum {string} */
+            status: "running" | "complete" | "partial" | "failed";
+            steps: {
+                /** @enum {string|null} */
+                errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
+                /** @enum {string} */
+                name: "resolve" | "fetchReviews" | "selectReviews" | "extractTraits" | "publicSummary" | "evidenceConfidence" | "personalMatch" | "finalize";
+                /** @enum {string} */
+                status: "pending" | "running" | "done" | "failed" | "skipped";
+            }[];
+        };
+        AnalysisList: {
+            items: {
+                /** Format: date-time */
+                createdAt: string;
+                edition: {
+                    author: string | null;
+                    coverUrl: string | null;
+                    /** Format: uuid */
+                    editionId: string;
+                    format: string | null;
+                    language: string | null;
+                    publisher: string | null;
+                    subtitle: string | null;
+                    title: string;
+                    year: number | null;
+                };
+                feedback: {
+                    /** @enum {string|null} */
+                    personal: "accurate" | "not_for_me" | null;
+                    /** @enum {string|null} */
+                    public: "accurate" | "not_for_me" | null;
+                };
+                /** Format: date-time */
+                finishedAt: string | null;
+                /** Format: uuid */
+                id: string;
+                personalMatch: {
+                    currentTasteProfileVersion: number;
+                    evidenceConfidence: {
+                        /** @enum {string} */
+                        level: "low" | "medium" | "high";
+                        reasons: string[];
+                    } | null;
+                    isFallback: boolean;
+                    isOutdated: boolean;
+                    /** @enum {string|null} */
+                    modelId: "B0" | "B1" | "B2" | "B3" | "B4" | null;
+                    scale: {
+                        /** @enum {number} */
+                        max: 5;
+                        /** @enum {number} */
+                        min: 1;
+                    };
+                    score: number | null;
+                    /** @enum {string} */
+                    status: "done" | "running" | "failed" | "skipped" | "needs_taste_data" | "below_floor";
+                    tasteProfileVersion: number | null;
+                };
+                publicReception: {
+                    evidenceConfidence: {
+                        /** @enum {string} */
+                        level: "low" | "medium" | "high";
+                        reasons: string[];
+                    } | null;
+                    /** @enum {string|null} */
+                    evidenceState: "sufficient" | "limited" | "insufficient" | "unavailable" | null;
+                    /** @enum {string} */
+                    status: "pending" | "running" | "done" | "failed" | "skipped";
+                    summary: string | null;
+                };
+                /** @enum {string} */
+                status: "running" | "complete" | "partial" | "failed";
+            }[];
+            nextCursor: string | null;
+        };
         /** @enum {string} */
         AnalysisStatus: "running" | "complete" | "partial" | "failed";
+        AnalysisSummary: {
+            /** Format: date-time */
+            createdAt: string;
+            edition: {
+                author: string | null;
+                coverUrl: string | null;
+                /** Format: uuid */
+                editionId: string;
+                format: string | null;
+                language: string | null;
+                publisher: string | null;
+                subtitle: string | null;
+                title: string;
+                year: number | null;
+            };
+            feedback: {
+                /** @enum {string|null} */
+                personal: "accurate" | "not_for_me" | null;
+                /** @enum {string|null} */
+                public: "accurate" | "not_for_me" | null;
+            };
+            /** Format: date-time */
+            finishedAt: string | null;
+            /** Format: uuid */
+            id: string;
+            personalMatch: {
+                currentTasteProfileVersion: number;
+                evidenceConfidence: {
+                    /** @enum {string} */
+                    level: "low" | "medium" | "high";
+                    reasons: string[];
+                } | null;
+                isFallback: boolean;
+                isOutdated: boolean;
+                /** @enum {string|null} */
+                modelId: "B0" | "B1" | "B2" | "B3" | "B4" | null;
+                scale: {
+                    /** @enum {number} */
+                    max: 5;
+                    /** @enum {number} */
+                    min: 1;
+                };
+                score: number | null;
+                /** @enum {string} */
+                status: "done" | "running" | "failed" | "skipped" | "needs_taste_data" | "below_floor";
+                tasteProfileVersion: number | null;
+            };
+            publicReception: {
+                evidenceConfidence: {
+                    /** @enum {string} */
+                    level: "low" | "medium" | "high";
+                    reasons: string[];
+                } | null;
+                /** @enum {string|null} */
+                evidenceState: "sufficient" | "limited" | "insufficient" | "unavailable" | null;
+                /** @enum {string} */
+                status: "pending" | "running" | "done" | "failed" | "skipped";
+                summary: string | null;
+            };
+            /** @enum {string} */
+            status: "running" | "complete" | "partial" | "failed";
+        };
         AuthSession: {
             accessToken: string;
             expiresInSeconds: number;
@@ -538,6 +811,9 @@ export interface components {
             newPassword: string;
             token: string;
         };
+        RetryAnalysis: {
+            steps?: ("resolve" | "fetchReviews" | "selectReviews" | "extractTraits" | "publicSummary" | "evidenceConfidence" | "personalMatch" | "finalize")[];
+        };
         ScanResult: {
             candidates: {
                 author: string | null;
@@ -567,6 +843,10 @@ export interface components {
         };
         /** @enum {string} */
         SourceOutcome: "ok" | "empty" | "failed" | "rate_limited" | "not_permitted";
+        StartAnalysis: {
+            /** Format: uuid */
+            editionId: string;
+        };
         /** @enum {string} */
         StepName: "resolve" | "fetchReviews" | "selectReviews" | "extractTraits" | "publicSummary" | "evidenceConfidence" | "personalMatch" | "finalize";
         /** @enum {string} */

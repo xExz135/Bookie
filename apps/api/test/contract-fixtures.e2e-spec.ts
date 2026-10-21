@@ -24,6 +24,12 @@ interface Outcome {
 interface Fixture {
   file: string;
   endpoint: string;
+  /**
+   * The work package that will build this endpoint. A planned fixture
+   * publishes the agreed shape before the endpoint exists (contract first);
+   * its bodies are checked like any other.
+   */
+  planned?: string;
   outcomes: Record<string, Outcome>;
 }
 
@@ -81,8 +87,12 @@ describe('contract fixtures', () => {
       }
     }
     for (const fixture of fixtures) {
-      if (!operations.some((op) => op.endpoint === fixture.endpoint)) {
+      const exists = operations.some((op) => op.endpoint === fixture.endpoint);
+      if (!exists && !fixture.planned) {
         problems.push(`${fixture.file}: endpoint ${fixture.endpoint} does not exist`);
+      }
+      if (exists && fixture.planned) {
+        problems.push(`${fixture.file}: the endpoint exists now; remove "planned"`);
       }
     }
     expect(problems).toEqual([]);
