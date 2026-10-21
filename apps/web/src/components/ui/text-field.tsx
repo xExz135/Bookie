@@ -1,4 +1,4 @@
-import { useId, type InputHTMLAttributes } from 'react';
+import { useId, type ComponentPropsWithRef } from 'react';
 
 /** A labelled input with its error message tied to it for screen readers. */
 export function TextField({
@@ -6,7 +6,7 @@ export function TextField({
   error,
   hint,
   ...props
-}: InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string; hint?: string }) {
+}: ComponentPropsWithRef<'input'> & { label: string; error?: string; hint?: string }) {
   const id = useId();
   const errorId = `${id}-error`;
   const hintId = `${id}-hint`;
