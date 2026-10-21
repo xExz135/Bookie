@@ -18,6 +18,7 @@ const ID = '0b10b26f-04e1-598b-a2ac-cdac933ae226';
 const GET = `${API_URL}/api/v1/analyses/${ID}`;
 const RETRY = `${API_URL}/api/v1/analyses/${ID}/retry`;
 const RECALCULATE = `${API_URL}/api/v1/analyses/${ID}/recalculate`;
+const START = `${API_URL}/api/v1/analyses`;
 
 /** A fixture outcome as an Analysis, with a short poll interval so tests do not wait 1.5 s. */
 function outcome(file: string, name: string): Analysis {
@@ -187,6 +188,32 @@ describe('Failures and retry', () => {
     expect(within(publicSection()).getByText('What readers liked')).toBeVisible();
   });
 
+  it('D-024: a result made before a model existed offers the personal retry once the API allows it', async () => {
+    const old = analysis('personalUnavailable');
+    old.canRetry = true;
+    serve(old);
+    let sent: unknown = null;
+    server.use(
+      http.post(RETRY, async ({ request }) => {
+        sent = await request.json();
+        serve(analysis('complete'));
+        return HttpResponse.json(outcome('analyses-retry.json', 'retrying'));
+      }),
+    );
+    renderScreen();
+    await screen.findByText('Partial result');
+    expect(
+      within(personalSection()).getByText(
+        /Personal matching was not available when this analysis ran. Retry to match/,
+      ),
+    ).toBeVisible();
+    await userEvent.click(
+      within(personalSection()).getByRole('button', { name: 'Retry personal match' }),
+    );
+    expect(sent).toEqual({ steps: ['personalMatch'] });
+    expect(await within(personalSection()).findByText('4.2')).toBeVisible();
+  });
+
   it('shows a retry that was refused, and reloads when the analysis changed meanwhile', async () => {
     const calls = serve(analysis('personalFailed'));
     server.use(
@@ -225,6 +252,86 @@ describe('Failures and retry', () => {
     fail = false;
     await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(await screen.findByText('Complete')).toBeVisible();
+  });
+});
+
+describe('Older reviews and refresh (D-025)', () => {
+  it('PERF-3: a failed update shows the earlier reception labelled with its date, keeps the personal match, and retries the failed step', async () => {
+    const stale = analysis('stalePublicReception');
+    serve(stale);
+    let sent: unknown = null;
+    server.use(
+      http.post(RETRY, async ({ request }) => {
+        sent = await request.json();
+        serve(analysis('complete'));
+        return HttpResponse.json(outcome('analyses-retry.json', 'retrying'));
+      }),
+    );
+    renderScreen();
+    expect(await screen.findByText('Partial result')).toBeVisible();
+    const note = within(publicSection()).getByText(/Updating them failed/);
+    expect(note).toHaveTextContent('Reviews as of 21 Oct 2026.');
+    expect(note).toHaveTextContent('This does not mean there are no reviews');
+    // The earlier reception is still shown in full, and the personal match ran on it.
+    expect(within(publicSection()).getByText('Summary of reviews')).toBeVisible();
+    expect(within(personalSection()).getByText('4.2')).toBeVisible();
+    // The way forward is the retry, not another refresh.
+    expect(
+      within(publicSection()).queryByRole('button', { name: 'Refresh reviews' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(
+      within(publicSection()).getByRole('button', { name: 'Retry public reception' }),
+    );
+    expect(sent).toEqual({ steps: ['fetchReviews'] });
+    expect(await screen.findByText('Complete')).toBeVisible();
+    expect(within(publicSection()).queryByText(/Updating them failed/)).not.toBeInTheDocument();
+  });
+
+  it('spec 10: refresh reviews starts a new analysis with refresh and opens it', async () => {
+    const complete = analysis('complete');
+    serve(complete);
+    const started = outcome('analyses-start.json', 'started');
+    let sent: unknown = null;
+    server.use(
+      http.post(START, async ({ request }) => {
+        sent = await request.json();
+        return HttpResponse.json(started, { status: 201 });
+      }),
+    );
+    renderScreen();
+    await screen.findByText('Complete');
+    expect(within(publicSection()).getByText(/Reviews gathered 21 Oct 2026/)).toBeVisible();
+    await userEvent.click(within(publicSection()).getByRole('button', { name: 'Refresh reviews' }));
+    expect(sent).toEqual({ editionId: complete.edition.editionId, refresh: true });
+    expect(router.push).toHaveBeenCalledWith(`/analyses/${started.id}`);
+  });
+
+  it('spec 10: a refused refresh says when it can be tried again', async () => {
+    serve(analysis('complete'));
+    server.use(
+      http.post(START, () =>
+        HttpResponse.json(fixture('analyses-start.json', 'refreshLimit').body, { status: 429 }),
+      ),
+    );
+    renderScreen();
+    await screen.findByText('Complete');
+    await userEvent.click(within(publicSection()).getByRole('button', { name: 'Refresh reviews' }));
+    expect(await within(publicSection()).findByRole('alert')).toHaveTextContent(
+      'The reviews of this book cannot be refreshed again yet. Try again in 12 hours.',
+    );
+    expect(router.push).not.toHaveBeenCalled();
+    expect(within(publicSection()).getByRole('button', { name: 'Refresh reviews' })).toBeEnabled();
+  });
+
+  it('offers no refresh while the analysis runs', async () => {
+    const running = analysis('running');
+    running.publicReception.status = 'done';
+    serve(running);
+    renderScreen();
+    await screen.findByText('Analyzing');
+    expect(
+      within(publicSection()).queryByRole('button', { name: 'Refresh reviews' }),
+    ).not.toBeInTheDocument();
   });
 });
 

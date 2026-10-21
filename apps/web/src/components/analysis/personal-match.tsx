@@ -34,11 +34,8 @@ export function PersonalMatchSection({
 }) {
   return (
     <Section id="personal" eyebrow="For you" title="Your personal match">
-      <PersonalBody match={match} evidence={evidence} />
-      {match.status === 'failed' &&
-      failedStep &&
-      failedStep.errorCode !== 'MODEL_UNAVAILABLE' &&
-      retry.available ? (
+      <PersonalBody match={match} evidence={evidence} retryable={retry.available} />
+      {match.status === 'failed' && failedStep && retry.available ? (
         <SectionRetry
           label="Retry personal match"
           busy={retry.busy}
@@ -60,9 +57,12 @@ export function PersonalMatchSection({
 function PersonalBody({
   match,
   evidence,
+  retryable,
 }: {
   match: PersonalMatch;
   evidence: ReadonlyMap<string, Evidence>;
+  /** The API's `canRetry`: a model can now score this result (D-024). */
+  retryable: boolean;
 }) {
   switch (match.status) {
     case 'running':
@@ -99,6 +99,14 @@ function PersonalBody({
         </p>
       );
     case 'failed':
+      if (match.errorCode === 'MODEL_UNAVAILABLE' && retryable) {
+        return (
+          <p className="text-body-md text-on-surface">
+            Personal matching was not available when this analysis ran. Retry to match this book to
+            your {match.ratedCount} rated books. The public reception is not affected.
+          </p>
+        );
+      }
       if (match.errorCode === 'MODEL_UNAVAILABLE') {
         return (
           <p className="text-body-md text-on-surface">

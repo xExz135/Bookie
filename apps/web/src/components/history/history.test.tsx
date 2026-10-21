@@ -85,6 +85,17 @@ describe('History', () => {
     expect(items[5]).toHaveTextContent('Fallback model B1 (questionnaire and trait match)');
   });
 
+  it('PERF-3: a row showing earlier reviews says that updating them failed', async () => {
+    const page = history();
+    const index = page.items.findIndex((item) => item.publicReception.status === 'done');
+    page.items[index]!.publicReception.stale = true;
+    server.use(http.get(`${API_URL}${LIST}`, () => HttpResponse.json(page)));
+    renderHistory();
+    const items = await rows();
+    expect(items[index]).toHaveTextContent('Earlier reviews shown: updating them failed');
+    expect(items.filter((li) => li.textContent?.includes('Earlier reviews shown'))).toHaveLength(1);
+  });
+
   it('ONB-4: only an outdated row offers recalculation, naming both versions, and opens the new analysis', async () => {
     const page = history();
     server.use(

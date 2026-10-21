@@ -13,6 +13,7 @@ import { EvidenceList } from './evidence-list';
 import { PersonalMatchSection } from './personal-match';
 import { PublicReceptionSection, type RetryControl } from './public-reception';
 import { OutdatedNotice, useRecalculate } from './recalculate';
+import { useRefreshReviews } from './refresh-reviews';
 import { SectionRetry } from './section-retry';
 import { StatusBadge, StatusMessage } from './status-banner';
 import { StepRail } from './step-rail';
@@ -92,6 +93,7 @@ function useAnalysis(id: string) {
 export function AnalysisScreen({ id }: { id: string }) {
   const { analysis, setAnalysis, loadError, pollError, reload } = useAnalysis(id);
   const recalc = useRecalculate();
+  const refresh = useRefreshReviews();
   const [retrying, setRetrying] = useState<SectionKey | null>(null);
   const [retryError, setRetryError] = useState<{ section: SectionKey; message: string } | null>(
     null,
@@ -214,6 +216,12 @@ export function AnalysisScreen({ id }: { id: string }) {
             'public',
             publicFailed.map((s) => s.name),
           )}
+          refresh={{
+            available: analysis.status !== 'running' && retrying === null,
+            busy: refresh.busy,
+            error: refresh.error,
+            onRefresh: () => void refresh.refresh(analysis.edition.editionId),
+          }}
           feedback={{ analysisId: id, value: analysis.feedback.public }}
         />
         <PersonalMatchSection

@@ -34,6 +34,12 @@ export function PublicSummary({
   }
   return (
     <>
+      {reception.stale ? (
+        // PERF-3, D-025: the full result gives the date and the retry.
+        <p className="text-label-md text-on-secondary-fixed-variant">
+          Earlier reviews shown: updating them failed
+        </p>
+      ) : null}
       {reception.evidenceState === 'limited' ? (
         <p className="text-label-md text-on-secondary-fixed-variant">Limited evidence</p>
       ) : null}

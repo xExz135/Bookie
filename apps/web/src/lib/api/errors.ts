@@ -23,7 +23,8 @@ export class ApiRequestError extends Error {
   }
 }
 
-function waitText(seconds: number | undefined): string {
+/** "in 3 hours", for a `retryAfterSeconds`. */
+export function waitText(seconds: number | undefined): string {
   if (!seconds || seconds < 60) return 'in a minute';
   const minutes = Math.ceil(seconds / 60);
   if (minutes < 60) return `in ${minutes} minute${minutes === 1 ? '' : 's'}`;

@@ -14,6 +14,7 @@ import {
 import { codeMessage } from '@/lib/api/errors';
 import { FeedbackControl } from './feedback-control';
 import { Citations, ConfidenceBlock, Section, SubHeading } from './parts';
+import { RefreshReviews } from './refresh-reviews';
 import { SectionRetry } from './section-retry';
 
 export interface RetryControl {
@@ -22,6 +23,14 @@ export interface RetryControl {
   busy: boolean;
   error: string | null;
   onRetry: () => void;
+}
+
+export interface RefreshControl {
+  /** Off while the analysis runs. */
+  available: boolean;
+  busy: boolean;
+  error: string | null;
+  onRefresh: () => void;
 }
 
 /**
@@ -34,12 +43,14 @@ export function PublicReceptionSection({
   failedSteps,
   evidence,
   retry,
+  refresh,
   feedback,
 }: {
   reception: Reception;
   failedSteps: Step[];
   evidence: ReadonlyMap<string, Evidence>;
   retry: RetryControl;
+  refresh: RefreshControl;
   /** Shown only once the section is done (spec 6: hidden on sections not generated). */
   feedback: { analysisId: string; value: FeedbackValue | null };
 }) {
@@ -60,6 +71,16 @@ export function PublicReceptionSection({
           analysisId={feedback.analysisId}
           target="public"
           initial={feedback.value}
+        />
+      ) : null}
+      {reception.status === 'done' ? (
+        <RefreshReviews
+          generatedAt={reception.generatedAt}
+          // An older reception that failed to update is retried, not refreshed (D-025).
+          available={refresh.available && !(reception.stale && retry.available)}
+          busy={refresh.busy}
+          error={refresh.error}
+          onRefresh={refresh.onRefresh}
         />
       ) : null}
     </Section>
@@ -94,6 +115,7 @@ function PublicBody({
 
   return (
     <>
+      {reception.stale ? <StaleNote reception={reception} failedSteps={failedSteps} /> : null}
       <EvidenceStateNote state={reception.evidenceState} />
       {reception.evidenceConfidence ? (
         <ConfidenceBlock
@@ -152,6 +174,22 @@ function BookTraits({
         </p>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * PERF-3, D-025: building a newer reception failed, so an older one is shown,
+ * labelled with its date and the reason. The failed step can be retried.
+ */
+function StaleNote({ reception, failedSteps }: { reception: Reception; failedSteps: Step[] }) {
+  const codes = [...new Set(failedSteps.map((s) => s.errorCode).filter((c) => c !== null))];
+  const date = reception.generatedAt ? formatDate(reception.generatedAt) : 'an earlier date';
+  return (
+    <Alert tone="info">
+      <strong>Reviews as of {date}.</strong> Updating them failed, so the earlier reception is
+      shown.
+      {codes.map((code) => ` ${codeMessage(code)}`).join('')}
+    </Alert>
   );
 }
 

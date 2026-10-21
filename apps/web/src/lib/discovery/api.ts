@@ -23,7 +23,19 @@ export function scanCover(jpeg: Blob): Promise<ScanResult> {
   );
 }
 
-/** Starts (or joins) the analysis of the confirmed edition (CONTRACT 4.4). */
-export function startAnalysis(editionId: string): Promise<Analysis> {
-  return call(api.POST('/api/v1/analyses', { body: { editionId } }));
+/**
+ * Starts (or joins) the analysis of the confirmed edition (CONTRACT 4.4).
+ * With `refresh`, the public reception is built again even if a fresh one
+ * exists (spec 10 user refresh, D-025); the API limits refreshes per book per
+ * day and answers `429` beyond that.
+ */
+export function startAnalysis(
+  editionId: string,
+  options: { refresh?: boolean } = {},
+): Promise<Analysis> {
+  return call(
+    api.POST('/api/v1/analyses', {
+      body: options.refresh ? { editionId, refresh: true } : { editionId },
+    }),
+  );
 }
