@@ -9,8 +9,8 @@ import { RateLimiter } from '../redis/rate-limiter';
 /**
  * Delete my data (spec 12, SEC-3, D-022): removes everything the reader
  * created (taste-profile versions with their ratings and answers, rating
- * imports, analyses with their personal matches and steps, feedback and the
- * reading list) and starts onboarding again. The account itself stays, as do
+ * imports, analyses with their personal matches and steps, feedback, the
+ * reading list and the user-study participation) and starts onboarding again. The account itself stays, as do
  * the scan and refresh counters (documented exceptions in D-022), so limits
  * cannot be reset by deleting data. Shared catalog rows and public review
  * summaries belong to no reader and stay.
@@ -48,6 +48,7 @@ export class MyDataService {
     // ratings, preferences, import rows, explanation rows).
     const counts = await this.prisma.$transaction([
       this.prisma.feedback.deleteMany({ where: { userId } }),
+      this.prisma.studyParticipant.deleteMany({ where: { userId } }),
       this.prisma.readingListItem.deleteMany({ where: { userId } }),
       this.prisma.personalAnalysis.deleteMany({ where: { userId } }),
       this.prisma.analysis.deleteMany({ where: { userId } }),
@@ -60,11 +61,11 @@ export class MyDataService {
       }),
     ]);
     // Counts only: no titles, ratings or other personal data in the log.
-    const [feedback, readingList, personal, analyses, imports, versions] = counts
-      .slice(0, 6)
+    const [feedback, study, readingList, personal, analyses, imports, versions] = counts
+      .slice(0, 7)
       .map((c) => (c as { count: number }).count);
     this.logger.log(
-      `Deleted reader data: ${versions} profile versions, ${imports} imports, ${analyses} analyses, ${personal} personal matches, ${feedback} feedback, ${readingList} reading-list items`,
+      `Deleted reader data: ${versions} profile versions, ${imports} imports, ${analyses} analyses, ${personal} personal matches, ${feedback} feedback, ${readingList} reading-list items, ${study} study participations`,
     );
   }
 }

@@ -468,3 +468,25 @@ Not covered:
 Consequences:
 - Frontend follow-up (FE): label a `stale` reception with its date, and offer a "refresh reviews" action that sends `refresh: true` and handles `429`.
 - BE-11: measure cold p50 and p95 with the parallel steps, the cache hit rate, and the model calls saved by reusing outputs.
+
+## D-027 User study (FE-10)
+Status: **DECIDED** (the outline approved by the owner for both roles on 2026-10-22: join a study, five books held out on the server, the model's and B0's predictions next to the reader's ratings, a report over all participants; the details below follow it; numbers are configurable)
+Date: 2026-10-22
+Affects: FE-10, BE-13, BE-16; spec 9 (user study), SEC-1, SEC-3; CONTRACT 4.6
+Context: spec 9 asks for a user study: each reader rates at least 15 books, five are held out, the app predicts them, and the result is compared with B0 on the held-out ratings, with intervals and the real number of readers. No endpoint could do this: held-out books chosen in the browser would reach the taste profile, the API only returned the shipped model's score, and nothing stored the results.
+Decision:
+- **Ratings:** the study uses the ratings the reader already has (import or quick rate, FE-2), so there is nothing new to fill in. A reader joins with at least `STUDY_MIN_RATED_BOOKS` (15) rated books in the current taste profile.
+- **Held-out books:** `STUDY_HELD_OUT_BOOKS` (5), chosen at random **among the rated books the learned model knows**, because B0 and the learned model have nothing to say about a book outside the release, and the study is meant to test the learned model. The choice is a shuffle by the SHA-256 of the participant id and the book, so it is random for the reader and reproducible from the stored rows.
+- **Predictions:** for each held-out book, the live scorer (D-024) scores it from the reader's profile **without the held-out books** (`excludeEditionIds`), so their ratings never reach the model, and B0 scores it as the shrunk item mean. With 10 or more remaining ratings the shipped model predicts. Its confidence comes from the same rule as the live match (D-024): it is `low` when fewer than 10 of the remaining books are known to the model.
+- **Storage:** `study_participants` (one per reader, with the taste-profile version and consent time) and `study_predictions` (book, actual rating, model and B0 scores with their model versions, confidence), migration `user_study`. Everything is fixed when the reader joins. Leaving (`DELETE /study`) and delete-my-data (SEC-3) remove it.
+- **API:** CONTRACT 4.6. `GET /study` says whether the reader can join and why not (`too_few_ratings`, `too_few_known_books`, `no_model`); `POST /study` with `consent: true` joins (`409` when not eligible); `DELETE /study` leaves.
+- **Report:** `pnpm eval study` reads every participation and writes `eval/results/study/` (`results.json`, `report.md`) with the offline evaluation's own metrics: per-reader Spearman and MAE, the mean over readers with a 95% percentile bootstrap that resamples readers (seed in `eval/params.toml` `[study]`), and the model minus B0 as a paired difference. It also reports spec 9's share of Accurate against Not for me feedback on live personal matches, with a Wilson interval. Below 30 readers the report says so, and that no strong claim follows.
+- **Consent:** the screen asks before joining and says the ratings of the held-out books and the predictions are used, without name or email, in the project's results; the report holds numbers only.
+Not covered:
+- With five held-out books per reader, one reader's Spearman rests on five pairs; the interval over readers carries that uncertainty, and NDCG@10 is not reported (it needs more books per reader).
+- Readers are whoever the owner invites, not a random sample; the report says how many took part.
+- Holding out only known books measures the learned model on books it knows; books outside the release use the fallbacks of D-024, which the study does not measure.
+Consequences:
+- FE-10 builds the study screen against CONTRACT 4.6.
+- BE-16 takes the study table from `eval/results/study/report.md` once readers have taken part.
+- Adding `study.py` changes the harness checksum, so the next `pnpm eval` run (the final run of D-023) records a new one.

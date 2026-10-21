@@ -16,6 +16,7 @@ const REMOVED = [
   'Every analysis in your history, with its personal match',
   'Your Accurate / Not for me feedback',
   'Your reading list',
+  'Your part in the user study, with its predictions',
 ];
 const KEPT = [
   'Your account: email, password and display name, so you stay signed in',
@@ -64,6 +65,20 @@ export function Settings() {
           className="self-start text-label-lg text-secondary underline underline-offset-4"
         >
           Edit your taste profile
+        </Link>
+      </div>
+
+      <div className="flex flex-col gap-3 rounded-md border border-outline-variant bg-surface-container-lowest p-5 sm:p-6">
+        <h2 className="font-serif text-headline-sm text-on-surface">User study</h2>
+        <p className="text-body-md text-on-surface-variant">
+          See how well Bookie predicts books you have already rated: some are hidden from the model,
+          and its predictions are shown next to your own ratings.
+        </p>
+        <Link
+          href="/study"
+          className="self-start text-label-lg text-secondary underline underline-offset-4"
+        >
+          Take part in the user study
         </Link>
       </div>
 
@@ -150,8 +165,8 @@ function DeleteMyData() {
               onChange={(e) => setConfirmed(e.target.checked)}
               className="mt-1 size-4 accent-error"
             />
-            I understand that my ratings, history, feedback and reading list will be deleted for
-            good.
+            I understand that my ratings, history, feedback, reading list and study results will be
+            deleted for good.
           </label>
           <div className="flex flex-col items-start gap-3">
             <button

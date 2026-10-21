@@ -1,0 +1,25 @@
+{
+  "endpoint": "DELETE /api/v1/study",
+  "outcomes": {
+    "left": {
+      "status": 204,
+      "body": null
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    }
+  }
+}

@@ -4605,6 +4605,246 @@
         ],
         "type": "string"
       },
+      "Study": {
+        "additionalProperties": false,
+        "properties": {
+          "heldOut": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "baseline": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "modelId": {
+                      "enum": [
+                        "B0"
+                      ],
+                      "type": "string"
+                    },
+                    "score": {
+                      "maximum": 5,
+                      "minimum": 1,
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "score",
+                    "modelId"
+                  ],
+                  "type": "object"
+                },
+                "edition": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "author": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "coverUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "editionId": {
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "type": "string"
+                    },
+                    "format": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "language": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "publisher": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "subtitle": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "year": {
+                      "maximum": 9007199254740991,
+                      "minimum": -9007199254740991,
+                      "nullable": true,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "editionId",
+                    "title",
+                    "subtitle",
+                    "author",
+                    "year",
+                    "language",
+                    "publisher",
+                    "format",
+                    "coverUrl"
+                  ],
+                  "type": "object"
+                },
+                "prediction": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "confidence": {
+                      "enum": [
+                        "low",
+                        "medium",
+                        "high"
+                      ],
+                      "type": "string"
+                    },
+                    "modelId": {
+                      "enum": [
+                        "B0",
+                        "B1",
+                        "B2",
+                        "B3",
+                        "B4"
+                      ],
+                      "type": "string"
+                    },
+                    "score": {
+                      "maximum": 5,
+                      "minimum": 1,
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "score",
+                    "modelId",
+                    "confidence"
+                  ],
+                  "type": "object"
+                },
+                "yourRating": {
+                  "maximum": 5,
+                  "minimum": 1,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "edition",
+                "yourRating",
+                "prediction",
+                "baseline"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "ineligibleReason": {
+            "enum": [
+              "too_few_ratings",
+              "too_few_known_books",
+              "no_model"
+            ],
+            "nullable": true,
+            "type": "string"
+          },
+          "joinedAt": {
+            "format": "date-time",
+            "nullable": true,
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "type": "string"
+          },
+          "knownCount": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "modelVersion": {
+            "nullable": true,
+            "type": "string"
+          },
+          "ratedCount": {
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "requirements": {
+            "additionalProperties": false,
+            "properties": {
+              "heldOutBooks": {
+                "maximum": 9007199254740991,
+                "minimum": 1,
+                "type": "integer"
+              },
+              "minRatedBooks": {
+                "maximum": 9007199254740991,
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "minRatedBooks",
+              "heldOutBooks"
+            ],
+            "type": "object"
+          },
+          "scale": {
+            "additionalProperties": false,
+            "properties": {
+              "max": {
+                "enum": [
+                  5
+                ],
+                "type": "number"
+              },
+              "min": {
+                "enum": [
+                  1
+                ],
+                "type": "number"
+              }
+            },
+            "required": [
+              "min",
+              "max"
+            ],
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "not_eligible",
+              "eligible",
+              "joined"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "ineligibleReason",
+          "requirements",
+          "ratedCount",
+          "knownCount",
+          "joinedAt",
+          "modelVersion",
+          "scale",
+          "heldOut"
+        ],
+        "type": "object"
+      },
+      "StudyJoin": {
+        "properties": {
+          "consent": {
+            "enum": [
+              true
+            ],
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "consent"
+        ],
+        "type": "object"
+      },
       "TasteProfile": {
         "additionalProperties": false,
         "properties": {
@@ -6505,6 +6745,128 @@
         },
         "tags": [
           "discovery"
+        ]
+      }
+    },
+    "/api/v1/study": {
+      "delete": {
+        "operationId": "StudyController_leave",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Left the study; its predictions are deleted"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          }
+        },
+        "tags": [
+          "study"
+        ]
+      },
+      "get": {
+        "operationId": "StudyController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Study"
+                }
+              }
+            },
+            "description": "Whether the reader can join, or their held-out books with the predictions"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          }
+        },
+        "tags": [
+          "study"
+        ]
+      },
+      "post": {
+        "operationId": "StudyController_join",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudyJoin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Study"
+                }
+              }
+            },
+            "description": "Already joined"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Study"
+                }
+              }
+            },
+            "description": "Joined; the predictions are made"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "CONFLICT"
+          }
+        },
+        "tags": [
+          "study"
         ]
       }
     },

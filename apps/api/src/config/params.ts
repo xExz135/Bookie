@@ -176,6 +176,17 @@ export const PARAMS = {
     description: 'Rated books needed for a confident personal match.',
     source: 'Spec 6, D-008',
   },
+  STUDY_MIN_RATED_BOOKS: {
+    schema: int(15),
+    description: 'Rated books a reader needs to join the user study (spec 9: at least 15).',
+    source: 'Spec 9, D-027',
+  },
+  STUDY_HELD_OUT_BOOKS: {
+    schema: int(5),
+    description:
+      'Rated books held out from the model and predicted in the user study (spec 9: five). Chosen among the books the learned model knows.',
+    source: 'Spec 9, D-027',
+  },
   TASTE_HARD_FLOOR: {
     schema: int(3),
     description: 'Below this many rated books, no personal match is shown (MODEL-4).',

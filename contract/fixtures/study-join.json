@@ -1,0 +1,314 @@
+{
+  "endpoint": "POST /api/v1/study",
+  "outcomes": {
+    "joined": {
+      "status": 201,
+      "schema": "Study",
+      "body": {
+        "status": "joined",
+        "ineligibleReason": null,
+        "requirements": {
+          "minRatedBooks": 15,
+          "heldOutBooks": 5
+        },
+        "ratedCount": 18,
+        "knownCount": 14,
+        "joinedAt": "2026-10-22T09:00:00.000Z",
+        "modelVersion": "2026-10-21.6533ea0e",
+        "scale": {
+          "min": 1,
+          "max": 5
+        },
+        "heldOut": [
+          {
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "yourRating": 5,
+            "prediction": {
+              "score": 4.31,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 4.21,
+              "modelId": "B0"
+            }
+          },
+          {
+            "edition": {
+              "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+              "title": "Divergent",
+              "subtitle": null,
+              "author": "Veronica Roth",
+              "year": 2011,
+              "language": "en",
+              "publisher": "Katherine Tegen Books",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1328559506m/13335037.jpg"
+            },
+            "yourRating": 4,
+            "prediction": {
+              "score": 3.88,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 3.95,
+              "modelId": "B0"
+            }
+          },
+          {
+            "edition": {
+              "editionId": "0cd80021-63a8-5050-a0f2-aa25725c9417",
+              "title": "Ender's Game",
+              "subtitle": null,
+              "author": "Orson Scott Card",
+              "year": 1985,
+              "language": "en",
+              "publisher": "Tor",
+              "format": "Paperback",
+              "coverUrl": null
+            },
+            "yourRating": 2,
+            "prediction": {
+              "score": 3.12,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 3.86,
+              "modelId": "B0"
+            }
+          },
+          {
+            "edition": {
+              "editionId": "79be2d25-b411-5bb6-b28c-4e05a69375fe",
+              "title": "The Maze Runner",
+              "subtitle": null,
+              "author": "James Dashner",
+              "year": 2009,
+              "language": "en",
+              "publisher": "Delacorte Press",
+              "format": "Hardcover",
+              "coverUrl": null
+            },
+            "yourRating": 4,
+            "prediction": {
+              "score": 4.05,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 4.12,
+              "modelId": "B0"
+            }
+          },
+          {
+            "edition": {
+              "editionId": "6b1f0c2a-3d4e-4f5a-8b6c-7d8e9f0a1b2c",
+              "title": "Harry Potter and the Sorcerer's Stone",
+              "subtitle": null,
+              "author": "J.K. Rowling",
+              "year": 1997,
+              "language": "en",
+              "publisher": "Scholastic Inc",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1474154022m/3.jpg"
+            },
+            "yourRating": 3,
+            "prediction": {
+              "score": 3.47,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 3.74,
+              "modelId": "B0"
+            }
+          }
+        ]
+      }
+    },
+    "alreadyJoined": {
+      "status": 200,
+      "schema": "Study",
+      "body": {
+        "status": "joined",
+        "ineligibleReason": null,
+        "requirements": {
+          "minRatedBooks": 15,
+          "heldOutBooks": 5
+        },
+        "ratedCount": 18,
+        "knownCount": 14,
+        "joinedAt": "2026-10-22T09:00:00.000Z",
+        "modelVersion": "2026-10-21.6533ea0e",
+        "scale": {
+          "min": 1,
+          "max": 5
+        },
+        "heldOut": [
+          {
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "yourRating": 5,
+            "prediction": {
+              "score": 4.31,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 4.21,
+              "modelId": "B0"
+            }
+          },
+          {
+            "edition": {
+              "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+              "title": "Divergent",
+              "subtitle": null,
+              "author": "Veronica Roth",
+              "year": 2011,
+              "language": "en",
+              "publisher": "Katherine Tegen Books",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1328559506m/13335037.jpg"
+            },
+            "yourRating": 4,
+            "prediction": {
+              "score": 3.88,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 3.95,
+              "modelId": "B0"
+            }
+          },
+          {
+            "edition": {
+              "editionId": "0cd80021-63a8-5050-a0f2-aa25725c9417",
+              "title": "Ender's Game",
+              "subtitle": null,
+              "author": "Orson Scott Card",
+              "year": 1985,
+              "language": "en",
+              "publisher": "Tor",
+              "format": "Paperback",
+              "coverUrl": null
+            },
+            "yourRating": 2,
+            "prediction": {
+              "score": 3.12,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 3.86,
+              "modelId": "B0"
+            }
+          },
+          {
+            "edition": {
+              "editionId": "79be2d25-b411-5bb6-b28c-4e05a69375fe",
+              "title": "The Maze Runner",
+              "subtitle": null,
+              "author": "James Dashner",
+              "year": 2009,
+              "language": "en",
+              "publisher": "Delacorte Press",
+              "format": "Hardcover",
+              "coverUrl": null
+            },
+            "yourRating": 4,
+            "prediction": {
+              "score": 4.05,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 4.12,
+              "modelId": "B0"
+            }
+          },
+          {
+            "edition": {
+              "editionId": "6b1f0c2a-3d4e-4f5a-8b6c-7d8e9f0a1b2c",
+              "title": "Harry Potter and the Sorcerer's Stone",
+              "subtitle": null,
+              "author": "J.K. Rowling",
+              "year": 1997,
+              "language": "en",
+              "publisher": "Scholastic Inc",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1474154022m/3.jpg"
+            },
+            "yourRating": 3,
+            "prediction": {
+              "score": 3.47,
+              "modelId": "B3",
+              "confidence": "medium"
+            },
+            "baseline": {
+              "score": 3.74,
+              "modelId": "B0"
+            }
+          }
+        ]
+      }
+    },
+    "noConsent": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "consent": "Agree to take part to join the study."
+        }
+      }
+    },
+    "notEligible": {
+      "status": 409,
+      "body": {
+        "code": "CONFLICT",
+        "message": "This action conflicts with the current state.",
+        "retryable": false
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    }
+  }
+}

@@ -14,6 +14,11 @@ export interface PersonalScoreInput {
   tasteProfileVersionId: string;
   /** The book's public analysis, whose traits B1 and the explanations read. */
   publicAnalysisId: string | null;
+  /**
+   * Rated books left out of the profile, as if the reader had not rated them:
+   * the user study's held-out books (spec 9, D-027). The analysis never sets it.
+   */
+  excludeEditionIds?: string[];
 }
 
 export interface PersonalScore {

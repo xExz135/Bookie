@@ -264,9 +264,30 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
 - `a` and `b` are full `Analysis` objects, the same as `GET /analyses/:id`. `traitDifferences` lists only the book traits whose values differ (compared as sets); an empty list on one side means that side's trait is unknown. Traits unknown on both sides are not listed.
 
 *Delete my data* (SEC-3, D-022)
-- Removes the reader's taste-profile versions with their ratings and questionnaire answers, rating imports, analyses with their steps and personal matches, feedback and the reading list. `onboardingState` becomes `pending`.
+- Removes the reader's taste-profile versions with their ratings and questionnaire answers, rating imports, analyses with their steps and personal matches, feedback, the reading list and the user-study participation (4.6). `onboardingState` becomes `pending`.
 - Kept on purpose: the account (email, password, display name, sessions) and the scan and refresh counters, so limits cannot be reset by deleting data. Shared catalog rows and public review summaries belong to no reader.
 - Ask for the password again before calling. After `204`, reload the reader (`GET /me`) and treat every cached result as gone.
+
+### 4.6 User study
+
+**Status: agreed 2026-10-22** (D-027; the outline approved by the owner for both roles). Built for FE-10. Shapes are in `contract/openapi.json` (`Study`, `StudyJoin`); examples of every outcome are in `contract/fixtures/` (`study-get`, `study-join`, `study-leave`).
+
+| Method and path | Request | Response | Errors |
+|---|---|---|---|
+| `GET /study` | none | `Study`: whether the reader can join, and once joined their held-out books with the predictions | none beyond auth |
+| `POST /study` | `{ consent: true }` | `201 Study` joined (the predictions are made now), or `200` with the same body when the reader had already joined | `400` without consent (`fields.consent`), `409` not eligible (see `ineligibleReason` from `GET /study`) |
+| `DELETE /study` | none | `204`: left the study; the held-out books and predictions are deleted. Also `204` when the reader had not joined | none beyond auth |
+
+**`Study`**: `status` (`not_eligible`, `eligible`, `joined`), `ineligibleReason` (`too_few_ratings`, `too_few_known_books`, `no_model`, or null), `requirements` (`minRatedBooks`, `heldOutBooks`), `ratedCount`, `knownCount`, `joinedAt`, `modelVersion`, `scale` (`{ min: 1, max: 5 }`) and `heldOut`: `[{ edition, yourRating, prediction: { score, modelId, confidence }, baseline: { score, modelId: "B0" } }]`.
+
+**Meaning rules the frontend relies on.** The `Study` schema checks the starred rules (★) in code.
+- Spec 9: a reader with at least `requirements.minRatedBooks` rated books joins; `requirements.heldOutBooks` of them are held out at random, **only among the books the learned model knows** (`knownCount`), and the shipped model predicts each from the reader's other ratings. The held-out ratings never reach the model. `baseline` is B0, the book's average rating, which the model is compared against.
+- ★ `ineligibleReason` is set exactly when `status` is `not_eligible`: `too_few_ratings` (rate more books: `ratedCount` of `minRatedBooks`), `too_few_known_books` (fewer than `heldOutBooks` of the rated books are known to the model: rate more popular books), `no_model` (no model is loaded). Show what is needed; do not offer to join.
+- ★ `joinedAt`, `modelVersion` and `heldOut` are set exactly when `status` is `joined`; `heldOut` is in the order to show.
+- Everything is fixed when the reader joins: later rating changes do not alter it. To start again, `DELETE /study`, then join again (a new random choice).
+- Show each held-out book with the reader's own rating, the prediction and B0 side by side, each on the 1 to 5 scale. The prediction is not a probability of enjoyment, and is not combined with anything into one number (D-010); `prediction.confidence` is shown as a level. No percentages.
+- Ask for consent before calling `POST /study`, saying that the reader's ratings of the held-out books and the predictions are used, without their name or email, in the project's results, and that leaving deletes them.
+- Delete my data (4.5) also removes the participation.
 
 ## 5. Frontend rules that depend on this contract
 - Render what the API returns. Never compute match, confidence, staleness or ordering.
@@ -294,3 +315,4 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
 | 2026-10-21 | 4.5 wording (FE-6): feedback buttons show on a section whose status is `done`, which is what the API checks; `feedback` holds the saved choice and is null before one is made, so it cannot decide whether to show them. No shape or behavior change. Proposed by frontend; approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-21 | BE-9 (D-025): `POST /analyses` takes an optional `refresh` (spec 10 user refresh, limited per reader and book per day, `429` when used up); `publicReception.stale` in `Analysis` and `AnalysisSummary` marks an older reception shown because building a newer one failed (PERF-3), and such an analysis is `partial`. New fixture outcomes `analyses-get.json` → `stalePublicReception` and `analyses-start.json` → `refreshLimit`. Approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-22 | 4.4: `isFallback` wording: B0 or B1 produced the score for a cold start **or a book the learned model does not know** (D-024: B0 and B1 also score books outside the release). Wording only, no shape change; `openapi.json` has no description for the field, so it is unchanged. Approved by the owner for both roles on 2026-10-22 | n/a |
+| 2026-10-22 | 4.6 added (FE-10, D-027): `GET /study`, `POST /study` (`{ consent: true }`, `409` when not eligible) and `DELETE /study`, with the `Study` and `StudyJoin` shapes and fixtures `study-get`, `study-join`, `study-leave`. Delete my data (4.5) also removes the study participation. Approved by the owner for both roles on 2026-10-22 | n/a |

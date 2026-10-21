@@ -117,8 +117,10 @@ export class TasteModelScorer implements PersonalScorer {
     const profile = (
       await this.prisma.$queryRawUnsafe<Array<{ edition_id: string; rating: number }>>(
         `SELECT edition_id, rating FROM profile_ratings
-          WHERE taste_profile_version_id = $1::uuid ORDER BY edition_id`,
+          WHERE taste_profile_version_id = $1::uuid AND NOT (edition_id = ANY($2::uuid[]))
+          ORDER BY edition_id`,
         input.tasteProfileVersionId,
+        input.excludeEditionIds ?? [],
       )
     ).map((r) => ({ editionId: r.edition_id, rating: Number(r.rating) }));
     const answers = await this.answers(input.tasteProfileVersionId);
@@ -207,6 +209,39 @@ export class TasteModelScorer implements PersonalScorer {
       similarBooks: this.similarBooks(model, profile, sims, embeddings, input.editionId),
       traitFits: this.traitFits(p, answers, traits),
     };
+  }
+
+  /**
+   * The books among `editionIds` that the release's learned model knows, or
+   * null when no release is loaded (user study, D-027).
+   */
+  async knownBooks(editionIds: string[]): Promise<Set<string> | null> {
+    const release = await this.release();
+    if (!release) return null;
+    const rows = await this.prisma.$queryRawUnsafe<Array<{ edition_id: string }>>(
+      `SELECT edition_id FROM model_item_stats
+        WHERE model_version_id = $1::uuid AND edition_id = ANY($2::uuid[])`,
+      release.rowId.B3,
+      editionIds,
+    );
+    return new Set(rows.map((r) => r.edition_id));
+  }
+
+  /**
+   * B0's score for a book (the shrunk item mean, as in the offline evaluation):
+   * the baseline the user study compares against (spec 9). Null when no
+   * release is loaded.
+   */
+  async baseline(editionId: string): Promise<{ modelVersionId: string; score: number } | null> {
+    const release = await this.release();
+    if (!release) return null;
+    const [row] = await this.prisma.$queryRawUnsafe<Array<{ item_bias: number }>>(
+      `SELECT item_bias FROM model_item_stats WHERE model_version_id = $1::uuid AND edition_id = $2::uuid`,
+      release.rowId.B3,
+      editionId,
+    );
+    const score = scoreB0(release.parameters, row ? Number(row.item_bias) : undefined);
+    return { modelVersionId: release.rowId.B0, score: Math.round(score * 100) / 100 };
   }
 
   /** Evidence confidence of the personal match, in code (spec 4, D-024). */

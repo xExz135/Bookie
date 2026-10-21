@@ -96,6 +96,7 @@ pnpm eval                # offline evaluation of B0 to B4: one command reproduce
 pnpm eval:test           # harness tests on synthetic data (CI)
 pnpm eval export         # run, then export the models as a release in data/derived/models/ (D-024)
 pnpm eval parity         # rewrite the Python/TypeScript parity fixture (D-006)
+pnpm eval study          # the user study report from the database to eval/results/study/ (D-027)
 pnpm --filter @bookie/api models:load   # load the newest release into the database and ship its model
 ```
 

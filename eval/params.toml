@@ -32,6 +32,12 @@ learning_curve = [5, 10, 20, 40]
 # Calibration bins on the 1 to 5 scale.
 calibration_bin_width = 0.5
 
+[study]
+# The user study report (spec 9, FE-10, D-027) uses the metric settings above and its own
+# bootstrap seed. Held-out books per reader and the minimum rated books are API settings
+# (STUDY_HELD_OUT_BOOKS, STUDY_MIN_RATED_BOOKS).
+seed = 20261022
+
 [models.baseline]
 # Shrinkage of item and reader averages toward the global mean (B0, B3 baselines).
 # Common defaults for rating data; not tuned.

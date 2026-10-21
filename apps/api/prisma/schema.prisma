@@ -241,6 +241,7 @@ model User {
   feedback             Feedback[]
   readingListItems     ReadingListItem[]
   refreshRequests      RefreshRequest[]
+  studyParticipation   StudyParticipant?
 
   @@map("users")
 }
@@ -303,14 +304,15 @@ model TasteProfileVersion {
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  ratings          ProfileRating[]
-  genrePreferences ProfileGenrePreference[]
-  themeAvoidances  ProfileThemeAvoidance[]
-  tasteVectors     TasteVector[]
-  analyses         Analysis[]
-  personalAnalyses PersonalAnalysis[]
-  feedback         Feedback[]
-  createdByImport  RatingImport?
+  ratings           ProfileRating[]
+  genrePreferences  ProfileGenrePreference[]
+  themeAvoidances   ProfileThemeAvoidance[]
+  tasteVectors      TasteVector[]
+  analyses          Analysis[]
+  personalAnalyses  PersonalAnalysis[]
+  feedback          Feedback[]
+  createdByImport   RatingImport?
+  studyParticipants StudyParticipant[]
 
   @@unique([userId, versionNo])
   @@map("taste_profile_versions")
@@ -485,6 +487,7 @@ model Edition {
   publicBuilds     PublicAnalysisBuild[]
   modelNeighbours  ModelItemNeighbour[]  @relation("neighbourOf")
   modelNeighboured ModelItemNeighbour[]  @relation("neighbour")
+  studyPredictions StudyPrediction[]
 
   @@index([workId])
   @@index([isbn13])
@@ -834,6 +837,8 @@ model ModelVersion {
   tasteVectors     TasteVector[]
   feedback         Feedback[]
   itemStats        ModelItemStat[]
+  studyPredictions StudyPrediction[]    @relation("studyModel")
+  studyBaselines   StudyPrediction[]    @relation("studyBaseline")
   neighbours       ModelItemNeighbour[]
 
   @@unique([modelId, version])
@@ -1004,4 +1009,51 @@ model RefreshRequest {
 
   @@index([userId, editionId, requestedAt])
   @@map("refresh_requests")
+}
+
+// =====================================================================
+// User study - spec 9, FE-10, D-027
+// =====================================================================
+
+/// A reader who joined the user study (one participation at a time). Made
+/// once from the taste-profile version in force; later rating changes do not
+/// touch it. Removed by delete-my-data (SEC-3) and when the reader leaves.
+model StudyParticipant {
+  id                    String              @id @default(uuid()) @db.Uuid
+  userId                String              @unique @map("user_id") @db.Uuid
+  tasteProfileVersionId String              @map("taste_profile_version_id") @db.Uuid
+  /// Rated books in that version, including the held-out ones.
+  ratedCount            Int                 @map("rated_count")
+  consentedAt           DateTime            @map("consented_at") @db.Timestamptz(3)
+  createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  user                  User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tasteProfileVersion   TasteProfileVersion @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  predictions           StudyPrediction[]
+
+  @@map("study_participants")
+}
+
+/// One held-out book: the reader's own rating, which the model never saw, the
+/// shipped model's prediction from the other ratings, and B0's (spec 9).
+model StudyPrediction {
+  id                     String           @id @default(uuid()) @db.Uuid
+  participantId          String           @map("participant_id") @db.Uuid
+  editionId              String           @map("edition_id") @db.Uuid
+  /// Order shown, 1 to STUDY_HELD_OUT_BOOKS.
+  position               Int
+  actualRating           Int              @map("actual_rating") @db.SmallInt
+  modelVersionId         String           @map("model_version_id") @db.Uuid
+  /// 1 to 5, rounded to 2 decimals as in the personal match.
+  score                  Decimal          @db.Decimal(3, 2)
+  confidence             ConfidenceLevel
+  baselineModelVersionId String           @map("baseline_model_version_id") @db.Uuid
+  baselineScore          Decimal          @map("baseline_score") @db.Decimal(3, 2)
+  participant            StudyParticipant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  edition                Edition          @relation(fields: [editionId], references: [id])
+  modelVersion           ModelVersion     @relation("studyModel", fields: [modelVersionId], references: [id])
+  baselineModelVersion   ModelVersion     @relation("studyBaseline", fields: [baselineModelVersionId], references: [id])
+
+  @@unique([participantId, editionId])
+  @@unique([participantId, position])
+  @@map("study_predictions")
 }

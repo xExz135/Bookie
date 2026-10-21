@@ -9,6 +9,7 @@ import { HealthController } from './health/health.controller';
 import { MailModule } from './mail/mailer';
 import { ReaderDataModule } from './reader-data/reader-data.module';
 import { RedisModule } from './redis/redis.module';
+import { StudyModule } from './study/study.module';
 import { TasteModule } from './taste/taste.module';
 
 @Module({})
@@ -26,6 +27,7 @@ export class AppModule {
         TasteModule,
         AnalysisModule,
         ReaderDataModule,
+        StudyModule,
       ],
       controllers: [HealthController],
     };

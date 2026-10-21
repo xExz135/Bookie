@@ -436,6 +436,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/study": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["StudyController_get"];
+        put?: never;
+        post: operations["StudyController_join"];
+        delete: operations["StudyController_leave"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/taste-profile": {
         parameters: {
             query?: never;
@@ -1376,6 +1392,58 @@ export interface components {
         StepName: "resolve" | "fetchReviews" | "selectReviews" | "extractTraits" | "publicSummary" | "evidenceConfidence" | "personalMatch" | "finalize";
         /** @enum {string} */
         StepStatus: "pending" | "running" | "done" | "failed" | "skipped";
+        Study: {
+            heldOut: {
+                baseline: {
+                    /** @enum {string} */
+                    modelId: "B0";
+                    score: number;
+                };
+                edition: {
+                    author: string | null;
+                    coverUrl: string | null;
+                    /** Format: uuid */
+                    editionId: string;
+                    format: string | null;
+                    language: string | null;
+                    publisher: string | null;
+                    subtitle: string | null;
+                    title: string;
+                    year: number | null;
+                };
+                prediction: {
+                    /** @enum {string} */
+                    confidence: "low" | "medium" | "high";
+                    /** @enum {string} */
+                    modelId: "B0" | "B1" | "B2" | "B3" | "B4";
+                    score: number;
+                };
+                yourRating: number;
+            }[];
+            /** @enum {string|null} */
+            ineligibleReason: "too_few_ratings" | "too_few_known_books" | "no_model" | null;
+            /** Format: date-time */
+            joinedAt: string | null;
+            knownCount: number;
+            modelVersion: string | null;
+            ratedCount: number;
+            requirements: {
+                heldOutBooks: number;
+                minRatedBooks: number;
+            };
+            scale: {
+                /** @enum {number} */
+                max: 5;
+                /** @enum {number} */
+                min: 1;
+            };
+            /** @enum {string} */
+            status: "not_eligible" | "eligible" | "joined";
+        };
+        StudyJoin: {
+            /** @enum {boolean} */
+            consent: true;
+        };
         TasteProfile: {
             /** Format: date-time */
             createdAt: string | null;
@@ -2849,6 +2917,122 @@ export interface operations {
             };
             /** @description IDENTIFICATION_UNAVAILABLE */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    StudyController_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Whether the reader can join, or their held-out books with the predictions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Study"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    StudyController_join: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StudyJoin"];
+            };
+        };
+        responses: {
+            /** @description Already joined */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Study"];
+                };
+            };
+            /** @description Joined; the predictions are made */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Study"];
+                };
+            };
+            /** @description VALIDATION_FAILED */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description CONFLICT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    StudyController_leave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Left the study; its predictions are deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
