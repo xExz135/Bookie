@@ -641,6 +641,9 @@
                 },
                 "type": "array"
               },
+              "stale": {
+                "type": "boolean"
+              },
               "status": {
                 "enum": [
                   "pending",
@@ -695,6 +698,7 @@
             },
             "required": [
               "status",
+              "stale",
               "evidenceState",
               "summary",
               "praises",
@@ -1053,6 +1057,9 @@
                       "nullable": true,
                       "type": "string"
                     },
+                    "stale": {
+                      "type": "boolean"
+                    },
                     "status": {
                       "enum": [
                         "pending",
@@ -1070,6 +1077,7 @@
                   },
                   "required": [
                     "status",
+                    "stale",
                     "evidenceState",
                     "summary",
                     "evidenceConfidence"
@@ -1368,6 +1376,9 @@
                 "nullable": true,
                 "type": "string"
               },
+              "stale": {
+                "type": "boolean"
+              },
               "status": {
                 "enum": [
                   "pending",
@@ -1385,6 +1396,7 @@
             },
             "required": [
               "status",
+              "stale",
               "evidenceState",
               "summary",
               "evidenceConfidence"
@@ -2402,6 +2414,9 @@
                     },
                     "type": "array"
                   },
+                  "stale": {
+                    "type": "boolean"
+                  },
                   "status": {
                     "enum": [
                       "pending",
@@ -2456,6 +2471,7 @@
                 },
                 "required": [
                   "status",
+                  "stale",
                   "evidenceState",
                   "summary",
                   "praises",
@@ -3183,6 +3199,9 @@
                     },
                     "type": "array"
                   },
+                  "stale": {
+                    "type": "boolean"
+                  },
                   "status": {
                     "enum": [
                       "pending",
@@ -3237,6 +3256,7 @@
                 },
                 "required": [
                   "status",
+                  "stale",
                   "evidenceState",
                   "summary",
                   "praises",
@@ -4552,6 +4572,9 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
             "type": "string"
+          },
+          "refresh": {
+            "type": "boolean"
           }
         },
         "required": [

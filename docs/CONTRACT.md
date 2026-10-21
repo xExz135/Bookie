@@ -155,7 +155,7 @@ Every save (rating, removal, questionnaire, confirmed import) creates a new immu
 
 | Method and path | Request | Response | Errors |
 |---|---|---|---|
-| `POST /analyses` | `{ editionId }` | `201 Analysis` (new), or `200 Analysis` when the reader already has one running for this edition and taste-profile version (joined, not duplicated) | `400`, `404` unknown edition, `429` |
+| `POST /analyses` | `{ editionId, refresh? }` | `201 Analysis` (new), or `200 Analysis` when the reader already has one running for this edition and taste-profile version (joined, not duplicated). With `refresh: true` the public reception is built again even if a fresh one exists (spec 10 user refresh); if that build fails, the older reception is shown as `stale` (PERF-3) | `400`, `404` unknown edition, `429` (also when the reader used today's refreshes of this book, `REFRESH_PER_BOOK_PER_DAY`, with `retryAfterSeconds`) |
 | `GET /analyses/:id` | none | `Analysis` | `404` |
 | `POST /analyses/:id/retry` | `{ steps?: [stepName] }` (all failed steps when left out) | `200 Analysis`, running again. Done steps are never repeated (RES-2) | `400` a step that did not fail, `404`, `409` nothing failed or still running, `429` |
 | `POST /analyses/:id/recalculate` | none | `201 Analysis`: a new analysis for the current taste profile, with `recalculatedFromId`. The old one is unchanged | `404`, `409` already uses the current profile, `429` |
@@ -172,7 +172,7 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
   "edition": { "...Candidate fields": "", "isbn13": "9780439023481", "pageCount": 374, "description": "" },
   "steps": [ { "name": "resolve", "status": "done", "errorCode": null }, "... all eight, in stepName order" ],
   "publicReception": {
-    "status": "done", "evidenceState": "sufficient",
+    "status": "done", "stale": false, "evidenceState": "sufficient",
     "summary": "written verdict, or null",
     "praises":    [ { "text": "", "evidenceIds": ["uuid"] } ],
     "complaints": [ { "text": "", "evidenceIds": ["uuid"] } ],
@@ -198,12 +198,12 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
 }
 ```
 
-**`AnalysisSummary`** (a history row): `id`, `status`, `createdAt`, `finishedAt`, `edition` (a `Candidate`), `publicReception` with `status`, `evidenceState`, `summary` and `evidenceConfidence`, `personalMatch` with `status`, `score`, `scale`, `modelId`, `isFallback`, `evidenceConfidence`, `tasteProfileVersion`, `currentTasteProfileVersion` and `isOutdated`, and `feedback`. No evidence, claims or traits.
+**`AnalysisSummary`** (a history row): `id`, `status`, `createdAt`, `finishedAt`, `edition` (a `Candidate`), `publicReception` with `status`, `stale`, `evidenceState`, `summary` and `evidenceConfidence`, `personalMatch` with `status`, `score`, `scale`, `modelId`, `isFallback`, `evidenceConfidence`, `tasteProfileVersion`, `currentTasteProfileVersion` and `isOutdated`, and `feedback`. No evidence, claims or traits.
 
 **Meaning rules the frontend relies on.** The `Analysis` schema checks the starred rules (★) in code, so the backend's output and the fixtures cannot break them.
 
 *Status and progress*
-- `status`: `running` while any step is pending or running; `complete` when everything that applies is done; `partial` when the public reception is shown with something missing (limited or insufficient evidence, or the personal match failed); `failed` when no public reception can be shown (all sources failed, or a public step failed after its retry).
+- `status`: `running` while any step is pending or running; `complete` when everything that applies is done; `partial` when the public reception is shown with something missing (limited or insufficient evidence, the personal match failed, or an older reception is shown because building a newer one failed); `failed` when no public reception can be shown (all sources failed, or a public step failed after its retry).
 - ★ `pollAfterMs` is set exactly while `running`: poll `GET /analyses/:id` after that long, and stop when it is null. ★ `finishedAt` is set exactly when the analysis is no longer running. Leaving the screen never cancels (RES-1).
 - ★ `steps` always lists all eight steps in `stepName` order, for the progress rail (D-010 point 7). ★ `errorCode` is set exactly on failed steps (an error code from section 2).
 - ★ `canRetry` is true only when a step failed and `POST /analyses/:id/retry` will run it again. Show retry only when it is true.
@@ -215,6 +215,7 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
 - `sources` lists every source asked, with its outcome, so failures are disclosed (spec 11). Show the rating average and count per source, named by `name`; no combined public score (D-010 point 3). `ratingScope = work` means the rating covers every edition of the book: label it so. `providesText = false` marks rating-only sources. `fetchedAt` dates older data (PERF-3).
 - ★ `evidence` holds exactly the items cited by `praises`, `complaints` and both `traits` lists, so every `evidenceIds` entry resolves within the response (RES-5). `number` is the stable "Review #12" label. `excerpt` is untrusted text of at most 1,000 characters: render it as plain text. ★ `excerpt` is null when `displayAllowed` is false; it is also null for `source_aggregate` items, which stand for `reviewCount` reviews. The book description can be cited (`kind = description`, `source = null`).
 - `traits` describe the book (D-015 vocabularies). Empty `values` means unknown, and ★ an unknown trait cites nothing.
+- ★ `stale = true` (PERF-3, D-025): building a newer reception failed (a refresh, or a rebuild after expiry), so an older one is shown. Label it with its date (`generatedAt`), for example "Reviews as of 21 Oct 2026; updating them failed". The failed step has its `errorCode` and `canRetry` is true; the analysis is `partial`, never `failed`. The personal match still runs.
 
 *Personal match*
 - `personalMatch.status = needs_taste_data`: no taste profile yet. Show the invitation to rate books (ONB-2). `score` is null.
@@ -291,3 +292,4 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
 | 2026-10-21 | BE-8: the five 4.4 endpoints are built, so the `analyses-*.json` fixtures lose their `planned` mark. New error code `MODEL_UNAVAILABLE` (503, section 2), used only as the personal step's `errorCode` while no taste model is shipped (D-021); new fixture outcome `analyses-get.json` → `personalUnavailable`. `GET /analyses` ignores a cursor or limit it cannot read instead of returning 400 (no 400 is documented for it). Approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-21 | 4.5 agreed and built (BE-10, D-022): feedback with `409` for sections not generated; reading list items carry `edition`, `analysisId`, `group` and the `AnalysisSummary` personal match, in the order to show; `POST /reading-list` answers `201` or `200`; compare lists only differing traits; delete-my-data keeps the account and the scan and refresh counters, needs the password (`400` when wrong, `429` after too many tries). New enum `readingListGroup` in section 3. Approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-21 | 4.5 wording (FE-6): feedback buttons show on a section whose status is `done`, which is what the API checks; `feedback` holds the saved choice and is null before one is made, so it cannot decide whether to show them. No shape or behavior change. Proposed by frontend; approved by the owner for both roles on 2026-10-21 | n/a |
+| 2026-10-21 | BE-9 (D-025): `POST /analyses` takes an optional `refresh` (spec 10 user refresh, limited per reader and book per day, `429` when used up); `publicReception.stale` in `Analysis` and `AnalysisSummary` marks an older reception shown because building a newer one failed (PERF-3), and such an analysis is `partial`. New fixture outcomes `analyses-get.json` → `stalePublicReception` and `analyses-start.json` → `refreshLimit`. Approved by the owner for both roles on 2026-10-21 | n/a |

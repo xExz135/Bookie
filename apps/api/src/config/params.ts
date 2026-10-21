@@ -408,6 +408,24 @@ export const PARAMS = {
       'Analyses this API process runs at once; the rest wait in order. They run in the background, so leaving the page never cancels one (RES-1).',
     source: 'D-021 (hypothesis)',
   },
+  ANALYSIS_PARALLEL_MODEL_STEPS: {
+    schema: z.stringbool().default(true),
+    description:
+      'Run trait extraction and the public summary at the same time; they read the same evidence and not each other.',
+    source: 'D-025 (blocker 7: cold latency)',
+  },
+  PUBLIC_BUILD_WAIT_POLL_MS: {
+    schema: int(500, 10),
+    description:
+      "How often an analysis waiting for another analysis's build of the same book checks again (PERF-2).",
+    source: 'D-025 (hypothesis)',
+  },
+  PUBLIC_BUILD_CLAIM_TTL_SECONDS: {
+    schema: int(180),
+    description:
+      'A build claim older than this is treated as abandoned (for example the process stopped), so another analysis may build.',
+    source: 'D-025 (hypothesis: longer than a slow cold build)',
+  },
   ANALYSIS_RECOVER_ON_START: {
     schema: z.stringbool().default(true),
     description:

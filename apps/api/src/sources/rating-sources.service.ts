@@ -32,6 +32,19 @@ export interface SourceRating {
   /** When to ask again. Failures expire soon and are retried (spec 10); they never stand for "no ratings". */
   expiresAt: Date;
   durationMs: number;
+  /** True when this answer came from an earlier, still valid fetch rather than the source (PERF-1). */
+  cached?: boolean;
+}
+
+interface CachedRow {
+  key: string;
+  outcome: SourceRatingOutcome;
+  rating_average: string | null;
+  rating_count: number | null;
+  work_level_only: boolean;
+  error_code: string | null;
+  fetched_at: Date;
+  expires_at: Date;
 }
 
 interface SourcePolicy {
@@ -66,16 +79,78 @@ export class RatingSourcesService {
     @Inject(RATING_SOURCES) private readonly adapters: RatingSourceAdapter[],
   ) {}
 
-  /** Null when the edition is not in the catalog. */
-  async lookupEdition(editionId: string): Promise<SourceRating[] | null> {
+  /**
+   * Null when the edition is not in the catalog. With `useCache`, a source's
+   * earlier answer for this edition is reused while it has not expired, so
+   * the source is not asked again (PERF-1, spec 10); a refresh asks every source.
+   */
+  async lookupEdition(
+    editionId: string,
+    options: { useCache?: boolean } = {},
+  ): Promise<SourceRating[] | null> {
     const book = await this.loadBook(editionId);
-    return book ? this.lookup(book) : null;
+    return book ? this.lookup(book, options) : null;
   }
 
-  async lookup(book: BookRef): Promise<SourceRating[]> {
+  async lookup(book: BookRef, options: { useCache?: boolean } = {}): Promise<SourceRating[]> {
     const policies = await this.policies();
     const asked = this.adapters.filter((a) => a.configured && policies.has(a.key));
-    return Promise.all(asked.map((a) => this.ask(a, policies.get(a.key)!, book)));
+    const cached = options.useCache ? await this.cachedAnswers(book.editionId) : new Map();
+    return Promise.all(
+      asked.map((a) => {
+        const policy = policies.get(a.key)!;
+        const hit = policy.storage_allowed ? cached.get(a.key) : undefined;
+        return hit ? this.fromCache(policy, hit, book.editionId) : this.ask(a, policy, book);
+      }),
+    );
+  }
+
+  /** Each source's latest stored answer for the edition that has not expired. */
+  private async cachedAnswers(editionId: string): Promise<Map<string, CachedRow>> {
+    const rows = await this.prisma.$queryRawUnsafe<CachedRow[]>(
+      `SELECT DISTINCT ON (s.key) s.key, f.outcome::text AS outcome, f.rating_average::text AS rating_average,
+              f.rating_count, f.work_level_only, f.error_code, f.fetched_at, f.expires_at
+         FROM review_fetches f JOIN review_sources s ON s.id = f.source_id
+        WHERE f.edition_id = $1::uuid AND f.expires_at > now() AND s.key <> 'goodreads_dataset'
+          AND f.outcome <> 'not_permitted'
+        ORDER BY s.key, f.fetched_at DESC`,
+      editionId,
+    );
+    return new Map(rows.map((r) => [r.key, r]));
+  }
+
+  private fromCache(policy: SourcePolicy, row: CachedRow, editionId: string): SourceRating {
+    const ok = row.outcome === 'ok';
+    const result: SourceRating = {
+      key: policy.key,
+      name: policy.name,
+      providesText: policy.provides_text,
+      storageAllowed: policy.storage_allowed,
+      displayAllowed: policy.display_allowed,
+      outcome: row.outcome,
+      ratingAverage: ok && row.rating_average !== null ? Number(row.rating_average) : null,
+      ratingCount: ok ? row.rating_count : null,
+      ratingScope: ok ? (row.work_level_only ? 'work' : 'edition') : null,
+      externalId: null,
+      matchedBy: null,
+      detail: row.error_code,
+      fetchedAt: row.fetched_at,
+      expiresAt: row.expires_at,
+      durationMs: 0,
+      cached: true,
+    };
+    this.logger.log(
+      JSON.stringify({
+        event: 'source_ratings',
+        source: result.key,
+        editionId,
+        outcome: result.outcome,
+        detail: result.detail,
+        cached: true,
+        durationMs: 0,
+      }),
+    );
+    return result;
   }
 
   /** What the adapters need: title, main authors, ISBNs and any known Open Library work key. */

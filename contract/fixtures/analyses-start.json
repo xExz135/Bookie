@@ -70,6 +70,7 @@
         ],
         "publicReception": {
           "status": "running",
+          "stale": false,
           "evidenceState": null,
           "summary": null,
           "praises": [],
@@ -200,6 +201,7 @@
         ],
         "publicReception": {
           "status": "running",
+          "stale": false,
           "evidenceState": null,
           "summary": null,
           "praises": [],
@@ -303,6 +305,15 @@
         "message": "Too many requests. Try again later.",
         "retryable": true,
         "retryAfterSeconds": 60
+      }
+    },
+    "refreshLimit": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 43200
       }
     }
   }

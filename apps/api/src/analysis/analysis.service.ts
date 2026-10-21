@@ -30,11 +30,15 @@ export class AnalysisService {
   /**
    * Starts an analysis of the edition for the reader's current taste
    * profile, or joins the one already running for the same edition and
-   * profile version (spec 10: duplicates join, never duplicate).
+   * profile version (spec 10: duplicates join, never duplicate). With
+   * `refresh`, the public reception is built again even if a fresh one exists
+   * (spec 10 user refresh), at most REFRESH_PER_BOOK_PER_DAY times per reader
+   * and book (D-025).
    */
   async start(
     userId: string,
     editionId: string,
+    refresh = false,
   ): Promise<{ analysis: Analysis; created: boolean }> {
     await this.checkRate(userId);
     const edition = await this.prisma.edition.findUnique({
@@ -43,7 +47,33 @@ export class AnalysisService {
     });
     if (!edition) throw new ApiError('NOT_FOUND', { message: 'Unknown edition.' });
     const version = await this.currentVersion(userId);
-    return this.create(userId, editionId, version?.id ?? null, null);
+    if (refresh) {
+      const running = await this.prisma.analysis.findFirst({
+        where: { userId, editionId, tasteProfileVersionId: version?.id ?? null, status: 'running' },
+        select: { id: true },
+      });
+      // Joining a running analysis is not a new refresh, so it is not counted.
+      if (!running) await this.countRefresh(userId, editionId);
+    }
+    return this.create(userId, editionId, version?.id ?? null, null, refresh);
+  }
+
+  /** Counts a refresh in the database, so the limit holds without Redis (spec 10). */
+  private async countRefresh(userId: string, editionId: string): Promise<void> {
+    const day = 24 * 3_600_000;
+    const recent = await this.prisma.refreshRequest.findMany({
+      where: { userId, editionId, requestedAt: { gt: new Date(Date.now() - day) } },
+      orderBy: { requestedAt: 'asc' },
+      select: { requestedAt: true },
+    });
+    if (recent.length >= this.config.REFRESH_PER_BOOK_PER_DAY) {
+      const retryAfterSeconds = Math.max(
+        1,
+        Math.ceil((recent[0]!.requestedAt.getTime() + day - Date.now()) / 1000),
+      );
+      throw new ApiError('RATE_LIMITED', { retryAfterSeconds });
+    }
+    await this.prisma.refreshRequest.create({ data: { userId, editionId } });
   }
 
   async get(userId: string, analysisId: string): Promise<Analysis> {
@@ -180,6 +210,7 @@ export class AnalysisService {
     editionId: string,
     tasteProfileVersionId: string | null,
     recalculatedFromId: string | null,
+    refresh = false,
   ): Promise<{ analysis: Analysis; created: boolean }> {
     const running = () =>
       this.prisma.analysis.findFirst({
@@ -197,6 +228,7 @@ export class AnalysisService {
           editionId,
           tasteProfileVersionId,
           recalculatedFromId,
+          refresh,
           steps: { create: STEP_ORDER.map((step) => ({ step })) },
         },
         select: { id: true },

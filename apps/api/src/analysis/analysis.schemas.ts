@@ -96,6 +96,12 @@ const bookTraitSchema = z.object({
 const publicReceptionSchema = z.object({
   /** `skipped` is not used here. */
   status: z.enum(CONTRACT_ENUMS.stepStatus),
+  /**
+   * True when this is an older public reception, shown because building a
+   * newer one failed (PERF-3): `generatedAt` says when it was made, and the
+   * failed step has its `errorCode` and can be retried.
+   */
+  stale: z.boolean(),
   evidenceState: z.enum(CONTRACT_ENUMS.evidenceState).nullable(),
   /** The written verdict; null until done, and always null when evidence is insufficient or unavailable. */
   summary: z.string().nullable(),
@@ -234,6 +240,16 @@ function checkAnalysis(a: AnalysisShape, ctx: z.RefinementCtx): void {
   if (pr.status !== 'done' && (pr.summary !== null || pr.praises.length + pr.complaints.length > 0))
     problem('public reception content only once done');
 
+  // PERF-3: an older reception is shown only because a public step failed, and
+  // then the analysis is partial (the reception is shown with something missing).
+  const publicStepFailed = a.steps.some(
+    (s) => s.status === 'failed' && s.name !== 'personalMatch' && s.name !== 'finalize',
+  );
+  if (pr.stale && (pr.status !== 'done' || !publicStepFailed))
+    problem('stale means a public step failed and the older reception is shown');
+  if (pr.stale && a.status === 'failed')
+    problem('an analysis showing a stale reception is partial');
+
   // MODEL-4 and D-010: a score only when the match is done, on the 1 to 5 scale.
   if ((pm.status === 'done') !== (pm.score !== null))
     problem('score is set exactly when status is done');
@@ -275,6 +291,7 @@ export const analysisSummarySchema = responseSchema(
     edition: candidateSchema,
     publicReception: publicReceptionSchema.pick({
       status: true,
+      stale: true,
       evidenceState: true,
       summary: true,
       evidenceConfidence: true,
@@ -301,7 +318,15 @@ export const analysisListSchema = responseSchema(
 
 export const startAnalysisSchema = requestSchema(
   'StartAnalysis',
-  z.object({ editionId: z.uuid({ error: 'Choose a book first.' }) }),
+  z.object({
+    editionId: z.uuid({ error: 'Choose a book first.' }),
+    /**
+     * Build the public reception again even when a fresh one exists (spec 10
+     * "user refresh"), limited per reader and book per day. If the rebuild
+     * fails, the older reception is shown as `stale` (PERF-3).
+     */
+    refresh: z.boolean().optional(),
+  }),
 );
 
 export const retryAnalysisSchema = requestSchema(

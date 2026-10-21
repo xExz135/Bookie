@@ -583,6 +583,7 @@ export interface components {
                     ratingScope: "edition" | "work" | null;
                     reviewsUsed: number;
                 }[];
+                stale: boolean;
                 /** @enum {string} */
                 status: "pending" | "running" | "done" | "failed" | "skipped";
                 summary: string | null;
@@ -662,6 +663,7 @@ export interface components {
                     } | null;
                     /** @enum {string|null} */
                     evidenceState: "sufficient" | "limited" | "insufficient" | "unavailable" | null;
+                    stale: boolean;
                     /** @enum {string} */
                     status: "pending" | "running" | "done" | "failed" | "skipped";
                     summary: string | null;
@@ -728,6 +730,7 @@ export interface components {
                 } | null;
                 /** @enum {string|null} */
                 evidenceState: "sufficient" | "limited" | "insufficient" | "unavailable" | null;
+                stale: boolean;
                 /** @enum {string} */
                 status: "pending" | "running" | "done" | "failed" | "skipped";
                 summary: string | null;
@@ -937,6 +940,7 @@ export interface components {
                         ratingScope: "edition" | "work" | null;
                         reviewsUsed: number;
                     }[];
+                    stale: boolean;
                     /** @enum {string} */
                     status: "pending" | "running" | "done" | "failed" | "skipped";
                     summary: string | null;
@@ -1083,6 +1087,7 @@ export interface components {
                         ratingScope: "edition" | "work" | null;
                         reviewsUsed: number;
                     }[];
+                    stale: boolean;
                     /** @enum {string} */
                     status: "pending" | "running" | "done" | "failed" | "skipped";
                     summary: string | null;
@@ -1365,6 +1370,7 @@ export interface components {
         StartAnalysis: {
             /** Format: uuid */
             editionId: string;
+            refresh?: boolean;
         };
         /** @enum {string} */
         StepName: "resolve" | "fetchReviews" | "selectReviews" | "extractTraits" | "publicSummary" | "evidenceConfidence" | "personalMatch" | "finalize";

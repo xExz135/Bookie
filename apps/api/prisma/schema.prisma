@@ -482,6 +482,7 @@ model Edition {
   readingListItems ReadingListItem[]
   refreshRequests  RefreshRequest[]
   modelItemStats   ModelItemStat[]
+  publicBuilds     PublicAnalysisBuild[]
   modelNeighbours  ModelItemNeighbour[]  @relation("neighbourOf")
   modelNeighboured ModelItemNeighbour[]  @relation("neighbour")
 
@@ -749,29 +750,45 @@ model TraitEvidence {
 /// in the migration allows only one running analysis per user, edition and
 /// taste-profile version, so duplicate requests join the running one.
 model Analysis {
-  id                    String               @id @default(uuid()) @db.Uuid
-  userId                String               @map("user_id") @db.Uuid
-  editionId             String               @map("edition_id") @db.Uuid
+  id                    String                @id @default(uuid()) @db.Uuid
+  userId                String                @map("user_id") @db.Uuid
+  editionId             String                @map("edition_id") @db.Uuid
   /// Version in force when requested; null when the reader has none.
-  tasteProfileVersionId String?              @map("taste_profile_version_id") @db.Uuid
-  publicAnalysisId      String?              @map("public_analysis_id") @db.Uuid
-  status                AnalysisStatus       @default(running)
-  recalculatedFromId    String?              @map("recalculated_from_id") @db.Uuid
-  createdAt             DateTime             @default(now()) @map("created_at") @db.Timestamptz(3)
+  tasteProfileVersionId String?               @map("taste_profile_version_id") @db.Uuid
+  publicAnalysisId      String?               @map("public_analysis_id") @db.Uuid
+  status                AnalysisStatus        @default(running)
+  recalculatedFromId    String?               @map("recalculated_from_id") @db.Uuid
+  /// The reader asked to build the public reception again (spec 10 user refresh, D-025).
+  refresh               Boolean               @default(false)
+  createdAt             DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
   /// Set exactly when status leaves `running` (CHECK in migration).
-  finishedAt            DateTime?            @map("finished_at") @db.Timestamptz(3)
-  user                  User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
-  edition               Edition              @relation(fields: [editionId], references: [id])
-  tasteProfileVersion   TasteProfileVersion? @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
-  publicAnalysis        PublicAnalysis?      @relation(fields: [publicAnalysisId], references: [id])
-  recalculatedFrom      Analysis?            @relation("Recalculation", fields: [recalculatedFromId], references: [id], onDelete: SetNull)
-  recalculations        Analysis[]           @relation("Recalculation")
+  finishedAt            DateTime?             @map("finished_at") @db.Timestamptz(3)
+  user                  User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  edition               Edition               @relation(fields: [editionId], references: [id])
+  tasteProfileVersion   TasteProfileVersion?  @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  publicAnalysis        PublicAnalysis?       @relation(fields: [publicAnalysisId], references: [id])
+  recalculatedFrom      Analysis?             @relation("Recalculation", fields: [recalculatedFromId], references: [id], onDelete: SetNull)
+  recalculations        Analysis[]            @relation("Recalculation")
   steps                 AnalysisStep[]
   personalAnalysis      PersonalAnalysis?
   feedback              Feedback[]
+  publicBuilds          PublicAnalysisBuild[]
 
   @@index([userId, createdAt])
   @@map("analyses")
+}
+
+/// Who is building an edition's public reception right now (PERF-2, D-025).
+/// Other analyses of the book wait and reuse the result; a claim older than
+/// PUBLIC_BUILD_CLAIM_TTL_SECONDS is treated as abandoned.
+model PublicAnalysisBuild {
+  editionId  String   @id @map("edition_id") @db.Uuid
+  analysisId String   @map("analysis_id") @db.Uuid
+  claimedAt  DateTime @default(now()) @map("claimed_at") @db.Timestamptz(3)
+  edition    Edition  @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  analysis   Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+
+  @@map("public_analysis_builds")
 }
 
 /// Per-step status, visible in the API (RES-2). Retries rerun only failed steps.

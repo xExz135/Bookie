@@ -71,6 +71,7 @@
           ],
           "publicReception": {
             "status": "done",
+            "stale": false,
             "evidenceState": "sufficient",
             "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
             "praises": [
@@ -398,6 +399,7 @@
           ],
           "publicReception": {
             "status": "done",
+            "stale": false,
             "evidenceState": "sufficient",
             "summary": "Readers describe a fast, tense survival story that is hard to put down, carried by a guarded, practical narrator. Many read it as a sharp comment on cruelty staged as entertainment. The main complaints are a love triangle that slows the second half, plain present-tense prose, and violence involving children that some found hard to read.",
             "praises": [

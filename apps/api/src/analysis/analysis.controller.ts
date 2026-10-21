@@ -29,10 +29,14 @@ export class AnalysisController {
   @ApiErrors('VALIDATION_FAILED', ...AUTH_ERRORS, 'NOT_FOUND', 'RATE_LIMITED')
   async start(
     @CurrentUser() user: AuthUser,
-    @Body(new ZodBodyPipe(startAnalysisSchema)) body: { editionId: string },
+    @Body(new ZodBodyPipe(startAnalysisSchema)) body: { editionId: string; refresh?: boolean },
     @Res({ passthrough: true }) res: Response,
   ): Promise<Analysis> {
-    const { analysis, created } = await this.analyses.start(user.id, body.editionId);
+    const { analysis, created } = await this.analyses.start(
+      user.id,
+      body.editionId,
+      body.refresh ?? false,
+    );
     res.status(created ? 201 : 200);
     return analysis;
   }

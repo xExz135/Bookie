@@ -17,6 +17,7 @@ import { selectionOptions } from '../representation/representation-config';
 import {
   DESCRIPTION_EVIDENCE,
   type ExtractedTraits,
+  TRAIT_PROMPT_VERSION,
   TraitExtractionError,
   extractTraits,
 } from '../representation/traits';
@@ -36,7 +37,7 @@ import {
   type TraitsOutput,
 } from './analysis.types';
 import { evidenceStateOf, publicConfidence } from './evidence-confidence';
-import { SummaryError, generateSummary } from './public-summary';
+import { SUMMARY_PROMPT_VERSION, SummaryError, generateSummary } from './public-summary';
 import { PERSONAL_SCORER, type PersonalScorer } from './personal-scorer';
 
 export const ANALYSIS_LLM = Symbol('ANALYSIS_LLM');
@@ -58,9 +59,15 @@ interface Context {
   editionId: string;
   tasteProfileVersionId: string | null;
   publicAnalysisId: string | null;
+  /** The reader asked for a new public build (spec 10 user refresh). */
+  refresh: boolean;
+  createdAt: Date;
   edition: EditionInfo;
   outputs: Outputs;
 }
+
+/** The public steps that build a public analysis (after `resolve`). */
+const BUILD_STEPS: readonly StepName[] = PUBLIC_STEPS.slice(1);
 
 const HOUR = 3_600_000;
 
@@ -102,6 +109,19 @@ export class AnalysisPipeline {
       const byName = new Map(steps.map((s) => [s.step as StepName, s]));
       const next = STEP_ORDER.find((name) => byName.get(name)?.status === 'pending');
       if (!next) return;
+      // Traits and the summary read the same evidence and not each other: run them
+      // together, which roughly halves the model time of a cold analysis (blocker 7).
+      if (
+        next === 'extractTraits' &&
+        this.config.ANALYSIS_PARALLEL_MODEL_STEPS &&
+        byName.get('publicSummary')?.status === 'pending'
+      ) {
+        await Promise.all([
+          this.runStep(analysisId, 'extractTraits'),
+          this.runStep(analysisId, 'publicSummary'),
+        ]);
+        continue;
+      }
       await this.runStep(analysisId, next);
     }
   }
@@ -141,9 +161,17 @@ export class AnalysisPipeline {
       if (errorCode && name !== 'finalize') {
         // What needs this step cannot run: public steps after it and the
         // personal match. `finalize` still runs to set the overall status.
+        // PERF-3: when an older public analysis of the book exists, it is shown
+        // (marked stale) and the personal match can still run on it.
+        const stale = PUBLIC_STEPS.includes(name)
+          ? await this.staleFallback(tx, analysisId)
+          : false;
         const blocked = PUBLIC_STEPS.includes(name)
-          ? [...STEP_ORDER.slice(STEP_ORDER.indexOf(name) + 1, -1)]
+          ? STEP_ORDER.slice(STEP_ORDER.indexOf(name) + 1, -1).filter(
+              (s) => !(stale && s === 'personalMatch'),
+            )
           : [];
+        if (PUBLIC_STEPS.includes(name)) await this.releaseBuild(tx, analysisId);
         if (blocked.length > 0) {
           await tx.analysisStep.updateMany({
             where: { analysisId, step: { in: blocked }, status: 'pending' },
@@ -215,6 +243,8 @@ export class AnalysisPipeline {
       editionId: analysis.editionId,
       tasteProfileVersionId: analysis.tasteProfileVersionId,
       publicAnalysisId: analysis.publicAnalysisId,
+      refresh: analysis.refresh,
+      createdAt: analysis.createdAt,
       edition: { ...edition, authors: edition.authors ?? [] },
       outputs,
     };
@@ -231,14 +261,89 @@ export class AnalysisPipeline {
     finalize: (ctx) => this.finalize(ctx),
   };
 
-  /** Reuses a fresh public analysis of this edition (spec 10), so no source or model is asked again. */
+  /**
+   * Reuses a fresh public analysis of this edition (spec 10, PERF-1), so no
+   * source or model is asked again. Otherwise one analysis claims the build
+   * and every other analysis of the book waits for it and reuses the result
+   * (PERF-2, D-025). A refresh only reuses a build made after it was asked.
+   */
   private async resolve(ctx: Context): Promise<ResolveOutput> {
-    const fresh = await this.prisma.publicAnalysis.findFirst({
-      where: { editionId: ctx.editionId, expiresAt: { gt: new Date() } },
+    const started = Date.now();
+    const reusable = () =>
+      this.prisma.publicAnalysis.findFirst({
+        where: {
+          editionId: ctx.editionId,
+          ...(ctx.refresh
+            ? { generatedAt: { gte: ctx.createdAt } }
+            : { expiresAt: { gt: new Date() } }),
+        },
+        orderBy: { reviewsVersion: 'desc' },
+        select: { id: true },
+      });
+    for (;;) {
+      const fresh = await reusable();
+      if (fresh) return this.reuse(ctx, fresh.id, Date.now() - started);
+      if (await this.claimBuild(ctx)) {
+        // The build may have finished between the check and the claim.
+        const justBuilt = await reusable();
+        if (!justBuilt) return { reusedPublicAnalysisId: null, waitedMs: Date.now() - started };
+        await this.prisma.publicAnalysisBuild.deleteMany({ where: { analysisId: ctx.analysisId } });
+        return this.reuse(ctx, justBuilt.id, Date.now() - started);
+      }
+      await new Promise((resolve) => setTimeout(resolve, this.config.PUBLIC_BUILD_WAIT_POLL_MS));
+    }
+  }
+
+  /**
+   * Claims the build of this edition's public analysis. A claim held by this
+   * analysis (a resumed run) or older than PUBLIC_BUILD_CLAIM_TTL_SECONDS (an
+   * abandoned one) is taken over.
+   */
+  private async claimBuild(ctx: Context): Promise<boolean> {
+    const rows = await this.prisma.$queryRawUnsafe<Array<{ analysis_id: string }>>(
+      `INSERT INTO public_analysis_builds (edition_id, analysis_id, claimed_at)
+       VALUES ($1::uuid, $2::uuid, now())
+       ON CONFLICT (edition_id) DO UPDATE SET analysis_id = EXCLUDED.analysis_id, claimed_at = now()
+         WHERE public_analysis_builds.analysis_id = EXCLUDED.analysis_id
+            OR public_analysis_builds.claimed_at < now() - make_interval(secs => $3)
+       RETURNING analysis_id`,
+      ctx.editionId,
+      ctx.analysisId,
+      this.config.PUBLIC_BUILD_CLAIM_TTL_SECONDS,
+    );
+    return rows.length === 1;
+  }
+
+  private async releaseBuild(tx: Prisma.TransactionClient, analysisId: string): Promise<void> {
+    await tx.publicAnalysisBuild.deleteMany({ where: { analysisId } });
+  }
+
+  /**
+   * PERF-3: a public step failed. When the book has an older public analysis
+   * and this analysis has none, it is shown instead, marked stale with its date.
+   */
+  private async staleFallback(tx: Prisma.TransactionClient, analysisId: string): Promise<boolean> {
+    const analysis = await tx.analysis.findUniqueOrThrow({
+      where: { id: analysisId },
+      select: { editionId: true, publicAnalysisId: true },
+    });
+    if (analysis.publicAnalysisId) return true;
+    const older = await tx.publicAnalysis.findFirst({
+      where: { editionId: analysis.editionId },
       orderBy: { reviewsVersion: 'desc' },
       select: { id: true },
     });
-    if (!fresh) return { reusedPublicAnalysisId: null };
+    if (!older) return false;
+    await tx.analysis.update({ where: { id: analysisId }, data: { publicAnalysisId: older.id } });
+    return true;
+  }
+
+  private async reuse(
+    ctx: Context,
+    publicAnalysisId: string,
+    waitedMs: number,
+  ): Promise<ResolveOutput> {
+    const fresh = { id: publicAnalysisId };
     await this.prisma.$transaction([
       this.prisma.analysis.update({
         where: { id: ctx.analysisId },
@@ -253,7 +358,7 @@ export class AnalysisPipeline {
         data: { status: 'done', output: { reused: true }, finishedAt: new Date(), durationMs: 0 },
       }),
     ]);
-    return { reusedPublicAnalysisId: fresh.id };
+    return { reusedPublicAnalysisId: fresh.id, waitedMs };
   }
 
   /**
@@ -265,7 +370,9 @@ export class AnalysisPipeline {
     const sources: StoredSource[] = [];
     const dataset = await this.datasetSource(ctx.editionId);
     if (dataset) sources.push(dataset);
-    const live = (await this.ratingSources.lookupEdition(ctx.editionId)) ?? [];
+    // PERF-1: a source's still-valid earlier answer is reused; a refresh asks again.
+    const live =
+      (await this.ratingSources.lookupEdition(ctx.editionId, { useCache: !ctx.refresh })) ?? [];
     for (const r of live) {
       sources.push({
         key: r.key,
@@ -387,7 +494,50 @@ export class AnalysisPipeline {
     };
   }
 
+  /**
+   * The output of an earlier build of this book's public analysis for the
+   * same step, when it read exactly the same evidence with the same model and
+   * prompt: asking the model again would cost a call for the same input (D-025).
+   */
+  private async earlierOutput<T extends { model: string | null; promptVersion: string | null }>(
+    ctx: Context,
+    step: 'extractTraits' | 'publicSummary',
+    model: string,
+    promptVersion: string,
+  ): Promise<(T & { reusedFrom: string }) | null> {
+    const selection = ctx.outputs.selectReviews as SelectOutput;
+    const rows = await this.prisma.$queryRawUnsafe<
+      Array<{ analysis_id: string; selected: unknown; output: T }>
+    >(
+      `SELECT a.id AS analysis_id, sel.output -> 'selected' AS selected, st.output
+         FROM analyses a
+         JOIN analysis_steps sel ON sel.analysis_id = a.id AND sel.step = 'selectReviews' AND sel.status = 'done'
+         JOIN analysis_steps st ON st.analysis_id = a.id AND st.step = $2::step_name AND st.status = 'done'
+        WHERE a.edition_id = $1::uuid AND a.id <> $3::uuid
+          AND NOT (sel.output ? 'reused') AND NOT (st.output ? 'reused')
+          AND st.output ->> 'model' = $4 AND st.output ->> 'promptVersion' = $5
+        ORDER BY st.finished_at DESC LIMIT 5`,
+      ctx.editionId,
+      step,
+      ctx.analysisId,
+      model,
+      promptVersion,
+    );
+    const same = JSON.stringify(selection.selected);
+    const match = rows.find((r) => JSON.stringify(r.selected) === same);
+    if (!match) return null;
+    const { reusedFrom: _earlier, ...output } = match.output as T & { reusedFrom?: string };
+    return { ...(output as T), reusedFrom: match.analysis_id };
+  }
+
   private async extractTraits(ctx: Context): Promise<TraitsOutput> {
+    const earlier = await this.earlierOutput<TraitsOutput>(
+      ctx,
+      'extractTraits',
+      this.config.GEMINI_TRAIT_MODEL,
+      TRAIT_PROMPT_VERSION,
+    );
+    if (earlier) return earlier;
     const reviews = await this.reviewTexts(ctx.outputs.selectReviews as SelectOutput);
     if (reviews.length === 0 && !ctx.edition.description) {
       return { traits: null, model: null, promptVersion: null };
@@ -408,6 +558,13 @@ export class AnalysisPipeline {
     if (selection.evidenceState === 'insufficient' || selection.selected.length === 0) {
       return { summary: null, model: null, promptVersion: null };
     }
+    const earlier = await this.earlierOutput<SummaryOutput>(
+      ctx,
+      'publicSummary',
+      this.config.GEMINI_SUMMARY_MODEL,
+      SUMMARY_PROMPT_VERSION,
+    );
+    if (earlier) return earlier;
     const reviews = await this.reviewTexts(selection);
     const result = await generateSummary(this.llm, this.config.GEMINI_SUMMARY_MODEL, {
       title: ctx.edition.title,
@@ -572,6 +729,8 @@ export class AnalysisPipeline {
           where: { id: ctx.analysisId },
           data: { publicAnalysisId: pa.id },
         });
+        // Waiting analyses of this book can now reuse it (PERF-2).
+        await this.releaseBuild(tx, ctx.analysisId);
         return pa.id;
       },
       { timeout: 30_000 },
@@ -651,16 +810,22 @@ export class AnalysisPipeline {
       });
       evidenceState = pa?.evidenceState ?? null;
     }
+    // PERF-3: with an older reception shown, the analysis is partial, not failed.
     const result = PUBLIC_STEPS.some((s) => status(s) === 'failed')
-      ? 'failed'
+      ? ctx.publicAnalysisId
+        ? 'partial'
+        : 'failed'
       : evidenceState === 'limited' ||
           evidenceState === 'insufficient' ||
           status('personalMatch') === 'failed'
         ? 'partial'
         : 'complete';
-    await this.prisma.analysis.update({
-      where: { id: ctx.analysisId },
-      data: { status: result, finishedAt: new Date() },
+    await this.prisma.$transaction(async (tx) => {
+      await tx.analysis.update({
+        where: { id: ctx.analysisId },
+        data: { status: result, finishedAt: new Date() },
+      });
+      await this.releaseBuild(tx, ctx.analysisId);
     });
     return { status: result };
   }

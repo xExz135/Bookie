@@ -70,6 +70,7 @@
         ],
         "publicReception": {
           "status": "running",
+          "stale": false,
           "evidenceState": null,
           "summary": null,
           "praises": [],

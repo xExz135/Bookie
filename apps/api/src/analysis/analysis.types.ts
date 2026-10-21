@@ -48,6 +48,8 @@ export interface StoredSource {
 export interface ResolveOutput {
   /** A fresh public analysis of this edition was reused (spec 10); the public steps did not run. */
   reusedPublicAnalysisId: string | null;
+  /** Time spent waiting for another analysis's build of the same book (PERF-2). */
+  waitedMs?: number;
 }
 
 export interface FetchOutput {
@@ -67,6 +69,8 @@ export interface TraitsOutput {
   traits: ExtractedTraits | null;
   model: string | null;
   promptVersion: string | null;
+  /** The analysis whose output was reused because the evidence was the same (D-025). */
+  reusedFrom?: string;
 }
 
 export interface SummaryOutput {
@@ -74,6 +78,8 @@ export interface SummaryOutput {
   summary: PublicSummary | null;
   model: string | null;
   promptVersion: string | null;
+  /** The analysis whose output was reused because the evidence was the same (D-025). */
+  reusedFrom?: string;
 }
 
 export interface ConfidenceOutput {

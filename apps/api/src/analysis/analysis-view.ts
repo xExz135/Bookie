@@ -159,6 +159,7 @@ export class AnalysisView {
       edition: candidate,
       publicReception: {
         status: pr.status,
+        stale: pr.stale,
         evidenceState: pr.evidenceState,
         summary: pr.summary,
         evidenceConfidence: pr.evidenceConfidence,
@@ -308,6 +309,9 @@ export class AnalysisView {
           : 'running';
 
     if (done) return this.savedReception(publicAnalysisId!);
+    // PERF-3: building a newer one failed, so the older one is shown with its date.
+    if (failed && publicAnalysisId !== null)
+      return { ...(await this.savedReception(publicAnalysisId)), stale: true };
 
     // Not saved yet: show what the steps have found so far, so failures are disclosed (spec 11).
     const fetched = output<FetchOutput>('fetchReviews');
@@ -315,6 +319,7 @@ export class AnalysisView {
     const sourcesFailed = stepStatus('fetchReviews') === 'failed';
     return {
       status,
+      stale: false,
       evidenceState: sourcesFailed ? 'unavailable' : (selection?.evidenceState ?? null),
       summary: null,
       praises: [],
@@ -423,6 +428,7 @@ export class AnalysisView {
     });
     return {
       status: 'done',
+      stale: false,
       evidenceState: pa.evidenceState,
       summary: pa.summary,
       praises: pa.claims.filter((c) => c.kind === 'praise').map(claim),
