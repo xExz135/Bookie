@@ -1,0 +1,6 @@
+{
+  "endpoint": "POST /api/v1/auth/logout",
+  "outcomes": {
+    "success": { "status": 204, "clearsRefreshCookie": true, "body": null }
+  }
+}

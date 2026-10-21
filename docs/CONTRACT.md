@@ -83,7 +83,18 @@
 | `POST /auth/refresh` | cookie | `{ accessToken, expiresInSeconds }` plus a new refresh cookie. The old refresh token is revoked (rotation on every use). |
 | `POST /auth/logout` | cookie | `204` |
 | `POST /auth/forgot-password` | `{ email }` | `202`, identical for known and unknown emails |
-| `POST /auth/reset-password` | `{ token, newPassword }` | `204`. All existing sessions become invalid. |
+| `POST /auth/reset-password` | `{ token, newPassword }` | `204`. All existing sessions become invalid, including access tokens already issued. An invalid, used or expired link returns `400 VALIDATION_FAILED` with `fields.token`. |
+
+`User` = `{ id, email, displayName, onboardingState }`, where `onboardingState` is `pending`, `skipped` or `completed`.
+
+**Session rules the frontend relies on (BE-3)**
+- The refresh cookie is `bookie_refresh`: `HttpOnly`, `Secure`, `SameSite=Lax`, `Path=/api/v1/auth`. JavaScript never sees it. Send auth requests with `credentials: 'include'`.
+- Refresh tokens rotate on every use, so a refresh token works once. Run one refresh at a time (share the in-flight request between tabs or calls); a second, parallel refresh with the same cookie gets `401 UNAUTHENTICATED`.
+- On page load there is no access token in memory: call `POST /auth/refresh`, then `GET /me` for the user.
+- `401 TOKEN_EXPIRED` means refresh once and retry. `401 UNAUTHENTICATED` means go to login.
+- `POST /auth/forgot-password` returns `202` with no body for every email.
+- The reset email links to `{WEB_ORIGIN}/reset-password#token=<token>`. The token is in the URL fragment, which browsers never send to a server. The page reads it and posts it to `POST /auth/reset-password`. The link expires after 30 minutes by default and works once.
+- Register, login and forgot-password are throttled per IP and per email (default 10 per 15 minutes each) and return `429 RATE_LIMITED` with `retryAfterSeconds`.
 
 ### 4.2 Taste capture
 
@@ -176,6 +187,7 @@
 | `POST /reading-list` | `{ editionId }` | `201` |
 | `DELETE /reading-list/:editionId` | none | `204` |
 | `GET /compare?a=&b=` | analysis ids | `{ a: Analysis, b: Analysis, traitDifferences: [{ trait, a, b }] }` for the same reader |
+| `GET /me` | none | `User`: the signed-in reader only (SEC-1) |
 | `DELETE /me/data` | `{ password }` | `204`. Removes profile versions, ratings, analyses and feedback. |
 
 ## 5. Frontend rules that depend on this contract
@@ -195,3 +207,4 @@
 | 2026-10-20 | Initial draft | n/a |
 | 2026-10-20 | BE-1: added `INTERNAL_ERROR` (500), the `/health` exception and the generation rule. Proposed by backend; frontend to approve | n/a |
 | 2026-10-20 | v0.2: auth per D-001 (register signs in, `EMAIL_IN_USE`, refresh rotation); questionnaire fields per D-011 and `GET /questionnaire/options`; display rules per D-010 | n/a |
+| 2026-10-21 | BE-3: added `GET /me`, the `User` shape, session rules (cookie attributes, one refresh at a time, reset-link format) and `400` for an invalid reset link. Fixtures for every auth outcome in `contract/fixtures/`. Proposed by backend; frontend to approve | n/a |

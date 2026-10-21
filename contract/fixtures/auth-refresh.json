@@ -1,0 +1,18 @@
+{
+  "endpoint": "POST /api/v1/auth/refresh",
+  "outcomes": {
+    "success": {
+      "status": 200,
+      "schema": "AccessToken",
+      "setsRefreshCookie": true,
+      "body": {
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzZjJiOGMxZSJ9.fixture-signature",
+        "expiresInSeconds": 900
+      }
+    },
+    "noValidRefreshCookie": {
+      "status": 401,
+      "body": { "code": "UNAUTHENTICATED", "message": "Please sign in.", "retryable": false }
+    }
+  }
+}

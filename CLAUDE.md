@@ -66,7 +66,7 @@ Work on **one work package** per session (IDs like FE-4, BE-8 in `docs/STATUS.md
 
 ## Repository layout
 ```
-apps/api/            NestJS backend (BE-1 foundations done)
+apps/api/            NestJS backend
 apps/web/            Next.js frontend (not started)
 eval/                Python evaluation harness, labeled sets, results (not started)
 contract/            openapi.json (generated, never edited by hand) and fixtures/
@@ -92,6 +92,8 @@ pnpm eval                # (planned, BE-14) one command reproduces every reporte
 
 ## Technical notes
 - NestJS 12 is ESM-only. The API compiles to CommonJS and relies on Node's `require(esm)`; Jest runs with `--experimental-vm-modules` for the same reason. TypeScript is pinned to 5.9 because TypeScript 7 does not yet work with ts-jest and ts-node.
+- Authentication (D-001, D-016): every route needs an access token unless marked `@Public()`, which only the auth and health controllers may use. Get the reader with `@CurrentUser()` and scope every query to them (SEC-1).
+- Request and response shapes are zod schemas registered in `src/openapi/contract-schemas.ts`; the same schema validates and is published in `openapi.json`. Add a fixture in `contract/fixtures/` for every outcome of a new endpoint, or the fixture test fails.
 - Settings and tunable parameters live in `apps/api/src/config/params.ts`, each with its default and source. `.env.example` is generated from it.
 - Enums and error codes in `apps/api/src/contract/` are tested against `docs/CONTRACT.md` sections 2 and 3. Change both together.
-- Database: Prisma 7 (D-012). Schema and migrations in `apps/api/prisma/`. Tests rebuild a separate `bookie_test` database on every run, so `docker compose up -d` must be running for `pnpm test`.
+- Database: Prisma 7 (D-012). Schema and migrations in `apps/api/prisma/`. Tests rebuild a separate `bookie_test` database on every run, and the auth tests use Redis, so `docker compose up -d` must be running for `pnpm test`.

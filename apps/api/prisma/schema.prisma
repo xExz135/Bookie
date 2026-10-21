@@ -226,6 +226,8 @@ model User {
   passwordHash    String          @map("password_hash")
   displayName     String          @map("display_name")
   onboardingState OnboardingState @default(pending) @map("onboarding_state")
+  /// Incremented by a password reset; access tokens with an older value are rejected.
+  tokenVersion    Int             @default(0) @map("token_version")
   createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt       DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
 
@@ -812,11 +814,11 @@ model ModelVersion {
 /// names the model, size and text recipe so different vectors never mix.
 /// Cosine HNSW index added in the embedding_dimensions migration.
 model BookEmbedding {
-  editionId      String                @map("edition_id") @db.Uuid
-  embeddingModel String                @map("embedding_model")
+  editionId      String                     @map("edition_id") @db.Uuid
+  embeddingModel String                     @map("embedding_model")
   embedding      Unsupported("vector(768)")
-  createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
-  edition        Edition               @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  createdAt      DateTime                   @default(now()) @map("created_at") @db.Timestamptz(3)
+  edition        Edition                    @relation(fields: [editionId], references: [id], onDelete: Cascade)
 
   @@id([editionId, embeddingModel])
   @@map("book_embeddings")
@@ -824,12 +826,12 @@ model BookEmbedding {
 
 /// A reader's taste vector for one profile version and model version (B2).
 model TasteVector {
-  tasteProfileVersionId String                @map("taste_profile_version_id") @db.Uuid
-  modelVersionId        String                @map("model_version_id") @db.Uuid
+  tasteProfileVersionId String                     @map("taste_profile_version_id") @db.Uuid
+  modelVersionId        String                     @map("model_version_id") @db.Uuid
   embedding             Unsupported("vector(768)")
-  createdAt             DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
-  tasteProfileVersion   TasteProfileVersion   @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
-  modelVersion          ModelVersion          @relation(fields: [modelVersionId], references: [id])
+  createdAt             DateTime                   @default(now()) @map("created_at") @db.Timestamptz(3)
+  tasteProfileVersion   TasteProfileVersion        @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
+  modelVersion          ModelVersion               @relation(fields: [modelVersionId], references: [id])
 
   @@id([tasteProfileVersionId, modelVersionId])
   @@map("taste_vectors")

@@ -116,6 +116,43 @@ export const PARAMS = {
     description: 'Maximum password length.',
     source: 'D-001',
   },
+  AUTH_DISPLAY_NAME_MAX_LENGTH: {
+    schema: int(50, 10),
+    description: 'Longest display name accepted at registration.',
+    source: 'BE-3',
+  },
+  AUTH_COOKIE_SECURE: {
+    schema: z.stringbool().default(true),
+    description:
+      'Send the refresh cookie with the Secure flag. Browsers accept Secure cookies on http://localhost, so keep this true.',
+    source: 'D-001',
+  },
+  AUTH_ARGON2_MEMORY_KIB: {
+    schema: int(19_456, 1024),
+    description: 'argon2id memory cost in KiB.',
+    source: 'D-001, OWASP Password Storage Cheat Sheet',
+  },
+  AUTH_ARGON2_ITERATIONS: {
+    schema: int(2),
+    description: 'argon2id time cost (iterations).',
+    source: 'D-001, OWASP Password Storage Cheat Sheet',
+  },
+  AUTH_ARGON2_PARALLELISM: {
+    schema: int(1),
+    description: 'argon2id parallelism.',
+    source: 'D-001, OWASP Password Storage Cheat Sheet',
+  },
+  TRUST_PROXY: {
+    schema: z.stringbool().default(false),
+    description:
+      "Trust the first proxy's X-Forwarded-For header for the client IP (per-IP throttling). Turn on only behind a reverse proxy.",
+    source: 'BE-3',
+  },
+  REDIS_KEY_PREFIX: {
+    schema: z.string().min(1).default('bookie:'),
+    description: 'Prefix for every Redis key, so several environments can share one Redis.',
+    source: 'BE-3',
+  },
   RATE_LIMIT_AUTH_MAX: {
     schema: int(10),
     description:

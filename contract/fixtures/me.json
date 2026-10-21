@@ -1,0 +1,23 @@
+{
+  "endpoint": "GET /api/v1/me",
+  "outcomes": {
+    "success": {
+      "status": 200,
+      "schema": "User",
+      "body": {
+        "id": "3f2b8c1e-5d4a-4e7b-9c1d-2a6f8e0b7c45",
+        "email": "ada@example.com",
+        "displayName": "Ada",
+        "onboardingState": "pending"
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": { "code": "UNAUTHENTICATED", "message": "Please sign in.", "retryable": false }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": { "code": "TOKEN_EXPIRED", "message": "Your session expired.", "retryable": false }
+    }
+  }
+}

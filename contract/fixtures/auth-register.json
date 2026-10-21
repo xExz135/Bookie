@@ -1,0 +1,46 @@
+{
+  "endpoint": "POST /api/v1/auth/register",
+  "outcomes": {
+    "success": {
+      "status": 201,
+      "schema": "AuthSession",
+      "setsRefreshCookie": true,
+      "body": {
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzZjJiOGMxZSJ9.fixture-signature",
+        "expiresInSeconds": 900,
+        "user": {
+          "id": "3f2b8c1e-5d4a-4e7b-9c1d-2a6f8e0b7c45",
+          "email": "ada@example.com",
+          "displayName": "Ada",
+          "onboardingState": "pending"
+        }
+      }
+    },
+    "emailInUse": {
+      "status": 409,
+      "body": {
+        "code": "EMAIL_IN_USE",
+        "message": "An account with this email already exists.",
+        "retryable": false
+      }
+    },
+    "validationFailed": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": { "email": "Enter a valid email.", "password": "Use at least 10 characters." }
+      }
+    },
+    "rateLimited": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 840
+      }
+    }
+  }
+}

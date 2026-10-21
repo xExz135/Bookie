@@ -277,3 +277,20 @@ Decision:
 Consequences:
 - On the free tier, embedding is slow: roughly 15 to 20 books a minute. Embedding the 5,000-book sample takes hours, and the whole catalog is not practical. BE-14 should embed only the books its evaluation needs, or the owner can choose a paid plan.
 - Traits are stored with a public analysis by the pipeline (BE-8). Until then, `traits:sample` writes results to `data/derived/` (git-ignored) for review and the H2 comparison.
+
+## D-016 Authentication implementation details
+Status: **DECIDED** (backend role, BE-3; within the scope fixed by D-001)
+Date: 2026-10-21
+Affects: FE-1, BE-3, BE-6, BE-7, BE-8, BE-10; CONTRACT 4.1
+Context: D-001 fixed what authentication does. These are the choices made while building it.
+Decision:
+- **Access tokens** are HS256 JWTs signed with `AUTH_TOKEN_SECRET`, holding only the user id, a token version, and issue and expiry times. Only this exact header is accepted, so a token cannot pick another algorithm.
+- **Ending sessions on password reset:** users get a `token_version` column (new migration). A reset raises it, and the guard rejects access tokens that carry an older value. Every earlier session therefore ends at once instead of up to 15 minutes later, which the contract asks for. The guard reads the user row on each request; that also cuts off deleted users at once.
+- **Every route is closed by default (SEC-2):** a global guard needs a valid access token unless the route is marked `@Public()`. A test fails if `@Public()` appears outside the auth and health controllers, and another calls every documented operation without a token and expects `401`.
+- **Throttling** uses fixed windows in Redis, counted per action, per IP and per email. Email keys are hashed, so Redis never holds an address. If Redis is down, counting continues in the API process's memory (spec 10: continue without the cache layer) instead of letting every request through. The same limiter will serve scans and analyses.
+- **Reset links** put the token in the URL fragment (`/reset-password#token=...`), which browsers never send to a server or in a Referer header. Requesting a reset sends the email in the background, so response time does not reveal whether the email has an account. A successful reset also voids the account's other unused links.
+- **Login timing:** an unknown email still costs one argon2id check against a dummy hash, so it takes as long as a wrong password.
+- **`GET /me`** was added so the frontend can load the user after a page reload (refresh, then `/me`). Proposed in CONTRACT 4.5; frontend to approve.
+- **Refresh races:** with rotation and no token families (D-001), two parallel refreshes with the same cookie cannot both succeed. The frontend runs one refresh at a time (CONTRACT 4.1).
+- **Accepted risk:** per-email login throttling means someone who knows a reader's email can keep that reader from logging in for up to one window (default 15 minutes) by sending wrong passwords. This is the trade-off of throttling without lockout or CAPTCHA, and fits a portfolio deployment.
+- **Behind a reverse proxy**, set `TRUST_PROXY=true` so per-IP throttling sees the real client address.
