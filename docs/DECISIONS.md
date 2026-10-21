@@ -446,7 +446,7 @@ Measured (2026-10-21, dev database, release `2026-10-21.6533ea0e` from the inter
 Consequences:
 - After the final evaluation (D-023), `pnpm eval export` and `models:load` serve the new release; the shipped model may change from B3 to B4.
 - Results that failed with `MODEL_UNAVAILABLE` before a release existed now have `canRetry: true`. The frontend still hides retry for that code (FE-5); a frontend follow-up should offer it when `canRetry` is true.
-- CONTRACT 4.4 says `isFallback` means "B0 or B1 produced it (cold start)"; B0 and B1 now also score books outside the release. Proposed wording for both roles: "B0 or B1 produced it (cold start, or a book the learned model does not know)". No shape change.
+- CONTRACT 4.4 says `isFallback` means "B0 or B1 produced it (cold start)"; B0 and B1 now also score books outside the release. Proposed wording for both roles: "B0 or B1 produced it (cold start, or a book the learned model does not know)". No shape change. **Approved by the owner for both roles on 2026-10-22**; CONTRACT 4.4 changed.
 
 ## D-025 Caching, shared builds, refresh and older data (BE-9)
 Status: **DECIDED** (backend role, BE-9; the `refresh` request field and `publicReception.stale` approved by the owner for both roles on 2026-10-21; timings are configurable hypotheses)

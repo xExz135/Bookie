@@ -166,9 +166,10 @@ function MatchResult({
 
       {match.isFallback && match.modelId ? (
         <Alert tone="info">
+          {/* CONTRACT 4.4: a cold start or a book the learned model does not know; the reasons say which. */}
           <strong>Low confidence.</strong> This score comes from a simpler fallback model,{' '}
-          {match.modelId} ({MODEL_NAMES[match.modelId]}), because you have not yet rated enough
-          books for the learned model.
+          {match.modelId} ({MODEL_NAMES[match.modelId]}), instead of the learned model. The reasons
+          are listed under its confidence below.
         </Alert>
       ) : null}
 

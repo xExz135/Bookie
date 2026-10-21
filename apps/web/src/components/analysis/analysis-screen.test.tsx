@@ -414,12 +414,14 @@ describe('Three separate signals', () => {
     renderScreen();
     const personal = within(await screen.findByRole('region', { name: 'Your personal match' }));
     expect(personal.getByText('3.6')).toBeVisible();
-    expect(personal.getByText(/This score comes from a simpler fallback model/)).toHaveTextContent(
-      'B1 (questionnaire and trait match)',
-    );
-    expect(
-      personal.getByText('Evidence confidence (your ratings)').parentElement,
-    ).toHaveTextContent('Low');
+    const notice = personal.getByText(/This score comes from a simpler fallback model/);
+    expect(notice).toHaveTextContent('B1 (questionnaire and trait match)');
+    // CONTRACT 4.4: a fallback is a cold start or a book the learned model does not know, so the
+    // screen does not guess which; the API's reasons say it.
+    expect(notice).not.toHaveTextContent('rated enough');
+    const confidence = personal.getByText('Evidence confidence (your ratings)').parentElement!;
+    expect(confidence).toHaveTextContent('Low');
+    expect(personal.getByText(/Scored by questionnaire and trait match \(B1\)/)).toBeVisible();
   });
 
   it('ONB-4: an outdated result names both taste-profile versions and recalculates into a new analysis', async () => {
