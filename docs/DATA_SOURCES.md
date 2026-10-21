@@ -25,6 +25,7 @@ Complete this **before** building any adapter or storing any source's content (B
 Notes for the adapters:
 - Google Books `description` is HTML. Treat it as untrusted and render it as plain text.
 - Open Library: send a User-Agent naming the app. Adding a contact email raises the limit to 3 per second; that needs the owner's choice of address.
+- Open Library is used since BE-6 for search when the catalog has no good match (D-017): `search.json`, at most 1 request per second, outcomes cached. The User-Agent is `OPEN_LIBRARY_USER_AGENT` (app name and GitHub page, no email).
 - A failed or rate-limited live source is recorded as `failed` or `rate_limited`, never as "no reviews" (spec 8).
 
 ## Datasets (primary data plan)

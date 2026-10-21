@@ -57,7 +57,12 @@ export interface JsonRequest {
   /** JSON Schema the response must follow (Gemini responseJsonSchema). */
   schema: object;
   temperature?: number;
+  /** Images sent before the text, held in memory only (DISC-3). */
+  images?: Array<{ mimeType: string; data: Buffer }>;
 }
+
+/** Rough token cost of one image, for pacing only (Gemini bills images by tiles). */
+const IMAGE_TOKEN_ESTIMATE = 1300;
 
 const DEFAULT_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
 /** Longest wait we accept for a rate limit before reporting the quota as exhausted. */
@@ -134,14 +139,27 @@ export class GeminiClient {
   ): Promise<{ text: string; usage: LlmUsage }> {
     const body = {
       systemInstruction: { parts: [{ text: request.system }] },
-      contents: [{ role: 'user', parts: [{ text: request.user }] }],
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            ...(request.images ?? []).map((image) => ({
+              inlineData: { mimeType: image.mimeType, data: image.data.toString('base64') },
+            })),
+            { text: request.user },
+          ],
+        },
+      ],
       generationConfig: {
         responseMimeType: 'application/json',
         responseJsonSchema: request.schema,
         temperature: request.temperature ?? 0,
       },
     };
-    const tokens = estimateTokens(request.system) + estimateTokens(request.user);
+    const tokens =
+      estimateTokens(request.system) +
+      estimateTokens(request.user) +
+      (request.images?.length ?? 0) * IMAGE_TOKEN_ESTIMATE;
     const {
       data: raw,
       latencyMs,

@@ -111,12 +111,25 @@
 
 ### 4.3 Discovery
 
-`Candidate` = `{ editionId, title, subtitle, author, year, language, coverUrl, confidence? }`
+`Candidate` = `{ editionId, title, subtitle, author, year, language, publisher, format, coverUrl }`. Every field except `editionId` and `title` may be `null` when unknown (DISC-1: show all available identifying fields). `author` lists the main authors, comma-separated; illustrators and translators are left out. `language` is a BCP 47 tag.
 
 | Method and path | Request | Response |
 |---|---|---|
-| `GET /books/search?q=` | query | `{ candidates: [Candidate] }` (at most 3). Never auto-selects when more than one is plausible. |
-| `POST /scan` | multipart image (already resized by the client) | `{ outcome: 'identified' \| 'uncertain', candidates: [Candidate] }`, or an error `NOT_A_BOOK` or `UNREADABLE_IMAGE`. Uncertain always goes to the confirmation screen. |
+| `GET /books/search?q=` | query: title, author, both, or an ISBN (2 to 200 characters) | `{ candidates: [Candidate], external }`. At most 3 candidates (`SEARCH_MAX_CANDIDATES`), **one per book**: different editions of the same work are not shown side by side; the edition with the most dataset reviews is chosen. Never auto-selects. |
+| `POST /scan` | multipart, field `image`: JPEG or PNG, already resized by the client (default 1024 px), at most 2 MB by default | `{ outcome: 'identified' \| 'uncertain', candidates: [Candidate], recognized: { title, subtitle, authors }, external }`, or an error. |
+
+`external` is `null` when only the catalog was searched, or `{ source: 'open_library', outcome }` (`sourceOutcome`) when Open Library was asked because the catalog had no good match. Books found there are added to the catalog, so their candidates have an `editionId` like any other.
+
+**Meaning rules the frontend relies on**
+- `candidates: []` with `external.outcome = 'failed'` or `'rate_limited'` means the book may exist but a source could not be checked. Say so; do not say "no such book".
+- `outcome = 'identified'`: exactly one book matched what the cover says, and the cover was read clearly. The reader still confirms the candidate before an analysis starts.
+- `outcome = 'uncertain'` always goes to the confirmation screen (DISC-2), even with one candidate. With no candidates, offer a typed search prefilled from `recognized`.
+- Errors before processing (DISC-4): `413 UPLOAD_TOO_LARGE`, `415 UNSUPPORTED_TYPE` (the type is checked from the file's content, not its name). `422 UNREADABLE_IMAGE` for a broken file. None of these use up a scan.
+- `422 NOT_A_BOOK`, `422 UNREADABLE_IMAGE`: dismiss with a prompt to type the title. These use up a scan.
+- `503 IDENTIFICATION_UNAVAILABLE`: the vision service is down or out of quota. Typed search still works. The scan is given back.
+- `429 SCAN_QUOTA_EXCEEDED`: `SCAN_DAILY_QUOTA` scans (default 20) in any 24 hours; `retryAfterSeconds` says when the next one is free.
+- Search is limited per reader (default 60 a minute) and can return `429 RATE_LIMITED`.
+- The photo is processed in memory and never stored (DISC-3). Its metadata (EXIF, including location) is removed before it is sent to the vision model.
 
 ### 4.4 Analyses
 
@@ -208,3 +221,4 @@
 | 2026-10-20 | BE-1: added `INTERNAL_ERROR` (500), the `/health` exception and the generation rule. Proposed by backend; frontend to approve | n/a |
 | 2026-10-20 | v0.2: auth per D-001 (register signs in, `EMAIL_IN_USE`, refresh rotation); questionnaire fields per D-011 and `GET /questionnaire/options`; display rules per D-010 | n/a |
 | 2026-10-21 | BE-3: added `GET /me`, the `User` shape, session rules (cookie attributes, one refresh at a time, reset-link format) and `400` for an invalid reset link. Fixtures for every auth outcome in `contract/fixtures/`. Proposed by backend; frontend to approve | n/a |
+| 2026-10-21 | BE-6: `Candidate` gains `publisher` and `format`, and its fields are nullable; search and scan responses gain `external`; scan gains `recognized`; one candidate per work; meaning rules and scan error rules in 4.3. Fixtures added. Proposed by backend; frontend to approve | n/a |

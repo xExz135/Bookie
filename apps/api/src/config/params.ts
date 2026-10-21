@@ -206,8 +206,73 @@ export const PARAMS = {
   },
   SCAN_MIN_CONFIDENCE: {
     schema: num(0.7, 0, 1),
-    description: 'Identification confidence below this is treated as uncertain (DISC-2).',
-    source: 'Spec 6 (hypothesis)',
+    description:
+      'Title match (trigram similarity, computed in code) a catalog book needs for a scan to count as identified. Below it the scan is uncertain (DISC-2).',
+    source: 'Spec 6, D-017 (hypothesis)',
+  },
+  SCAN_AUTHOR_MIN_MATCH: {
+    schema: num(0.6, 0, 1),
+    description:
+      'Author match a catalog book needs, when the cover shows an author, to count as plausible.',
+    source: 'D-017 (hypothesis)',
+  },
+  SCAN_TIMEOUT_MS: {
+    schema: int(20_000, 1000),
+    description: 'Timeout for reading one cover with the vision model.',
+    source: 'D-017 (hypothesis)',
+  },
+  GEMINI_VISION_MODEL: {
+    schema: z.string().min(1).default('gemini-3.5-flash-lite'),
+    description: 'Model that reads cover photos (title, author, whether it is a book).',
+    source: 'D-017',
+  },
+  SEARCH_MIN_SCORE: {
+    schema: num(0.4, 0.1, 1),
+    description:
+      'Lowest match score (trigram similarity, 0 to 1) for a catalog book to be a candidate.',
+    source: 'Spec 6, D-017 (hypothesis)',
+  },
+  SEARCH_EXTERNAL_BELOW_SCORE: {
+    schema: num(0.5, 0, 1),
+    description:
+      'If no catalog book matches at least this well, Open Library is searched too (spec 6: stored books first, then external metadata).',
+    source: 'Spec 6, D-017 (hypothesis)',
+  },
+  SEARCH_POPULARITY_WEIGHT: {
+    schema: num(0.1, 0, 1),
+    description: 'How much the dataset rating count lifts a match in the ranking (0 turns it off).',
+    source: 'D-017 (hypothesis)',
+  },
+  SEARCH_TIMEOUT_MS: {
+    schema: int(3000, 100),
+    description: 'Database time limit for one catalog search.',
+    source: 'D-017 (hypothesis)',
+  },
+  SEARCH_RATE_LIMIT_PER_MINUTE: {
+    schema: int(60),
+    description:
+      'Searches allowed per reader per minute (protects Open Library from repeated lookups).',
+    source: 'D-017 (hypothesis)',
+  },
+  OPEN_LIBRARY_ENABLED: {
+    schema: z.stringbool().default(true),
+    description: 'Search Open Library when the catalog has no good match.',
+    source: 'D-003',
+  },
+  OPEN_LIBRARY_USER_AGENT: {
+    schema: z
+      .string()
+      .min(1)
+      .default('Bookie/0.1 (portfolio project; https://github.com/xExz135/Bookie)'),
+    description:
+      'User-Agent sent to Open Library, which asks apps to identify themselves. Adding a contact email raises its limit to 3 requests per second.',
+    source: 'D-003, docs/DATA_SOURCES.md',
+  },
+  OPEN_LIBRARY_MIN_INTERVAL_MS: {
+    schema: int(1000, 100),
+    description:
+      'Minimum time between Open Library requests (1 per second without a contact email).',
+    source: 'D-003, docs/DATA_SOURCES.md',
   },
 
   // --- Analysis pipeline (spec 8) ---

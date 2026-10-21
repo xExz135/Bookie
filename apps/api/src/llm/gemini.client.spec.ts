@@ -80,6 +80,26 @@ describe('GeminiClient', () => {
     });
   });
 
+  it('sends images inline before the text', async () => {
+    const { gemini, calls } = client([jsonReply('{}')]);
+    await gemini.generateJson('vision', {
+      system: 's',
+      user: 'what book is this?',
+      schema: {},
+      images: [{ mimeType: 'image/jpeg', data: Buffer.from([0xff, 0xd8, 0xff]) }],
+    });
+    expect(calls[0]!.body).toMatchObject({
+      contents: [
+        {
+          parts: [
+            { inlineData: { mimeType: 'image/jpeg', data: '/9j/' } },
+            { text: 'what book is this?' },
+          ],
+        },
+      ],
+    });
+  });
+
   it('embeds texts in one batch request and checks the vector size', async () => {
     const { gemini, calls } = client([
       { status: 200, body: { embeddings: [{ values: [1, 0] }, { values: [0, 1] }] } },

@@ -1,0 +1,128 @@
+{
+  "endpoint": "GET /api/v1/books/search",
+  "outcomes": {
+    "ambiguous": {
+      "status": 200,
+      "schema": "BookSearchResult",
+      "body": {
+        "candidates": [
+          {
+            "editionId": "6b1f0c2a-3d4e-4f5a-8b6c-7d8e9f0a1b2c",
+            "title": "Harry Potter and the Sorcerer's Stone",
+            "subtitle": null,
+            "author": "J.K. Rowling",
+            "year": 1997,
+            "language": "en",
+            "publisher": "Scholastic Inc",
+            "format": "Hardcover",
+            "coverUrl": "https://images.gr-assets.com/books/1474154022m/3.jpg"
+          },
+          {
+            "editionId": "0c9d8e7f-6a5b-4c3d-9e2f-1a0b9c8d7e6f",
+            "title": "Harry Potter and the Prisoner of Azkaban",
+            "subtitle": null,
+            "author": "J.K. Rowling",
+            "year": 2004,
+            "language": "en",
+            "publisher": "Scholastic Inc.",
+            "format": "Mass Market Paperback",
+            "coverUrl": "https://images.gr-assets.com/books/1499277281m/5.jpg"
+          },
+          {
+            "editionId": "5e4d3c2b-1a0f-4e9d-8c7b-6a5f4e3d2c1b",
+            "title": "Harry Potter and the Chamber of Secrets",
+            "subtitle": null,
+            "author": "J.K. Rowling",
+            "year": 1999,
+            "language": "en",
+            "publisher": "Arthur A. Levine Books",
+            "format": "Hardcover",
+            "coverUrl": null
+          }
+        ],
+        "external": null
+      }
+    },
+    "foundOnOpenLibrary": {
+      "status": 200,
+      "schema": "BookSearchResult",
+      "body": {
+        "candidates": [
+          {
+            "editionId": "7a6b5c4d-3e2f-5a1b-9c8d-7e6f5a4b3c2d",
+            "title": "The Employees",
+            "subtitle": "A workplace novel of the 22nd century",
+            "author": "Olga Ravn",
+            "year": 2020,
+            "language": "en",
+            "publisher": "Lolli Editions",
+            "format": null,
+            "coverUrl": "https://covers.openlibrary.org/b/id/12294759-M.jpg"
+          }
+        ],
+        "external": {
+          "source": "open_library",
+          "outcome": "ok"
+        }
+      }
+    },
+    "noMatch": {
+      "status": 200,
+      "schema": "BookSearchResult",
+      "body": {
+        "candidates": [],
+        "external": {
+          "source": "open_library",
+          "outcome": "empty"
+        }
+      }
+    },
+    "noMatchOpenLibraryFailed": {
+      "status": 200,
+      "schema": "BookSearchResult",
+      "body": {
+        "candidates": [],
+        "external": {
+          "source": "open_library",
+          "outcome": "failed"
+        }
+      }
+    },
+    "validationFailed": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "q": "Type at least 2 letters or digits."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "rateLimited": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 42
+      }
+    }
+  }
+}

@@ -32,7 +32,11 @@ export class FakeMailer implements Mailer {
  * Redis key prefix, so rate-limit counters never leak between tests.
  * Password hashing is made cheap here only to keep the tests fast.
  */
-export async function createTestApp(env: Record<string, string> = {}): Promise<{
+export async function createTestApp(
+  env: Record<string, string> = {},
+  /** Providers to replace, e.g. external services with fakes. */
+  overrides: Array<{ token: unknown; value: unknown }> = [],
+): Promise<{
   app: NestExpressApplication;
   config: AppConfig;
   mailer: FakeMailer;
@@ -45,13 +49,17 @@ export async function createTestApp(env: Record<string, string> = {}): Promise<{
     AUTH_ARGON2_MEMORY_KIB: '1024',
     AUTH_ARGON2_ITERATIONS: '1',
     RATE_LIMIT_AUTH_MAX: '1000',
+    SEARCH_RATE_LIMIT_PER_MINUTE: '1000',
     ...env,
   });
   const mailer = new FakeMailer();
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule.forRoot(config)] })
+  let builder = Test.createTestingModule({ imports: [AppModule.forRoot(config)] })
     .overrideProvider(MAILER)
-    .useValue(mailer)
-    .compile();
+    .useValue(mailer);
+  for (const { token, value } of overrides) {
+    builder = builder.overrideProvider(token as never).useValue(value);
+  }
+  const moduleRef = await builder.compile();
   const app = moduleRef.createNestApplication<NestExpressApplication>({ logger: false });
   configureApp(app, config);
   await app.init();

@@ -80,6 +80,156 @@
         ],
         "type": "object"
       },
+      "BookSearchResult": {
+        "additionalProperties": false,
+        "properties": {
+          "candidates": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "author": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "coverUrl": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "editionId": {
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                  "type": "string"
+                },
+                "format": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "language": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "publisher": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "subtitle": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "year": {
+                  "maximum": 9007199254740991,
+                  "minimum": -9007199254740991,
+                  "nullable": true,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "editionId",
+                "title",
+                "subtitle",
+                "author",
+                "year",
+                "language",
+                "publisher",
+                "format",
+                "coverUrl"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "external": {
+            "additionalProperties": false,
+            "nullable": true,
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "ok",
+                  "empty",
+                  "failed",
+                  "rate_limited",
+                  "not_permitted"
+                ],
+                "type": "string"
+              },
+              "source": {
+                "enum": [
+                  "open_library"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "source",
+              "outcome"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "candidates",
+          "external"
+        ],
+        "type": "object"
+      },
+      "Candidate": {
+        "additionalProperties": false,
+        "properties": {
+          "author": {
+            "nullable": true,
+            "type": "string"
+          },
+          "coverUrl": {
+            "nullable": true,
+            "type": "string"
+          },
+          "editionId": {
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "type": "string"
+          },
+          "format": {
+            "nullable": true,
+            "type": "string"
+          },
+          "language": {
+            "nullable": true,
+            "type": "string"
+          },
+          "publisher": {
+            "nullable": true,
+            "type": "string"
+          },
+          "subtitle": {
+            "nullable": true,
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "year": {
+            "maximum": 9007199254740991,
+            "minimum": -9007199254740991,
+            "nullable": true,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "editionId",
+          "title",
+          "subtitle",
+          "author",
+          "year",
+          "language",
+          "publisher",
+          "format",
+          "coverUrl"
+        ],
+        "type": "object"
+      },
       "ConfidenceLevel": {
         "enum": [
           "low",
@@ -264,6 +414,134 @@
         "required": [
           "token",
           "newPassword"
+        ],
+        "type": "object"
+      },
+      "ScanResult": {
+        "additionalProperties": false,
+        "properties": {
+          "candidates": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "author": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "coverUrl": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "editionId": {
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                  "type": "string"
+                },
+                "format": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "language": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "publisher": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "subtitle": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "year": {
+                  "maximum": 9007199254740991,
+                  "minimum": -9007199254740991,
+                  "nullable": true,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "editionId",
+                "title",
+                "subtitle",
+                "author",
+                "year",
+                "language",
+                "publisher",
+                "format",
+                "coverUrl"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "external": {
+            "additionalProperties": false,
+            "nullable": true,
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "ok",
+                  "empty",
+                  "failed",
+                  "rate_limited",
+                  "not_permitted"
+                ],
+                "type": "string"
+              },
+              "source": {
+                "enum": [
+                  "open_library"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "source",
+              "outcome"
+            ],
+            "type": "object"
+          },
+          "outcome": {
+            "enum": [
+              "identified",
+              "uncertain"
+            ],
+            "type": "string"
+          },
+          "recognized": {
+            "additionalProperties": false,
+            "properties": {
+              "authors": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "subtitle": {
+                "nullable": true,
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "subtitle",
+              "authors"
+            ],
+            "type": "object"
+          }
+        },
+        "required": [
+          "outcome",
+          "candidates",
+          "recognized",
+          "external"
         ],
         "type": "object"
       },
@@ -622,6 +900,65 @@
         ]
       }
     },
+    "/api/v1/books/search": {
+      "get": {
+        "operationId": "DiscoveryController_searchBooks",
+        "parameters": [
+          {
+            "description": "Title, author, both, or an ISBN",
+            "in": "query",
+            "name": "q",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookSearchResult"
+                }
+              }
+            },
+            "description": "At most SEARCH_MAX_CANDIDATES books, one edition each. Never auto-selected."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
+          }
+        },
+        "tags": [
+          "discovery"
+        ]
+      }
+    },
     "/api/v1/me": {
       "get": {
         "operationId": "MeController_me",
@@ -650,6 +987,117 @@
         },
         "tags": [
           "account"
+        ]
+      }
+    },
+    "/api/v1/scan": {
+      "post": {
+        "operationId": "DiscoveryController_scan",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "image": {
+                    "description": "Cover photo, JPEG or PNG, resized by the client (default 1024 px)",
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "image"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScanResult"
+                }
+              }
+            },
+            "description": "\"uncertain\" always goes to the confirmation screen (DISC-2)"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UPLOAD_TOO_LARGE"
+          },
+          "415": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNSUPPORTED_TYPE"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_A_BOOK, UNREADABLE_IMAGE"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "SCAN_QUOTA_EXCEEDED"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "IDENTIFICATION_UNAVAILABLE"
+          }
+        },
+        "tags": [
+          "discovery"
         ]
       }
     }

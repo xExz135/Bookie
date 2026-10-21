@@ -1,0 +1,161 @@
+{
+  "endpoint": "POST /api/v1/scan",
+  "outcomes": {
+    "identified": {
+      "status": 200,
+      "schema": "ScanResult",
+      "body": {
+        "outcome": "identified",
+        "candidates": [
+          {
+            "editionId": "2f3e4d5c-6b7a-5c8d-9e0f-1a2b3c4d5e6f",
+            "title": "Project Hail Mary",
+            "subtitle": null,
+            "author": "Andy Weir",
+            "year": 2021,
+            "language": "en",
+            "publisher": "Ballantine Books",
+            "format": "Hardcover",
+            "coverUrl": "https://covers.openlibrary.org/b/id/15208263-M.jpg"
+          }
+        ],
+        "recognized": {
+          "title": "PROJECT HAIL MARY",
+          "subtitle": null,
+          "authors": ["ANDY WEIR"]
+        },
+        "external": null
+      }
+    },
+    "uncertainTwoMatches": {
+      "status": 200,
+      "schema": "ScanResult",
+      "body": {
+        "outcome": "uncertain",
+        "candidates": [
+          {
+            "editionId": "8d7c6b5a-4f3e-4d2c-8b1a-0f9e8d7c6b5a",
+            "title": "Gone Girl",
+            "subtitle": null,
+            "author": "Gillian Flynn",
+            "year": 2014,
+            "language": "en",
+            "publisher": "Broadway Books",
+            "format": "Paperback",
+            "coverUrl": "https://images.gr-assets.com/books/1397056243m/19288043.jpg"
+          },
+          {
+            "editionId": "1b2c3d4e-5f6a-4b7c-9d8e-0f1a2b3c4d5e",
+            "title": "Gone Girl",
+            "subtitle": null,
+            "author": "Gillian Flynn",
+            "year": 2012,
+            "language": "de",
+            "publisher": "Fischer",
+            "format": "Paperback",
+            "coverUrl": null
+          }
+        ],
+        "recognized": {
+          "title": "GONE GIRL",
+          "subtitle": null,
+          "authors": ["GILLIAN FLYNN"]
+        },
+        "external": null
+      }
+    },
+    "uncertainNoMatch": {
+      "status": 200,
+      "schema": "ScanResult",
+      "body": {
+        "outcome": "uncertain",
+        "candidates": [],
+        "recognized": {
+          "title": "THE QUIET HOURS",
+          "subtitle": null,
+          "authors": ["PIA HOUR"]
+        },
+        "external": {
+          "source": "open_library",
+          "outcome": "empty"
+        }
+      }
+    },
+    "noImage": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "image": "Attach a cover photo."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "uploadTooLarge": {
+      "status": 413,
+      "body": {
+        "code": "UPLOAD_TOO_LARGE",
+        "message": "The file is too large.",
+        "retryable": false
+      }
+    },
+    "unsupportedType": {
+      "status": 415,
+      "body": {
+        "code": "UNSUPPORTED_TYPE",
+        "message": "This file type is not supported.",
+        "retryable": false
+      }
+    },
+    "notABook": {
+      "status": 422,
+      "body": {
+        "code": "NOT_A_BOOK",
+        "message": "This does not look like a book cover.",
+        "retryable": false
+      }
+    },
+    "unreadable": {
+      "status": 422,
+      "body": {
+        "code": "UNREADABLE_IMAGE",
+        "message": "The image could not be read.",
+        "retryable": false
+      }
+    },
+    "quotaExceeded": {
+      "status": 429,
+      "body": {
+        "code": "SCAN_QUOTA_EXCEEDED",
+        "message": "Scan limit reached.",
+        "retryable": true,
+        "retryAfterSeconds": 51840
+      }
+    },
+    "identificationUnavailable": {
+      "status": 503,
+      "body": {
+        "code": "IDENTIFICATION_UNAVAILABLE",
+        "message": "Cover identification is unavailable. Typed search still works.",
+        "retryable": true
+      }
+    }
+  }
+}
