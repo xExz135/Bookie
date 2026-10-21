@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
+import { SaveToReadingList } from '@/components/reading-list/save-to-reading-list';
 import { Button } from '@/components/ui/button';
 import { type Analysis, getAnalysis, retryAnalysis, type StepName } from '@/lib/analysis/api';
 import { formatDateTime, PERSONAL_STEPS, PUBLIC_STEPS } from '@/lib/analysis/labels';
@@ -199,7 +200,10 @@ export function AnalysisScreen({ id }: { id: string }) {
         ) : null}
       </section>
 
-      <BookHeader edition={analysis.edition} />
+      <BookHeader
+        edition={analysis.edition}
+        actions={<SaveToReadingList editionId={analysis.edition.editionId} />}
+      />
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <PublicReceptionSection

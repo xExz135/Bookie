@@ -9,6 +9,7 @@ import { Wordmark } from './wordmark';
 const NAV = [
   { href: '/', label: 'Discover' },
   { href: '/history', label: 'History' },
+  { href: '/reading-list', label: 'Reading list' },
   { href: '/taste', label: 'Taste profile' },
   { href: '/settings', label: 'Settings' },
 ];

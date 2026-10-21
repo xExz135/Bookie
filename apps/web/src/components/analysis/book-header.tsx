@@ -7,7 +7,14 @@ import { Cover } from './parts';
  * The edition analysed (DISC-5): every identifying field the API returned,
  * and a note that the result is about this edition.
  */
-export function BookHeader({ edition }: { edition: Analysis['edition'] }) {
+export function BookHeader({
+  edition,
+  actions,
+}: {
+  edition: Analysis['edition'];
+  /** Controls for this book, such as saving it to the reading list. */
+  actions?: React.ReactNode;
+}) {
   const facts = [
     edition.format,
     edition.isbn13 ? `ISBN ${edition.isbn13}` : null,
@@ -57,6 +64,7 @@ export function BookHeader({ edition }: { edition: Analysis['edition'] }) {
             className="max-w-prose whitespace-pre-line font-serif text-body-lg text-on-surface"
           />
         ) : null}
+        {actions}
         <p className="rounded-sm bg-surface-container-low px-4 py-3 text-body-sm text-on-surface-variant">
           <span className="text-label-md uppercase text-on-surface">About this edition: </span>
           This result is about this edition
