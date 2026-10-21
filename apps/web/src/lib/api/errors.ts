@@ -64,6 +64,11 @@ const MESSAGES: Record<ErrorCode, (body: ErrorBody) => string> = {
 export const NETWORK_MESSAGE =
   'We cannot reach Bookie right now. Check your connection and try again.';
 
+/** Our wording for a code reported inside a response, such as a failed step's `errorCode`. */
+export function codeMessage(code: ErrorCode): string {
+  return MESSAGES[code]({ code, message: '', retryable: false });
+}
+
 /** A message for any error thrown by an API call. */
 export function errorMessage(error: unknown): string {
   if (error instanceof ApiRequestError) {
