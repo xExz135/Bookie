@@ -580,8 +580,10 @@ export class AnalysisPipeline {
   }
 
   /**
-   * MODEL-4: below the hard floor there is no score. Without a shipped taste
-   * model (BE-13) a reader above the floor gets MODEL_UNAVAILABLE (D-021); the
+   * MODEL-4: below the hard floor there is no score. Above it the taste model
+   * scores (BE-13, D-024), and the result is stored with its model version,
+   * profile version and time (MODEL-3) and the model's explanations. Without a
+   * loaded model the step fails with MODEL_UNAVAILABLE (D-021); either way the
    * public reception is unaffected (RES-7).
    */
   private async personalMatch(ctx: Context): Promise<PersonalOutput> {
@@ -590,29 +592,49 @@ export class AnalysisPipeline {
           where: { tasteProfileVersionId: ctx.tasteProfileVersionId },
         })
       : 0;
-    let outcome: PersonalOutput['outcome'];
-    if (!ctx.tasteProfileVersionId || ratedCount === 0) outcome = 'needs_taste_data';
-    else if (ratedCount < this.config.TASTE_HARD_FLOOR) outcome = 'below_floor';
-    else {
-      const scored = await this.scorer.score({
-        userId: ctx.userId,
-        editionId: ctx.editionId,
-        tasteProfileVersionId: ctx.tasteProfileVersionId,
-      });
-      if (!scored) throw new StepError('MODEL_UNAVAILABLE');
-      throw new Error('Scoring is wired up by BE-13');
+    const base = {
+      analysisId: ctx.analysisId,
+      userId: ctx.userId,
+      editionId: ctx.editionId,
+      tasteProfileVersionId: ctx.tasteProfileVersionId,
+      publicAnalysisId: ctx.publicAnalysisId,
+    };
+    if (!ctx.tasteProfileVersionId || ratedCount < this.config.TASTE_HARD_FLOOR) {
+      const outcome =
+        !ctx.tasteProfileVersionId || ratedCount === 0 ? 'needs_taste_data' : 'below_floor';
+      await this.prisma.personalAnalysis.create({ data: { ...base, outcome } });
+      return { outcome };
     }
+    const scored = await this.scorer.score({
+      userId: ctx.userId,
+      editionId: ctx.editionId,
+      tasteProfileVersionId: ctx.tasteProfileVersionId,
+      publicAnalysisId: ctx.publicAnalysisId,
+    });
+    if (!scored) throw new StepError('MODEL_UNAVAILABLE');
     await this.prisma.personalAnalysis.create({
       data: {
-        analysisId: ctx.analysisId,
-        userId: ctx.userId,
-        editionId: ctx.editionId,
-        tasteProfileVersionId: ctx.tasteProfileVersionId,
-        publicAnalysisId: ctx.publicAnalysisId,
-        outcome,
+        ...base,
+        outcome: 'scored',
+        score: new Prisma.Decimal(scored.score.toFixed(2)),
+        modelVersionId: scored.modelVersionId,
+        confidence: scored.confidence.level,
+        confidenceReasons: scored.confidence.reasons,
+        similarBooks: {
+          create: scored.similarBooks.map((b, i) => ({
+            rank: i + 1,
+            editionId: b.editionId,
+            yourRating: b.yourRating,
+            similarity: new Prisma.Decimal(b.similarity.toFixed(5)),
+          })),
+        },
+        traitFits: { create: scored.traitFits },
       },
     });
-    return { outcome };
+    this.logger.log(
+      `personal match ${ctx.analysisId}: ${scored.modelId} ${scored.score} (${scored.confidence.level})`,
+    );
+    return { outcome: 'scored' };
   }
 
   /** The overall status, from the step results (CONTRACT 4.4 status rules). */

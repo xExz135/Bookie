@@ -7,21 +7,25 @@ import tomllib
 from bookie_eval.__main__ import main
 
 
+def _toml(table, prefix=""):
+    """A small TOML writer for the parameter tables (strings, numbers, lists, nested tables)."""
+    lines, subtables = [], []
+    for key, value in table.items():
+        name = json.dumps(key) if " " in key else key
+        if isinstance(value, dict):
+            subtables.append((f"{prefix}{name}", value))
+        else:
+            lines.append(f"{name} = {json.dumps(value)}")
+    out = ([f"[{prefix[:-1]}]"] if prefix and lines else []) + lines
+    for name, value in subtables:
+        out += _toml(value, f"{name}.")
+    return out
+
+
 def _write_params(tmp_path, params):
     # The CLI reads a TOML file; write the test parameters as one.
-    lines = []
-    for section, values in params.items():
-        for sub, body in ([(None, values)] if not any(isinstance(v, dict) for v in values.values()) else values.items()):
-            if sub is None:
-                lines.append(f"[{section}]")
-                items = body
-            else:
-                lines.append(f"[{section}.{sub}]")
-                items = body
-            for key, value in items.items():
-                lines.append(f"{key} = {json.dumps(value)}")
     path = tmp_path / "params.toml"
-    path.write_text("\n".join(lines), "utf-8")
+    path.write_text("\n".join(_toml(params)), "utf-8")
     assert tomllib.loads(path.read_text("utf-8")) == params
     return path
 

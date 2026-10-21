@@ -481,6 +481,9 @@ model Edition {
   embeddings       BookEmbedding[]
   readingListItems ReadingListItem[]
   refreshRequests  RefreshRequest[]
+  modelItemStats   ModelItemStat[]
+  modelNeighbours  ModelItemNeighbour[]  @relation("neighbourOf")
+  modelNeighboured ModelItemNeighbour[]  @relation("neighbour")
 
   @@index([workId])
   @@index([isbn13])
@@ -805,15 +808,46 @@ model ModelVersion {
   codeCommit       String?   @map("code_commit")
   trainedAt        DateTime? @map("trained_at") @db.Timestamptz(3)
   metrics          Json      @default("{}")
+  /// What the TypeScript scorer needs (coefficients, damping, B1 weights); D-024.
+  parameters       Json      @default("{}")
   isShipped        Boolean   @default(false) @map("is_shipped")
   createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
 
   personalAnalyses PersonalAnalysis[]
   tasteVectors     TasteVector[]
   feedback         Feedback[]
+  itemStats        ModelItemStat[]
+  neighbours       ModelItemNeighbour[]
 
   @@unique([modelId, version])
   @@map("model_versions")
+}
+
+/// A book the population models know (B0, B3), with its average-rating offset (D-024).
+model ModelItemStat {
+  modelVersionId String       @map("model_version_id") @db.Uuid
+  editionId      String       @map("edition_id") @db.Uuid
+  itemBias       Float        @map("item_bias")
+  modelVersion   ModelVersion @relation(fields: [modelVersionId], references: [id], onDelete: Cascade)
+  edition        Edition      @relation(fields: [editionId], references: [id], onDelete: Cascade)
+
+  @@id([modelVersionId, editionId])
+  @@map("model_item_stats")
+}
+
+/// A positive item similarity of B3, stored in both directions (D-024).
+model ModelItemNeighbour {
+  modelVersionId String       @map("model_version_id") @db.Uuid
+  editionId      String       @map("edition_id") @db.Uuid
+  neighbourId    String       @map("neighbour_id") @db.Uuid
+  /// Above 0 (CHECK in migration).
+  similarity     Float
+  modelVersion   ModelVersion @relation(fields: [modelVersionId], references: [id], onDelete: Cascade)
+  edition        Edition      @relation("neighbourOf", fields: [editionId], references: [id], onDelete: Cascade)
+  neighbour      Edition      @relation("neighbour", fields: [neighbourId], references: [id], onDelete: Cascade)
+
+  @@id([modelVersionId, editionId, neighbourId])
+  @@map("model_item_neighbours")
 }
 
 /// Sentence embedding of a book (BE-12, D-015). 768 dimensions; the model key

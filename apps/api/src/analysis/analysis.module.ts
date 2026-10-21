@@ -8,7 +8,8 @@ import { AnalysisRunner } from './analysis-runner';
 import { AnalysisView } from './analysis-view';
 import { AnalysisController } from './analysis.controller';
 import { AnalysisService } from './analysis.service';
-import { NoModelScorer, PERSONAL_SCORER } from './personal-scorer';
+import { TasteModelScorer } from '../taste-models/taste-model.scorer';
+import { PERSONAL_SCORER } from './personal-scorer';
 
 /** The analysis pipeline and its endpoints (BE-8, spec 8, CONTRACT 4.4). */
 @Module({
@@ -24,7 +25,8 @@ import { NoModelScorer, PERSONAL_SCORER } from './personal-scorer';
       inject: [APP_CONFIG],
       useFactory: (config: AppConfig) => geminiClient(config),
     },
-    { provide: PERSONAL_SCORER, useClass: NoModelScorer },
+    // The taste models (BE-13, D-024); MODEL_UNAVAILABLE until a release is loaded.
+    { provide: PERSONAL_SCORER, useClass: TasteModelScorer },
   ],
   exports: [AnalysisRunner, AnalysisView],
 })

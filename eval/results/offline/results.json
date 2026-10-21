@@ -1036,7 +1036,7 @@
     "globalMean": 4.007525
   },
   "provenance": {
-    "harnessChecksum": "4d1776ee14f78127163dda0c0dc26c062c6235423a832309e6b8892ca878abba",
+    "harnessChecksum": "97b39eb8cb3ce540acbaead6e541d6703c67546ee7f845225dfb77dbbf2985d4",
     "params": {
       "data": {
         "top_editions": 1000,
@@ -1074,7 +1074,18 @@
           "genre_share": 0.2,
           "weight_genre": 0.25,
           "weight_pace": 0.25,
-          "weight_theme_avoid": 0.25
+          "weight_theme_avoid": 0.25,
+          "sensitivity_weights": {
+            "high": 1.0,
+            "moderate": 0.5,
+            "low": 0.25
+          },
+          "theme_map": {
+            "Substance abuse and addiction": "addiction",
+            "Graphic violence and physical harm": "violence",
+            "Tragedy and bleak themes": "tragedy",
+            "Grief and bereavement": "grief and loss"
+          }
         },
         "b3": {
           "neighbours": 30,

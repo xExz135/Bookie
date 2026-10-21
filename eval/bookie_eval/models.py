@@ -228,8 +228,38 @@ def b1_scores(
         known = feats.pace[targets] >= 0
         match = np.where(feats.pace[targets] == questionnaire["pace"], 1.0, -1.0)
         score = score + p["weight_pace"] * np.where(known, match, 0.0)
-    score = score - p["weight_theme_avoid"] * (feats.themes[targets] & questionnaire["avoid"]).sum(axis=1)
+    # Each theme to avoid weighs 1 (derived) or by its sensitivity (real answers).
+    avoid = np.asarray(questionnaire["avoid"], dtype=np.float64)
+    score = score - p["weight_theme_avoid"] * (feats.themes[targets].astype(np.float64) @ avoid)
     return clip(score)
+
+
+def questionnaire_from_answers(answers: dict[str, Any], genre_names: list[str], params: dict[str, Any]) -> dict[str, Any]:
+    """The reader's real questionnaire (live B1, BE-13) in the form b1_scores takes.
+
+    answers: likedGenres and dislikedGenres (genre names), pace (or None) and
+    themesToAvoid ([{theme, sensitivity}] with questionnaire theme names).
+    Anything not answered stays unknown and adds nothing (MODEL-2).
+    """
+    p = params["models"]["b1"]
+    liked = np.array([g in answers["likedGenres"] for g in genre_names])
+    disliked = np.array([g in answers["dislikedGenres"] for g in genre_names])
+    avoid = np.zeros(len(THEMES))
+    for item in answers["themesToAvoid"]:
+        theme = p["theme_map"].get(item["theme"])
+        if theme is not None:
+            avoid[THEMES.index(theme)] = max(avoid[THEMES.index(theme)], p["sensitivity_weights"][item["sensitivity"]])
+    pace = PACES.index(answers["pace"]) if answers["pace"] in PACES else None
+    return {"liked": liked, "disliked": disliked, "pace": pace, "avoid": avoid}
+
+
+def b2_scores(
+    vectors: np.ndarray, books: np.ndarray, ratings: np.ndarray, targets: np.ndarray, coefficients: np.ndarray
+) -> np.ndarray:
+    """B2 as served: taste-vector cosine mapped by [intercept, reader mean, cosine]."""
+    reader_mean = float(ratings.mean())
+    cos = _cosine_to_taste(vectors, books, ratings - reader_mean, targets)
+    return clip(coefficients[0] + coefficients[1] * reader_mean + coefficients[2] * cos)
 
 
 def b3_scores(pop: PopulationModel, books: np.ndarray, ratings: np.ndarray, targets: np.ndarray) -> np.ndarray:

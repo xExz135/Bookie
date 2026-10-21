@@ -14,7 +14,12 @@ pnpm eval           # extract the snapshot if there is none, then run (about 2 m
 pnpm eval extract   # read the database and the trait cache into a new snapshot
 pnpm eval run       # run on the existing snapshot only
 pnpm eval:test      # harness tests on synthetic data (also in CI)
+pnpm eval export    # run, then export B0 to B4 as a release for the API (D-024)
+pnpm eval parity    # rewrite parity/model-parity.json, which the API's parity test scores (D-006)
 ```
+
+Serving a release: `pnpm eval export`, then `pnpm --filter @bookie/api models:load` loads the
+newest release in `data/derived/models/` and ships its chosen model.
 
 The run reads only the **snapshot** in `data/derived/eval/snapshot-top1000/` (git-ignored: it
 holds dataset reader IDs, D-004). Its `manifest.json` has a checksum per file, and the run
@@ -69,7 +74,9 @@ All parameters are in [`params.toml`](params.toml), each with where it comes fro
 | B3 | Item-based collaborative filtering with baseline correction: population similarities applied to the reader's own ratings, as the API will do for a new reader; the neighbours' average is damped by a constant chosen on validation |
 | B4 | Least-squares blend of B2 and B3 on validation |
 
-BE-13 exports these as artifacts and scores them in TypeScript with a parity test (D-006).
+`parity.py` holds the rules as served (D-024): live B1 uses the reader's real questionnaire, and B3
+uses only ratings of books the release knows. The API scores the same fixture in TypeScript and
+fails beyond 1e-6.
 
 ## Files
 

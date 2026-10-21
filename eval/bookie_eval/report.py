@@ -52,10 +52,10 @@ def _signed(m: dict[str, Any], places: int = 3) -> str:
 def write(results: dict[str, Any], out_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     data = rounded(results)
-    (out_dir / "results.json").write_text(json.dumps(data, indent=2) + "\n", "utf-8")
+    (out_dir / "results.json").write_text(json.dumps(data, indent=2) + "\n", "utf-8", newline="\n")
     _plot_learning_curve(data, out_dir / "learning-curve.png")
     _plot_calibration(data, out_dir / "calibration.png")
-    (out_dir / "report.md").write_text(_markdown(data), "utf-8")
+    (out_dir / "report.md").write_text(_markdown(data), "utf-8", newline="\n")
 
 
 def _markdown(r: dict[str, Any]) -> str:

@@ -110,7 +110,8 @@ def _calibration(preds: np.ndarray, actual: np.ndarray, width: float) -> dict[st
     }
 
 
-def run(snapshot: Snapshot, params: dict[str, Any], log=print) -> dict[str, Any]:
+def run(snapshot: Snapshot, params: dict[str, Any], log=print, fitted: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Every reported number. Pass `fitted` to also get the fitted models (for the export)."""
     seed = params["split"]["seed"]
     interval = params["metrics"]["interval"]
     samples = params["metrics"]["bootstrap_samples"]
@@ -144,6 +145,8 @@ def run(snapshot: Snapshot, params: dict[str, Any], log=print) -> dict[str, Any]
     test, test_values = _summaries(test_preds, test_actual, params, resamples)
     shipped, ranking = _choose(validation)
     log(f"shipped by validation Spearman: {shipped}")
+    if fitted is not None:
+        fitted.update(features=feats, population=pop, tuned=tuned, shipped=shipped)
 
     curve = _learning_curve(splits, feats, pop, tuned, params)
     shipped_test = np.concatenate(test_preds[shipped])

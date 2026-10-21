@@ -88,9 +88,12 @@ export class AnalysisView {
           ? 'running'
           : personalStep;
     const scored = personalStatus === 'done' && pa?.score != null;
-    // A stored score always names its model and confidence (MODEL-3). The
-    // explanations (similar books, trait fits) arrive with the models (BE-13).
+    // A stored score always names its model and confidence (MODEL-3), and comes
+    // with the model's explanations (spec 7).
     const model = scored ? (pa!.modelVersion ?? null) : null;
+    const explained = scored
+      ? await this.explanations(pa!.id, analysis.tasteProfileVersionId)
+      : { similarRatedBooks: [], traits: [] };
     const personalMatch: Personal = {
       status: personalStatus,
       score: scored ? Math.round(Number(pa!.score) * 10) / 10 : null,
@@ -107,8 +110,8 @@ export class AnalysisView {
       hardFloor: this.config.TASTE_HARD_FLOOR,
       minForConfidence: this.config.TASTE_MIN_RATED_FOR_CONFIDENCE,
       generatedAt: pa?.generatedAt.toISOString() ?? null,
-      similarRatedBooks: [],
-      traits: [],
+      similarRatedBooks: explained.similarRatedBooks,
+      traits: explained.traits,
       errorCode:
         personalStep === 'failed'
           ? ((steps.get('personalMatch')?.errorCode ?? 'INTERNAL_ERROR') as ErrorCode)
@@ -173,6 +176,74 @@ export class AnalysisView {
       },
       feedback: a.feedback,
     };
+  }
+
+  /**
+   * The stored explanations of a score: the most similar rated books, and the
+   * trait fits grouped as the contract shows them (aligned, conflicting,
+   * unknown), each citing the book trait's evidence.
+   */
+  private async explanations(
+    personalAnalysisId: string,
+    tasteProfileVersionId: string | null,
+  ): Promise<Pick<Personal, 'similarRatedBooks' | 'traits'>> {
+    const [similar, fits, version] = await Promise.all([
+      this.prisma.personalSimilarBook.findMany({
+        where: { personalAnalysisId },
+        orderBy: { rank: 'asc' },
+      }),
+      this.prisma.personalTraitFit.findMany({
+        where: { personalAnalysisId },
+        include: { bookTrait: { include: { evidence: true } } },
+      }),
+      tasteProfileVersionId
+        ? this.prisma.tasteProfileVersion.findUnique({
+            where: { id: tasteProfileVersionId },
+            select: { pace: true },
+          })
+        : null,
+    ]);
+    const similarRatedBooks = await Promise.all(
+      similar.map(async (s) => {
+        const e = await this.edition(s.editionId);
+        return {
+          editionId: e.editionId,
+          title: e.title,
+          author: e.author,
+          coverUrl: e.coverUrl,
+          yourRating: s.yourRating,
+        };
+      }),
+    );
+    const traits: Personal['traits'] = [];
+    for (const trait of TRAIT_KEYS) {
+      for (const fit of ['aligned', 'conflicting', 'unknown'] as const) {
+        const rows = fits.filter((f) => f.trait === trait && f.fit === fit);
+        if (rows.length === 0) continue;
+        const bookValues = rows.flatMap((r) => (r.bookTrait ? [r.bookTrait.value] : []));
+        // What the reader said: their pace, or the avoided themes the book has.
+        const yourValues =
+          fit === 'unknown'
+            ? []
+            : trait === 'pace' && version?.pace
+              ? [version.pace]
+              : trait === 'themes'
+                ? bookValues
+                : [];
+        traits.push({
+          trait,
+          fit,
+          bookValues,
+          yourValues,
+          evidenceIds: [
+            ...new Set(
+              rows.flatMap((r) => r.bookTrait?.evidence.map((e) => e.evidenceItemId) ?? []),
+            ),
+          ],
+        });
+      }
+    }
+    return { similarRatedBooks, traits };
   }
 
   private async edition(editionId: string): Promise<Analysis['edition']> {

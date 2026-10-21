@@ -14,3 +14,4 @@ next-env.d.ts
 apps/web/src/api/schema.d.ts
 # Written by the offline evaluation harness (pnpm eval)
 eval/results/
+eval/parity/

@@ -94,6 +94,9 @@ pnpm --filter @bookie/api traits:extract --limit 1000   # traits for the evaluat
 pnpm eval:setup          # once: eval/.venv with the pinned Python packages
 pnpm eval                # offline evaluation of B0 to B4: one command reproduces every reported number (EVAL-1)
 pnpm eval:test           # harness tests on synthetic data (CI)
+pnpm eval export         # run, then export the models as a release in data/derived/models/ (D-024)
+pnpm eval parity         # rewrite the Python/TypeScript parity fixture (D-006)
+pnpm --filter @bookie/api models:load   # load the newest release into the database and ship its model
 ```
 
 ## Technical notes

@@ -70,8 +70,8 @@ def manifest_checksum(manifest: dict[str, Any]) -> str:
 def save(directory: Path, snap_parts: dict[str, Any], info: dict[str, Any]) -> dict[str, Any]:
     """Writes the files of a snapshot and its manifest. Used by extract and by tests."""
     directory.mkdir(parents=True, exist_ok=True)
-    (directory / "books.json").write_text(json.dumps(snap_parts["books"], indent=1), "utf-8")
-    (directory / "readers.json").write_text(json.dumps(snap_parts["reader_ids"]), "utf-8")
+    (directory / "books.json").write_text(json.dumps(snap_parts["books"], indent=1), "utf-8", newline="\n")
+    (directory / "readers.json").write_text(json.dumps(snap_parts["reader_ids"]), "utf-8", newline="\n")
     np.savez_compressed(
         directory / "ratings.npz",
         reader=snap_parts["reader"].astype(np.int32),
@@ -80,8 +80,8 @@ def save(directory: Path, snap_parts: dict[str, Any], info: dict[str, Any]) -> d
     )
     np.save(directory / "embeddings.npy", snap_parts["embeddings"].astype(np.float32))
     np.save(directory / "genres.npy", snap_parts["genre_shares"].astype(np.float32))
-    (directory / "genre_names.json").write_text(json.dumps(snap_parts["genre_names"]), "utf-8")
-    (directory / "traits.json").write_text(json.dumps(snap_parts["traits"], indent=1), "utf-8")
+    (directory / "genre_names.json").write_text(json.dumps(snap_parts["genre_names"]), "utf-8", newline="\n")
+    (directory / "traits.json").write_text(json.dumps(snap_parts["traits"], indent=1), "utf-8", newline="\n")
     files = {
         name: _sha256(directory / name)
         for name in (
@@ -106,7 +106,7 @@ def save(directory: Path, snap_parts: dict[str, Any], info: dict[str, Any]) -> d
         },
         "files": files,
     }
-    (directory / "manifest.json").write_text(json.dumps(manifest, indent=2), "utf-8")
+    (directory / "manifest.json").write_text(json.dumps(manifest, indent=2), "utf-8", newline="\n")
     return manifest
 
 

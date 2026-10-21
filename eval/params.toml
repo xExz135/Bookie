@@ -52,6 +52,18 @@ genre_share = 0.2
 weight_genre = 0.25
 weight_pace = 0.25
 weight_theme_avoid = 0.25
+# Live B1 (BE-13) uses the reader's real answers. A theme to avoid weighs by its
+# sensitivity; hypotheses, not measured (the user study, FE-10, can).
+[models.b1.sensitivity_weights]
+high = 1.0
+moderate = 0.5
+low = 0.25
+# Questionnaire themes to avoid (D-011, `themes` table) and the trait theme each matches (D-015).
+[models.b1.theme_map]
+"Substance abuse and addiction" = "addiction"
+"Graphic violence and physical harm" = "violence"
+"Tragedy and bleak themes" = "tragedy"
+"Grief and bereavement" = "grief and loss"
 
 [models.b3]
 # Item-based collaborative filtering with baseline correction (Koren 2010).

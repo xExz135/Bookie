@@ -182,6 +182,25 @@ export const PARAMS = {
     source: 'Spec 6, D-008',
   },
 
+  // --- Taste models (spec 7, D-006, D-024) ---
+  TASTE_MODEL_VERSION: {
+    schema: z.string().default(''),
+    description:
+      'Serve this release version instead of the shipped one (for tests and rollbacks). Empty = the shipped model.',
+    source: 'D-024',
+  },
+  PERSONAL_CONFIDENCE_HIGH_RATINGS: {
+    schema: int(40),
+    description:
+      "High confidence needs at least this many of the reader's ratings among the books the learned model knows.",
+    source: 'D-024 (hypothesis: the learning curve still improves up to 40)',
+  },
+  PERSONAL_SIMILAR_BOOKS: {
+    schema: int(3),
+    description: "How many of the reader's most similar rated books explain a score.",
+    source: 'D-024',
+  },
+
   // --- Taste capture (spec 6, D-018) ---
   IMPORT_MAX_BYTES: {
     schema: int(10_000_000, 100_000),
