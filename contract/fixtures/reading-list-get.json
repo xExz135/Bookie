@@ -1,0 +1,185 @@
+{
+  "endpoint": "GET /api/v1/reading-list",
+  "outcomes": {
+    "list": {
+      "status": 200,
+      "schema": "ReadingList",
+      "body": {
+        "items": [
+          {
+            "edition": {
+              "editionId": "a6da1682-d49f-5c15-b566-5f88f2a453a0",
+              "title": "The Hunger Games",
+              "subtitle": null,
+              "author": "Suzanne Collins",
+              "year": 2008,
+              "language": "en",
+              "publisher": "Scholastic Press",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1447303603m/2767052.jpg"
+            },
+            "addedAt": "2026-10-19T10:00:00.000Z",
+            "analysisId": "0b10b26f-04e1-598b-a2ac-cdac933ae226",
+            "group": "ranked",
+            "personalMatch": {
+              "status": "done",
+              "score": 4.2,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": "B4",
+              "isFallback": false,
+              "evidenceConfidence": {
+                "level": "medium",
+                "reasons": ["24 rated books", "75 reviews describe this book"]
+              },
+              "tasteProfileVersion": 4,
+              "currentTasteProfileVersion": 4,
+              "isOutdated": false
+            }
+          },
+          {
+            "edition": {
+              "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+              "title": "Divergent",
+              "subtitle": null,
+              "author": "Veronica Roth",
+              "year": 2011,
+              "language": "en",
+              "publisher": "Katherine Tegen Books",
+              "format": "Hardcover",
+              "coverUrl": "https://images.gr-assets.com/books/1328559506m/13335037.jpg"
+            },
+            "addedAt": "2026-10-20T10:00:00.000Z",
+            "analysisId": "5d4c3b2a-1f0e-4d9c-8b7a-6f5e4d3c2b1a",
+            "group": "ranked",
+            "personalMatch": {
+              "status": "done",
+              "score": 3.8,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": "B4",
+              "isFallback": false,
+              "evidenceConfidence": {
+                "level": "medium",
+                "reasons": ["24 rated books", "75 reviews describe this book"]
+              },
+              "tasteProfileVersion": 4,
+              "currentTasteProfileVersion": 4,
+              "isOutdated": false
+            }
+          },
+          {
+            "edition": {
+              "editionId": "0cd80021-63a8-5050-a0f2-aa25725c9417",
+              "title": "Ender's Game",
+              "subtitle": null,
+              "author": "Orson Scott Card",
+              "year": 1985,
+              "language": "en",
+              "publisher": "Tor",
+              "format": "Paperback",
+              "coverUrl": null
+            },
+            "addedAt": "2026-10-18T10:00:00.000Z",
+            "analysisId": "0c00d70d-925f-5e78-b9a4-9178063e3c26",
+            "group": "low_confidence",
+            "personalMatch": {
+              "status": "done",
+              "score": 3.6,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": "B1",
+              "isFallback": true,
+              "evidenceConfidence": {
+                "level": "low",
+                "reasons": [
+                  "6 rated books; 10 are needed for a confident match",
+                  "Scored by questionnaire and trait match (B1), not the learned model"
+                ]
+              },
+              "tasteProfileVersion": 3,
+              "currentTasteProfileVersion": 3,
+              "isOutdated": false
+            }
+          },
+          {
+            "edition": {
+              "editionId": "7a6b5c4d-3e2f-4a1b-9c8d-7e6f5a4b3c2d",
+              "title": "The Employees",
+              "subtitle": "A workplace novel of the 22nd century",
+              "author": "Olga Ravn",
+              "year": 2020,
+              "language": "en",
+              "publisher": "Lolli Editions",
+              "format": null,
+              "coverUrl": null
+            },
+            "addedAt": "2026-10-21T08:00:00.000Z",
+            "analysisId": null,
+            "group": "no_match",
+            "personalMatch": null
+          },
+          {
+            "edition": {
+              "editionId": "79be2d25-b411-5bb6-b28c-4e05a69375fe",
+              "title": "The Maze Runner",
+              "subtitle": null,
+              "author": "James Dashner",
+              "year": 2009,
+              "language": "en",
+              "publisher": "Delacorte Press",
+              "format": "Hardcover",
+              "coverUrl": null
+            },
+            "addedAt": "2026-10-17T10:00:00.000Z",
+            "analysisId": "7c1d2e3f-4a5b-4c6d-8e7f-9a0b1c2d3e4f",
+            "group": "no_match",
+            "personalMatch": {
+              "status": "failed",
+              "score": null,
+              "scale": {
+                "min": 1,
+                "max": 5
+              },
+              "modelId": null,
+              "isFallback": false,
+              "evidenceConfidence": null,
+              "tasteProfileVersion": 4,
+              "currentTasteProfileVersion": 4,
+              "isOutdated": false
+            }
+          }
+        ]
+      }
+    },
+    "empty": {
+      "status": 200,
+      "schema": "ReadingList",
+      "body": {
+        "items": []
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    }
+  }
+}

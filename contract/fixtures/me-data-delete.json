@@ -1,0 +1,45 @@
+{
+  "endpoint": "DELETE /api/v1/me/data",
+  "outcomes": {
+    "deleted": {
+      "status": 204,
+      "body": null
+    },
+    "wrongPassword": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "password": "That password is not correct."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "rateLimited": {
+      "status": 429,
+      "body": {
+        "code": "RATE_LIMITED",
+        "message": "Too many requests. Try again later.",
+        "retryable": true,
+        "retryAfterSeconds": 3000
+      }
+    }
+  }
+}

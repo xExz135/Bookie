@@ -15,6 +15,6 @@ import { PasswordHasher } from './password-hasher';
     // Every route needs a valid access token unless marked @Public() (SEC-2).
     { provide: APP_GUARD, useClass: AuthGuard },
   ],
-  exports: [AuthService],
+  exports: [AuthService, PasswordHasher],
 })
 export class AuthModule {}

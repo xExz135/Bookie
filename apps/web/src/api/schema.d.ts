@@ -196,6 +196,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CompareController_compare"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["FeedbackController_save"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -207,6 +239,22 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/me/data": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["MyDataController_delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -335,6 +383,38 @@ export interface paths {
         put: operations["TasteController_rate"];
         post?: never;
         delete: operations["TasteController_unrate"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reading-list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ReadingListController_get"];
+        put?: never;
+        post: operations["ReadingListController_add"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/reading-list/{editionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["ReadingListController_remove"];
         options?: never;
         head?: never;
         patch?: never;
@@ -733,8 +813,311 @@ export interface components {
                 yourRating: number | null;
             }[];
         };
+        Comparison: {
+            a: {
+                canRetry: boolean;
+                /** Format: date-time */
+                createdAt: string;
+                edition: {
+                    author: string | null;
+                    coverUrl: string | null;
+                    description: string | null;
+                    /** Format: uuid */
+                    editionId: string;
+                    format: string | null;
+                    isbn13: string | null;
+                    language: string | null;
+                    pageCount: number | null;
+                    publisher: string | null;
+                    subtitle: string | null;
+                    title: string;
+                    year: number | null;
+                };
+                feedback: {
+                    /** @enum {string|null} */
+                    personal: "accurate" | "not_for_me" | null;
+                    /** @enum {string|null} */
+                    public: "accurate" | "not_for_me" | null;
+                };
+                /** Format: date-time */
+                finishedAt: string | null;
+                /** Format: uuid */
+                id: string;
+                personalMatch: {
+                    currentTasteProfileVersion: number;
+                    /** @enum {string|null} */
+                    errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "MODEL_UNAVAILABLE" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
+                    evidenceConfidence: {
+                        /** @enum {string} */
+                        level: "low" | "medium" | "high";
+                        reasons: string[];
+                    } | null;
+                    /** Format: date-time */
+                    generatedAt: string | null;
+                    hardFloor: number;
+                    isFallback: boolean;
+                    isOutdated: boolean;
+                    minForConfidence: number;
+                    /** @enum {string|null} */
+                    modelId: "B0" | "B1" | "B2" | "B3" | "B4" | null;
+                    modelVersion: string | null;
+                    ratedCount: number;
+                    scale: {
+                        /** @enum {number} */
+                        max: 5;
+                        /** @enum {number} */
+                        min: 1;
+                    };
+                    score: number | null;
+                    similarRatedBooks: {
+                        author: string | null;
+                        coverUrl: string | null;
+                        /** Format: uuid */
+                        editionId: string;
+                        title: string;
+                        yourRating: number;
+                    }[];
+                    /** @enum {string} */
+                    status: "done" | "running" | "failed" | "skipped" | "needs_taste_data" | "below_floor";
+                    tasteProfileVersion: number | null;
+                    traits: {
+                        bookValues: string[];
+                        evidenceIds: string[];
+                        /** @enum {string} */
+                        fit: "aligned" | "conflicting" | "unknown";
+                        /** @enum {string} */
+                        trait: "pace" | "tone" | "themes" | "contentIntensity";
+                        yourValues: string[];
+                    }[];
+                };
+                pollAfterMs: number | null;
+                publicReception: {
+                    complaints: {
+                        evidenceIds: string[];
+                        text: string;
+                    }[];
+                    evidence: {
+                        displayAllowed: boolean;
+                        excerpt: string | null;
+                        /** Format: uuid */
+                        id: string;
+                        /** @enum {string} */
+                        kind: "review" | "description" | "source_aggregate";
+                        number: number;
+                        /** Format: date-time */
+                        postedAt: string | null;
+                        rating: number | null;
+                        reviewCount: number | null;
+                        source: string | null;
+                    }[];
+                    evidenceConfidence: {
+                        /** @enum {string} */
+                        level: "low" | "medium" | "high";
+                        reasons: string[];
+                    } | null;
+                    /** @enum {string|null} */
+                    evidenceState: "sufficient" | "limited" | "insufficient" | "unavailable" | null;
+                    /** Format: date-time */
+                    generatedAt: string | null;
+                    praises: {
+                        evidenceIds: string[];
+                        text: string;
+                    }[];
+                    sources: {
+                        /** Format: date-time */
+                        fetchedAt: string | null;
+                        key: string;
+                        name: string;
+                        /** @enum {string} */
+                        outcome: "ok" | "empty" | "failed" | "rate_limited" | "not_permitted";
+                        providesText: boolean;
+                        ratingAverage: number | null;
+                        ratingCount: number | null;
+                        /** @enum {string|null} */
+                        ratingScope: "edition" | "work" | null;
+                        reviewsUsed: number;
+                    }[];
+                    /** @enum {string} */
+                    status: "pending" | "running" | "done" | "failed" | "skipped";
+                    summary: string | null;
+                    traits: {
+                        evidenceIds: string[];
+                        /** @enum {string} */
+                        trait: "pace" | "tone" | "themes" | "contentIntensity";
+                        values: string[];
+                    }[];
+                };
+                /** Format: uuid */
+                recalculatedFromId: string | null;
+                /** @enum {string} */
+                status: "running" | "complete" | "partial" | "failed";
+                steps: {
+                    /** @enum {string|null} */
+                    errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "MODEL_UNAVAILABLE" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
+                    /** @enum {string} */
+                    name: "resolve" | "fetchReviews" | "selectReviews" | "extractTraits" | "publicSummary" | "evidenceConfidence" | "personalMatch" | "finalize";
+                    /** @enum {string} */
+                    status: "pending" | "running" | "done" | "failed" | "skipped";
+                }[];
+            };
+            b: {
+                canRetry: boolean;
+                /** Format: date-time */
+                createdAt: string;
+                edition: {
+                    author: string | null;
+                    coverUrl: string | null;
+                    description: string | null;
+                    /** Format: uuid */
+                    editionId: string;
+                    format: string | null;
+                    isbn13: string | null;
+                    language: string | null;
+                    pageCount: number | null;
+                    publisher: string | null;
+                    subtitle: string | null;
+                    title: string;
+                    year: number | null;
+                };
+                feedback: {
+                    /** @enum {string|null} */
+                    personal: "accurate" | "not_for_me" | null;
+                    /** @enum {string|null} */
+                    public: "accurate" | "not_for_me" | null;
+                };
+                /** Format: date-time */
+                finishedAt: string | null;
+                /** Format: uuid */
+                id: string;
+                personalMatch: {
+                    currentTasteProfileVersion: number;
+                    /** @enum {string|null} */
+                    errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "MODEL_UNAVAILABLE" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
+                    evidenceConfidence: {
+                        /** @enum {string} */
+                        level: "low" | "medium" | "high";
+                        reasons: string[];
+                    } | null;
+                    /** Format: date-time */
+                    generatedAt: string | null;
+                    hardFloor: number;
+                    isFallback: boolean;
+                    isOutdated: boolean;
+                    minForConfidence: number;
+                    /** @enum {string|null} */
+                    modelId: "B0" | "B1" | "B2" | "B3" | "B4" | null;
+                    modelVersion: string | null;
+                    ratedCount: number;
+                    scale: {
+                        /** @enum {number} */
+                        max: 5;
+                        /** @enum {number} */
+                        min: 1;
+                    };
+                    score: number | null;
+                    similarRatedBooks: {
+                        author: string | null;
+                        coverUrl: string | null;
+                        /** Format: uuid */
+                        editionId: string;
+                        title: string;
+                        yourRating: number;
+                    }[];
+                    /** @enum {string} */
+                    status: "done" | "running" | "failed" | "skipped" | "needs_taste_data" | "below_floor";
+                    tasteProfileVersion: number | null;
+                    traits: {
+                        bookValues: string[];
+                        evidenceIds: string[];
+                        /** @enum {string} */
+                        fit: "aligned" | "conflicting" | "unknown";
+                        /** @enum {string} */
+                        trait: "pace" | "tone" | "themes" | "contentIntensity";
+                        yourValues: string[];
+                    }[];
+                };
+                pollAfterMs: number | null;
+                publicReception: {
+                    complaints: {
+                        evidenceIds: string[];
+                        text: string;
+                    }[];
+                    evidence: {
+                        displayAllowed: boolean;
+                        excerpt: string | null;
+                        /** Format: uuid */
+                        id: string;
+                        /** @enum {string} */
+                        kind: "review" | "description" | "source_aggregate";
+                        number: number;
+                        /** Format: date-time */
+                        postedAt: string | null;
+                        rating: number | null;
+                        reviewCount: number | null;
+                        source: string | null;
+                    }[];
+                    evidenceConfidence: {
+                        /** @enum {string} */
+                        level: "low" | "medium" | "high";
+                        reasons: string[];
+                    } | null;
+                    /** @enum {string|null} */
+                    evidenceState: "sufficient" | "limited" | "insufficient" | "unavailable" | null;
+                    /** Format: date-time */
+                    generatedAt: string | null;
+                    praises: {
+                        evidenceIds: string[];
+                        text: string;
+                    }[];
+                    sources: {
+                        /** Format: date-time */
+                        fetchedAt: string | null;
+                        key: string;
+                        name: string;
+                        /** @enum {string} */
+                        outcome: "ok" | "empty" | "failed" | "rate_limited" | "not_permitted";
+                        providesText: boolean;
+                        ratingAverage: number | null;
+                        ratingCount: number | null;
+                        /** @enum {string|null} */
+                        ratingScope: "edition" | "work" | null;
+                        reviewsUsed: number;
+                    }[];
+                    /** @enum {string} */
+                    status: "pending" | "running" | "done" | "failed" | "skipped";
+                    summary: string | null;
+                    traits: {
+                        evidenceIds: string[];
+                        /** @enum {string} */
+                        trait: "pace" | "tone" | "themes" | "contentIntensity";
+                        values: string[];
+                    }[];
+                };
+                /** Format: uuid */
+                recalculatedFromId: string | null;
+                /** @enum {string} */
+                status: "running" | "complete" | "partial" | "failed";
+                steps: {
+                    /** @enum {string|null} */
+                    errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "MODEL_UNAVAILABLE" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
+                    /** @enum {string} */
+                    name: "resolve" | "fetchReviews" | "selectReviews" | "extractTraits" | "publicSummary" | "evidenceConfidence" | "personalMatch" | "finalize";
+                    /** @enum {string} */
+                    status: "pending" | "running" | "done" | "failed" | "skipped";
+                }[];
+            };
+            traitDifferences: {
+                a: string[];
+                b: string[];
+                /** @enum {string} */
+                trait: "pace" | "tone" | "themes" | "contentIntensity";
+            }[];
+        };
         /** @enum {string} */
         ConfidenceLevel: "low" | "medium" | "high";
+        DeleteMyDataRequest: {
+            password: string;
+        };
         /** @enum {string} */
         ErrorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "MODEL_UNAVAILABLE" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR";
         ErrorResponseDto: {
@@ -750,6 +1133,22 @@ export interface components {
         };
         /** @enum {string} */
         EvidenceState: "sufficient" | "limited" | "insufficient" | "unavailable";
+        FeedbackRequest: {
+            /** Format: uuid */
+            analysisId: string;
+            /** @enum {string} */
+            target: "public" | "personal";
+            /** @enum {string} */
+            value: "accurate" | "not_for_me";
+        };
+        FeedbackSaved: {
+            /** @enum {string} */
+            target: "public" | "personal";
+            /** Format: date-time */
+            updatedAt: string;
+            /** @enum {string} */
+            value: "accurate" | "not_for_me";
+        };
         /** @enum {string} */
         FeedbackTarget: "public" | "personal";
         /** @enum {string} */
@@ -866,6 +1265,62 @@ export interface components {
         RatingRequest: {
             rating: number;
         };
+        ReadingList: {
+            items: {
+                /** Format: date-time */
+                addedAt: string;
+                /** Format: uuid */
+                analysisId: string | null;
+                edition: {
+                    author: string | null;
+                    coverUrl: string | null;
+                    /** Format: uuid */
+                    editionId: string;
+                    format: string | null;
+                    language: string | null;
+                    publisher: string | null;
+                    subtitle: string | null;
+                    title: string;
+                    year: number | null;
+                };
+                /** @enum {string} */
+                group: "ranked" | "low_confidence" | "no_match";
+                personalMatch: {
+                    currentTasteProfileVersion: number;
+                    evidenceConfidence: {
+                        /** @enum {string} */
+                        level: "low" | "medium" | "high";
+                        reasons: string[];
+                    } | null;
+                    isFallback: boolean;
+                    isOutdated: boolean;
+                    /** @enum {string|null} */
+                    modelId: "B0" | "B1" | "B2" | "B3" | "B4" | null;
+                    scale: {
+                        /** @enum {number} */
+                        max: 5;
+                        /** @enum {number} */
+                        min: 1;
+                    };
+                    score: number | null;
+                    /** @enum {string} */
+                    status: "done" | "running" | "failed" | "skipped" | "needs_taste_data" | "below_floor";
+                    tasteProfileVersion: number | null;
+                } | null;
+            }[];
+        };
+        ReadingListAdd: {
+            /** Format: uuid */
+            editionId: string;
+        };
+        ReadingListEntry: {
+            /** Format: date-time */
+            addedAt: string;
+            /** Format: uuid */
+            editionId: string;
+        };
+        /** @enum {string} */
+        ReadingListGroup: "ranked" | "low_confidence" | "no_match";
         RegisterRequest: {
             displayName: string;
             email: string;
@@ -1545,6 +2000,117 @@ export interface operations {
             };
         };
     };
+    CompareController_compare: {
+        parameters: {
+            query: {
+                /** @description Another analysis id */
+                b: unknown;
+                /** @description Analysis id */
+                a: unknown;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Comparison"];
+                };
+            };
+            /** @description VALIDATION_FAILED */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description NOT_FOUND */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    FeedbackController_save: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeedbackRequest"];
+            };
+        };
+        responses: {
+            /** @description Saved or replaced */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeedbackSaved"];
+                };
+            };
+            /** @description VALIDATION_FAILED */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description NOT_FOUND */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description CONFLICT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
     MeController_me: {
         parameters: {
             query?: never;
@@ -1564,6 +2130,55 @@ export interface operations {
             };
             /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    MyDataController_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeleteMyDataRequest"];
+            };
+        };
+        responses: {
+            /** @description Deleted; onboarding starts again */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description VALIDATION_FAILED */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2008,6 +2623,133 @@ export interface operations {
             };
             /** @description RATE_LIMITED */
             429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    ReadingListController_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Ranked by stored match where confident; the rest labeled, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadingList"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    ReadingListController_add: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReadingListAdd"];
+            };
+        };
+        responses: {
+            /** @description Already on the list */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadingListEntry"];
+                };
+            };
+            /** @description Added */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadingListEntry"];
+                };
+            };
+            /** @description VALIDATION_FAILED */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description NOT_FOUND */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    ReadingListController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                editionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Removed, or was not on the list */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description NOT_FOUND */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

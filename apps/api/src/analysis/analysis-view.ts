@@ -19,6 +19,8 @@ import { PERSONAL_SCORER, type PersonalScorer } from './personal-scorer';
 /** CONTRACT 4.4: excerpts are at most 1,000 characters. */
 const MAX_EXCERPT = 1000;
 const TRAIT_KEYS = ['pace', 'tone', 'themes', 'contentIntensity'] as const;
+/** Cold-start fallbacks (spec 7): their scores are always low confidence. */
+const FALLBACK_MODELS: readonly string[] = ['B0', 'B1'];
 
 type Public = Analysis['publicReception'];
 type Personal = Analysis['personalMatch'];
@@ -45,7 +47,9 @@ export class AnalysisView {
       include: {
         steps: true,
         tasteProfileVersion: { select: { versionNo: true, _count: { select: { ratings: true } } } },
-        personalAnalysis: true,
+        personalAnalysis: {
+          include: { modelVersion: { select: { modelId: true, version: true } } },
+        },
         feedback: true,
       },
     });
@@ -84,15 +88,18 @@ export class AnalysisView {
           ? 'running'
           : personalStep;
     const scored = personalStatus === 'done' && pa?.score != null;
+    // A stored score always names its model and confidence (MODEL-3). The
+    // explanations (similar books, trait fits) arrive with the models (BE-13).
+    const model = scored ? (pa!.modelVersion ?? null) : null;
     const personalMatch: Personal = {
       status: personalStatus,
       score: scored ? Math.round(Number(pa!.score) * 10) / 10 : null,
       scale: { min: 1, max: 5 },
-      // Model details and explanations arrive with the taste models (BE-13).
-      modelId: null,
-      modelVersion: null,
-      isFallback: false,
-      evidenceConfidence: null,
+      modelId: model?.modelId ?? null,
+      modelVersion: model?.version ?? null,
+      isFallback: model ? FALLBACK_MODELS.includes(model.modelId) : false,
+      evidenceConfidence:
+        scored && pa!.confidence ? { level: pa!.confidence, reasons: pa!.confidenceReasons } : null,
       tasteProfileVersion: versionNo,
       currentTasteProfileVersion: currentVersion,
       isOutdated: currentVersion > (versionNo ?? 0),

@@ -1,0 +1,56 @@
+{
+  "endpoint": "POST /api/v1/reading-list",
+  "outcomes": {
+    "added": {
+      "status": 201,
+      "schema": "ReadingListEntry",
+      "body": {
+        "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+        "addedAt": "2026-10-21T09:00:00.000Z"
+      }
+    },
+    "alreadyThere": {
+      "status": 200,
+      "schema": "ReadingListEntry",
+      "body": {
+        "editionId": "8b950eea-d77b-51dd-98c3-6a19c8660aaa",
+        "addedAt": "2026-10-20T10:00:00.000Z"
+      }
+    },
+    "notAnId": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "editionId": "Invalid UUID"
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "unknownEdition": {
+      "status": 404,
+      "body": {
+        "code": "NOT_FOUND",
+        "message": "Not found.",
+        "retryable": false
+      }
+    }
+  }
+}

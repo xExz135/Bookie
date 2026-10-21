@@ -71,6 +71,7 @@
 | `traitKey` | `pace`, `tone`, `themes`, `contentIntensity` |
 | `traitFit` | `aligned`, `conflicting`, `unknown` |
 | `modelId` | `B0`, `B1`, `B2`, `B3`, `B4` |
+| `readingListGroup` | `ranked`, `low_confidence`, `no_match` |
 
 ## 4. Endpoints (proposed)
 
@@ -234,15 +235,37 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
 
 ### 4.5 Feedback, lists, account
 
-| Method and path | Request | Response |
-|---|---|---|
-| `PUT /feedback` | `{ analysisId, target, value }` | `{ target, value, updatedAt }`. One value per user, analysis and target; changing it replaces it. |
-| `GET /reading-list` | none | `{ items: [{ editionId, title, author, personalMatch: { status, score, evidenceConfidence }, addedAt }] }` ordered by stored score; items without a confident match are labeled, not ranked as confident |
-| `POST /reading-list` | `{ editionId }` | `201` |
-| `DELETE /reading-list/:editionId` | none | `204` |
-| `GET /compare?a=&b=` | analysis ids | `{ a: Analysis, b: Analysis, traitDifferences: [{ trait, a, b }] }` for the same reader |
-| `GET /me` | none | `User`: the signed-in reader only (SEC-1) |
-| `DELETE /me/data` | `{ password }` | `204`. Removes profile versions, ratings, analyses and feedback. |
+**Status: agreed 2026-10-21** (D-022; approved by the owner for both roles). Built in BE-10. Shapes are in `contract/openapi.json` (`FeedbackRequest`, `FeedbackSaved`, `ReadingList`, `ReadingListAdd`, `ReadingListEntry`, `Comparison`, `DeleteMyDataRequest`); examples of every outcome are in `contract/fixtures/` (`feedback-put`, `reading-list-get`, `reading-list-add`, `reading-list-delete`, `compare`, `me-data-delete`).
+
+| Method and path | Request | Response | Errors |
+|---|---|---|---|
+| `PUT /feedback` | `{ analysisId, target, value }` | `200 { target, value, updatedAt }`. One value per reader, analysis and target; saving again replaces it (FB-1) | `400`, `404` not the reader's analysis (FB-2), `409` that section failed or was not generated |
+| `GET /reading-list` | none | `ReadingList`: `{ items: [{ edition, addedAt, analysisId, group, personalMatch }] }` in the order to show | none beyond auth |
+| `POST /reading-list` | `{ editionId }` | `201 { editionId, addedAt }` added, or `200` with the same body when it was already on the list | `400`, `404` unknown edition |
+| `DELETE /reading-list/:editionId` | none | `204`, also when the book was not on the list | `404` not an id |
+| `GET /compare?a=&b=` | two analysis ids | `Comparison`: `{ a: Analysis, b: Analysis, traitDifferences: [{ trait, a, b }] }` | `400` missing id or the same id twice, `404` either one missing or not the reader's |
+| `GET /me` | none | `User`: the signed-in reader only (SEC-1) | none beyond auth |
+| `DELETE /me/data` | `{ password }` | `204`. The reader stays signed in and starts onboarding again | `400` wrong password (`fields.password`), `429` too many attempts |
+
+**Meaning rules the frontend relies on.** The `ReadingList` schema checks the starred rules (★) in code.
+
+*Feedback*
+- Show the buttons only where the `Analysis` has `feedback` for that section (it is null on sections that were not generated). A `409` means the section is not there to judge; do not retry.
+- Feedback is stored with the analysis, its taste-profile version and, for the personal match, the model version that produced the score (spec 6). Read it back from `Analysis.feedback`.
+
+*Reading list*
+- `edition` is a `Candidate`. `analysisId` is the reader's latest **finished** analysis of that edition, or null; open it for the full result. `personalMatch` is that analysis's match as in `AnalysisSummary`, or null when there is none.
+- ★ `group` says how the item is placed (LIST-2): `ranked` (a score with medium or high confidence from a learned model), `low_confidence` (a score with low confidence, including the fallback models B0 and B1), `no_match` (no score: not analysed, no taste data, below the floor, not available, failed). Label `low_confidence` and `no_match` items as such.
+- ★ The list comes in the order to show: `ranked` items by score, highest first, then `low_confidence`, then `no_match`, each of those two newest added first. Do not re-sort.
+- LIST-1: the order uses stored scores only. It changes when a new analysis of a listed book finishes, not when the taste profile changes (the items then say `isOutdated`) and not while a new analysis is still running.
+
+*Compare*
+- `a` and `b` are full `Analysis` objects, the same as `GET /analyses/:id`. `traitDifferences` lists only the book traits whose values differ (compared as sets); an empty list on one side means that side's trait is unknown. Traits unknown on both sides are not listed.
+
+*Delete my data* (SEC-3, D-022)
+- Removes the reader's taste-profile versions with their ratings and questionnaire answers, rating imports, analyses with their steps and personal matches, feedback and the reading list. `onboardingState` becomes `pending`.
+- Kept on purpose: the account (email, password, display name, sessions) and the scan and refresh counters, so limits cannot be reset by deleting data. Shared catalog rows and public review summaries belong to no reader.
+- Ask for the password again before calling. After `204`, reload the reader (`GET /me`) and treat every cached result as gone.
 
 ## 5. Frontend rules that depend on this contract
 - Render what the API returns. Never compute match, confidence, staleness or ordering.
@@ -266,3 +289,4 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
 | 2026-10-21 | BE-7: 4.2 filled in: `GET /ratings`, `DELETE /ratings/:editionId`, `POST /onboarding/skip`, `yourRating` and `external` on catalog search, `importId`, `format`, `totalRows`, `ignoredRows` and `rating` on the import view, `tasteProfileVersion: 0` before the first save, import and version rules. Fixtures added. Proposed by backend; approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-21 | 4.4 rewritten with the result-screen and history mockups: `steps` as an ordered list with `errorCode`; `canRetry`; `edition` gains `isbn13`, `pageCount`, `description` (was `summary`); `ratings` merged into `sources` (with `ratingScope`, `providesText`, `reviewsUsed`, `fetchedAt`); cited `evidence` included in the analysis, replacing `GET /analyses/:id/evidence/:evidenceId`; book `traits` on the public side; personal `isFallback`, `currentTasteProfileVersion`, `ratedCount`, `hardFloor`, `minForConfidence`, `errorCode`, trait fits with `bookValues` and `yourValues`; `notFactoredIn` replaced by `unknown` trait fits; `feedback`; `AnalysisSummary`; error statuses per endpoint; rules checked in code. Planned fixtures (`analyses-*.json`). Proposed with D-019; approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-21 | BE-8: the five 4.4 endpoints are built, so the `analyses-*.json` fixtures lose their `planned` mark. New error code `MODEL_UNAVAILABLE` (503, section 2), used only as the personal step's `errorCode` while no taste model is shipped (D-021); new fixture outcome `analyses-get.json` → `personalUnavailable`. `GET /analyses` ignores a cursor or limit it cannot read instead of returning 400 (no 400 is documented for it). Approved by the owner for both roles on 2026-10-21 | n/a |
+| 2026-10-21 | 4.5 agreed and built (BE-10, D-022): feedback with `409` for sections not generated; reading list items carry `edition`, `analysisId`, `group` and the `AnalysisSummary` personal match, in the order to show; `POST /reading-list` answers `201` or `200`; compare lists only differing traits; delete-my-data keeps the account and the scan and refresh counters, needs the password (`400` when wrong, `429` after too many tries). New enum `readingListGroup` in section 3. Approved by the owner for both roles on 2026-10-21 | n/a |

@@ -1,0 +1,33 @@
+{
+  "endpoint": "DELETE /api/v1/reading-list/{editionId}",
+  "outcomes": {
+    "removed": {
+      "status": 204,
+      "body": null
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "notAnId": {
+      "status": 404,
+      "body": {
+        "code": "NOT_FOUND",
+        "message": "Not found.",
+        "retryable": false
+      }
+    }
+  }
+}

@@ -24,6 +24,7 @@ export const CONTRACT_ENUMS = {
   traitKey: ['pace', 'tone', 'themes', 'contentIntensity'],
   traitFit: ['aligned', 'conflicting', 'unknown'],
   modelId: ['B0', 'B1', 'B2', 'B3', 'B4'],
+  readingListGroup: ['ranked', 'low_confidence', 'no_match'],
 } as const;
 
 export type ContractEnumName = keyof typeof CONTRACT_ENUMS;
@@ -41,3 +42,4 @@ export type FeedbackValue = ContractEnum<'feedbackValue'>;
 export type TraitKey = ContractEnum<'traitKey'>;
 export type TraitFit = ContractEnum<'traitFit'>;
 export type ModelId = ContractEnum<'modelId'>;
+export type ReadingListGroup = ContractEnum<'readingListGroup'>;

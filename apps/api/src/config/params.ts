@@ -418,6 +418,12 @@ export const PARAMS = {
     description: 'New analyses a reader may start per hour.',
     source: 'Spec 12 (hypothesis)',
   },
+  RATE_LIMIT_DELETE_DATA_PER_HOUR: {
+    schema: int(5),
+    description:
+      'Delete-my-data attempts per reader per hour. Each asks for the password, so this also limits password guessing.',
+    source: 'D-022 (hypothesis)',
+  },
   REFRESH_PER_BOOK_PER_DAY: {
     schema: int(3),
     description: 'Manual review refreshes a reader may request per book per day.',

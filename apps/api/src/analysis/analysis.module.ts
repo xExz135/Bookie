@@ -26,6 +26,6 @@ import { NoModelScorer, PERSONAL_SCORER } from './personal-scorer';
     },
     { provide: PERSONAL_SCORER, useClass: NoModelScorer },
   ],
-  exports: [AnalysisRunner],
+  exports: [AnalysisRunner, AnalysisView],
 })
 export class AnalysisModule {}

@@ -1,0 +1,66 @@
+{
+  "endpoint": "PUT /api/v1/feedback",
+  "outcomes": {
+    "saved": {
+      "status": 200,
+      "schema": "FeedbackSaved",
+      "body": {
+        "target": "public",
+        "value": "accurate",
+        "updatedAt": "2026-10-21T09:00:00.000Z"
+      }
+    },
+    "changed": {
+      "status": 200,
+      "schema": "FeedbackSaved",
+      "body": {
+        "target": "personal",
+        "value": "not_for_me",
+        "updatedAt": "2026-10-21T09:05:00.000Z"
+      }
+    },
+    "badValue": {
+      "status": 400,
+      "body": {
+        "code": "VALIDATION_FAILED",
+        "message": "Some fields are invalid.",
+        "retryable": false,
+        "fields": {
+          "value": "Choose accurate or not_for_me."
+        }
+      }
+    },
+    "unauthenticated": {
+      "status": 401,
+      "body": {
+        "code": "UNAUTHENTICATED",
+        "message": "Please sign in.",
+        "retryable": false
+      }
+    },
+    "tokenExpired": {
+      "status": 401,
+      "body": {
+        "code": "TOKEN_EXPIRED",
+        "message": "Your session expired.",
+        "retryable": false
+      }
+    },
+    "notYours": {
+      "status": 404,
+      "body": {
+        "code": "NOT_FOUND",
+        "message": "Not found.",
+        "retryable": false
+      }
+    },
+    "sectionNotGenerated": {
+      "status": 409,
+      "body": {
+        "code": "CONFLICT",
+        "message": "This action conflicts with the current state.",
+        "retryable": false
+      }
+    }
+  }
+}

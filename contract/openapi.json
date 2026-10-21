@@ -1778,6 +1778,1614 @@
         ],
         "type": "object"
       },
+      "Comparison": {
+        "additionalProperties": false,
+        "properties": {
+          "a": {
+            "additionalProperties": false,
+            "properties": {
+              "canRetry": {
+                "type": "boolean"
+              },
+              "createdAt": {
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                "type": "string"
+              },
+              "edition": {
+                "additionalProperties": false,
+                "properties": {
+                  "author": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "coverUrl": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "editionId": {
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "type": "string"
+                  },
+                  "format": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "isbn13": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "language": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "pageCount": {
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "nullable": true,
+                    "type": "integer"
+                  },
+                  "publisher": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "subtitle": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "year": {
+                    "maximum": 9007199254740991,
+                    "minimum": -9007199254740991,
+                    "nullable": true,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "editionId",
+                  "title",
+                  "subtitle",
+                  "author",
+                  "year",
+                  "language",
+                  "publisher",
+                  "format",
+                  "coverUrl",
+                  "isbn13",
+                  "pageCount",
+                  "description"
+                ],
+                "type": "object"
+              },
+              "feedback": {
+                "additionalProperties": false,
+                "properties": {
+                  "personal": {
+                    "enum": [
+                      "accurate",
+                      "not_for_me"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "public": {
+                    "enum": [
+                      "accurate",
+                      "not_for_me"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "public",
+                  "personal"
+                ],
+                "type": "object"
+              },
+              "finishedAt": {
+                "format": "date-time",
+                "nullable": true,
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "type": "string"
+              },
+              "personalMatch": {
+                "additionalProperties": false,
+                "properties": {
+                  "currentTasteProfileVersion": {
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "errorCode": {
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "UNAUTHENTICATED",
+                      "TOKEN_EXPIRED",
+                      "INVALID_CREDENTIALS",
+                      "NOT_FOUND",
+                      "RATE_LIMITED",
+                      "SCAN_QUOTA_EXCEEDED",
+                      "UPLOAD_TOO_LARGE",
+                      "UNSUPPORTED_TYPE",
+                      "NOT_A_BOOK",
+                      "UNREADABLE_IMAGE",
+                      "IDENTIFICATION_UNAVAILABLE",
+                      "SOURCES_UNAVAILABLE",
+                      "LLM_QUOTA_EXHAUSTED",
+                      "INVALID_MODEL_OUTPUT",
+                      "MODEL_UNAVAILABLE",
+                      "CONFLICT",
+                      "EMAIL_IN_USE",
+                      "INTERNAL_ERROR"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "evidenceConfidence": {
+                    "additionalProperties": false,
+                    "nullable": true,
+                    "properties": {
+                      "level": {
+                        "enum": [
+                          "low",
+                          "medium",
+                          "high"
+                        ],
+                        "type": "string"
+                      },
+                      "reasons": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "level",
+                      "reasons"
+                    ],
+                    "type": "object"
+                  },
+                  "generatedAt": {
+                    "format": "date-time",
+                    "nullable": true,
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                    "type": "string"
+                  },
+                  "hardFloor": {
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "isFallback": {
+                    "type": "boolean"
+                  },
+                  "isOutdated": {
+                    "type": "boolean"
+                  },
+                  "minForConfidence": {
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "modelId": {
+                    "enum": [
+                      "B0",
+                      "B1",
+                      "B2",
+                      "B3",
+                      "B4"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "modelVersion": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "ratedCount": {
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "scale": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "max": {
+                        "enum": [
+                          5
+                        ],
+                        "type": "number"
+                      },
+                      "min": {
+                        "enum": [
+                          1
+                        ],
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "min",
+                      "max"
+                    ],
+                    "type": "object"
+                  },
+                  "score": {
+                    "maximum": 5,
+                    "minimum": 1,
+                    "nullable": true,
+                    "type": "number"
+                  },
+                  "similarRatedBooks": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "author": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "coverUrl": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "editionId": {
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "yourRating": {
+                          "maximum": 5,
+                          "minimum": 1,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "editionId",
+                        "title",
+                        "author",
+                        "coverUrl",
+                        "yourRating"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "status": {
+                    "enum": [
+                      "done",
+                      "running",
+                      "failed",
+                      "skipped",
+                      "needs_taste_data",
+                      "below_floor"
+                    ],
+                    "type": "string"
+                  },
+                  "tasteProfileVersion": {
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "nullable": true,
+                    "type": "integer"
+                  },
+                  "traits": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "bookValues": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "evidenceIds": {
+                          "items": {
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "fit": {
+                          "enum": [
+                            "aligned",
+                            "conflicting",
+                            "unknown"
+                          ],
+                          "type": "string"
+                        },
+                        "trait": {
+                          "enum": [
+                            "pace",
+                            "tone",
+                            "themes",
+                            "contentIntensity"
+                          ],
+                          "type": "string"
+                        },
+                        "yourValues": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "trait",
+                        "fit",
+                        "bookValues",
+                        "yourValues",
+                        "evidenceIds"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "status",
+                  "score",
+                  "scale",
+                  "modelId",
+                  "modelVersion",
+                  "isFallback",
+                  "evidenceConfidence",
+                  "tasteProfileVersion",
+                  "currentTasteProfileVersion",
+                  "isOutdated",
+                  "ratedCount",
+                  "hardFloor",
+                  "minForConfidence",
+                  "generatedAt",
+                  "similarRatedBooks",
+                  "traits",
+                  "errorCode"
+                ],
+                "type": "object"
+              },
+              "pollAfterMs": {
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "nullable": true,
+                "type": "integer"
+              },
+              "publicReception": {
+                "additionalProperties": false,
+                "properties": {
+                  "complaints": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "evidenceIds": {
+                          "items": {
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "type": "string"
+                          },
+                          "minItems": 1,
+                          "type": "array"
+                        },
+                        "text": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "evidenceIds"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "evidence": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "displayAllowed": {
+                          "type": "boolean"
+                        },
+                        "excerpt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                          "type": "string"
+                        },
+                        "kind": {
+                          "enum": [
+                            "review",
+                            "description",
+                            "source_aggregate"
+                          ],
+                          "type": "string"
+                        },
+                        "number": {
+                          "exclusiveMinimum": true,
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "postedAt": {
+                          "format": "date-time",
+                          "nullable": true,
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                          "type": "string"
+                        },
+                        "rating": {
+                          "maximum": 5,
+                          "minimum": 1,
+                          "nullable": true,
+                          "type": "integer"
+                        },
+                        "reviewCount": {
+                          "exclusiveMinimum": true,
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "nullable": true,
+                          "type": "integer"
+                        },
+                        "source": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "number",
+                        "kind",
+                        "source",
+                        "rating",
+                        "excerpt",
+                        "displayAllowed",
+                        "reviewCount",
+                        "postedAt"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "evidenceConfidence": {
+                    "additionalProperties": false,
+                    "nullable": true,
+                    "properties": {
+                      "level": {
+                        "enum": [
+                          "low",
+                          "medium",
+                          "high"
+                        ],
+                        "type": "string"
+                      },
+                      "reasons": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "level",
+                      "reasons"
+                    ],
+                    "type": "object"
+                  },
+                  "evidenceState": {
+                    "enum": [
+                      "sufficient",
+                      "limited",
+                      "insufficient",
+                      "unavailable"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "generatedAt": {
+                    "format": "date-time",
+                    "nullable": true,
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                    "type": "string"
+                  },
+                  "praises": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "evidenceIds": {
+                          "items": {
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "type": "string"
+                          },
+                          "minItems": 1,
+                          "type": "array"
+                        },
+                        "text": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "evidenceIds"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "sources": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "fetchedAt": {
+                          "format": "date-time",
+                          "nullable": true,
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                          "type": "string"
+                        },
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "outcome": {
+                          "enum": [
+                            "ok",
+                            "empty",
+                            "failed",
+                            "rate_limited",
+                            "not_permitted"
+                          ],
+                          "type": "string"
+                        },
+                        "providesText": {
+                          "type": "boolean"
+                        },
+                        "ratingAverage": {
+                          "maximum": 5,
+                          "minimum": 1,
+                          "nullable": true,
+                          "type": "number"
+                        },
+                        "ratingCount": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "nullable": true,
+                          "type": "integer"
+                        },
+                        "ratingScope": {
+                          "enum": [
+                            "edition",
+                            "work"
+                          ],
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "reviewsUsed": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "name",
+                        "outcome",
+                        "providesText",
+                        "ratingAverage",
+                        "ratingCount",
+                        "ratingScope",
+                        "reviewsUsed",
+                        "fetchedAt"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "status": {
+                    "enum": [
+                      "pending",
+                      "running",
+                      "done",
+                      "failed",
+                      "skipped"
+                    ],
+                    "type": "string"
+                  },
+                  "summary": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "traits": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "evidenceIds": {
+                          "items": {
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "trait": {
+                          "enum": [
+                            "pace",
+                            "tone",
+                            "themes",
+                            "contentIntensity"
+                          ],
+                          "type": "string"
+                        },
+                        "values": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "trait",
+                        "values",
+                        "evidenceIds"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidenceState",
+                  "summary",
+                  "praises",
+                  "complaints",
+                  "traits",
+                  "sources",
+                  "evidence",
+                  "evidenceConfidence",
+                  "generatedAt"
+                ],
+                "type": "object"
+              },
+              "recalculatedFromId": {
+                "format": "uuid",
+                "nullable": true,
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "running",
+                  "complete",
+                  "partial",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "steps": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "errorCode": {
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "UNAUTHENTICATED",
+                        "TOKEN_EXPIRED",
+                        "INVALID_CREDENTIALS",
+                        "NOT_FOUND",
+                        "RATE_LIMITED",
+                        "SCAN_QUOTA_EXCEEDED",
+                        "UPLOAD_TOO_LARGE",
+                        "UNSUPPORTED_TYPE",
+                        "NOT_A_BOOK",
+                        "UNREADABLE_IMAGE",
+                        "IDENTIFICATION_UNAVAILABLE",
+                        "SOURCES_UNAVAILABLE",
+                        "LLM_QUOTA_EXHAUSTED",
+                        "INVALID_MODEL_OUTPUT",
+                        "MODEL_UNAVAILABLE",
+                        "CONFLICT",
+                        "EMAIL_IN_USE",
+                        "INTERNAL_ERROR"
+                      ],
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "name": {
+                      "enum": [
+                        "resolve",
+                        "fetchReviews",
+                        "selectReviews",
+                        "extractTraits",
+                        "publicSummary",
+                        "evidenceConfidence",
+                        "personalMatch",
+                        "finalize"
+                      ],
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": [
+                        "pending",
+                        "running",
+                        "done",
+                        "failed",
+                        "skipped"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "status",
+                    "errorCode"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "pollAfterMs",
+              "createdAt",
+              "finishedAt",
+              "recalculatedFromId",
+              "canRetry",
+              "edition",
+              "steps",
+              "publicReception",
+              "personalMatch",
+              "feedback"
+            ],
+            "type": "object"
+          },
+          "b": {
+            "additionalProperties": false,
+            "properties": {
+              "canRetry": {
+                "type": "boolean"
+              },
+              "createdAt": {
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                "type": "string"
+              },
+              "edition": {
+                "additionalProperties": false,
+                "properties": {
+                  "author": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "coverUrl": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "description": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "editionId": {
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                    "type": "string"
+                  },
+                  "format": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "isbn13": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "language": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "pageCount": {
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "nullable": true,
+                    "type": "integer"
+                  },
+                  "publisher": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "subtitle": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "year": {
+                    "maximum": 9007199254740991,
+                    "minimum": -9007199254740991,
+                    "nullable": true,
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "editionId",
+                  "title",
+                  "subtitle",
+                  "author",
+                  "year",
+                  "language",
+                  "publisher",
+                  "format",
+                  "coverUrl",
+                  "isbn13",
+                  "pageCount",
+                  "description"
+                ],
+                "type": "object"
+              },
+              "feedback": {
+                "additionalProperties": false,
+                "properties": {
+                  "personal": {
+                    "enum": [
+                      "accurate",
+                      "not_for_me"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "public": {
+                    "enum": [
+                      "accurate",
+                      "not_for_me"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "public",
+                  "personal"
+                ],
+                "type": "object"
+              },
+              "finishedAt": {
+                "format": "date-time",
+                "nullable": true,
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                "type": "string"
+              },
+              "id": {
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "type": "string"
+              },
+              "personalMatch": {
+                "additionalProperties": false,
+                "properties": {
+                  "currentTasteProfileVersion": {
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "errorCode": {
+                    "enum": [
+                      "VALIDATION_FAILED",
+                      "UNAUTHENTICATED",
+                      "TOKEN_EXPIRED",
+                      "INVALID_CREDENTIALS",
+                      "NOT_FOUND",
+                      "RATE_LIMITED",
+                      "SCAN_QUOTA_EXCEEDED",
+                      "UPLOAD_TOO_LARGE",
+                      "UNSUPPORTED_TYPE",
+                      "NOT_A_BOOK",
+                      "UNREADABLE_IMAGE",
+                      "IDENTIFICATION_UNAVAILABLE",
+                      "SOURCES_UNAVAILABLE",
+                      "LLM_QUOTA_EXHAUSTED",
+                      "INVALID_MODEL_OUTPUT",
+                      "MODEL_UNAVAILABLE",
+                      "CONFLICT",
+                      "EMAIL_IN_USE",
+                      "INTERNAL_ERROR"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "evidenceConfidence": {
+                    "additionalProperties": false,
+                    "nullable": true,
+                    "properties": {
+                      "level": {
+                        "enum": [
+                          "low",
+                          "medium",
+                          "high"
+                        ],
+                        "type": "string"
+                      },
+                      "reasons": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "level",
+                      "reasons"
+                    ],
+                    "type": "object"
+                  },
+                  "generatedAt": {
+                    "format": "date-time",
+                    "nullable": true,
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                    "type": "string"
+                  },
+                  "hardFloor": {
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "isFallback": {
+                    "type": "boolean"
+                  },
+                  "isOutdated": {
+                    "type": "boolean"
+                  },
+                  "minForConfidence": {
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "modelId": {
+                    "enum": [
+                      "B0",
+                      "B1",
+                      "B2",
+                      "B3",
+                      "B4"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "modelVersion": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "ratedCount": {
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "scale": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "max": {
+                        "enum": [
+                          5
+                        ],
+                        "type": "number"
+                      },
+                      "min": {
+                        "enum": [
+                          1
+                        ],
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "min",
+                      "max"
+                    ],
+                    "type": "object"
+                  },
+                  "score": {
+                    "maximum": 5,
+                    "minimum": 1,
+                    "nullable": true,
+                    "type": "number"
+                  },
+                  "similarRatedBooks": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "author": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "coverUrl": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "editionId": {
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "yourRating": {
+                          "maximum": 5,
+                          "minimum": 1,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "editionId",
+                        "title",
+                        "author",
+                        "coverUrl",
+                        "yourRating"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "status": {
+                    "enum": [
+                      "done",
+                      "running",
+                      "failed",
+                      "skipped",
+                      "needs_taste_data",
+                      "below_floor"
+                    ],
+                    "type": "string"
+                  },
+                  "tasteProfileVersion": {
+                    "exclusiveMinimum": true,
+                    "maximum": 9007199254740991,
+                    "minimum": 0,
+                    "nullable": true,
+                    "type": "integer"
+                  },
+                  "traits": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "bookValues": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "evidenceIds": {
+                          "items": {
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "fit": {
+                          "enum": [
+                            "aligned",
+                            "conflicting",
+                            "unknown"
+                          ],
+                          "type": "string"
+                        },
+                        "trait": {
+                          "enum": [
+                            "pace",
+                            "tone",
+                            "themes",
+                            "contentIntensity"
+                          ],
+                          "type": "string"
+                        },
+                        "yourValues": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "trait",
+                        "fit",
+                        "bookValues",
+                        "yourValues",
+                        "evidenceIds"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "status",
+                  "score",
+                  "scale",
+                  "modelId",
+                  "modelVersion",
+                  "isFallback",
+                  "evidenceConfidence",
+                  "tasteProfileVersion",
+                  "currentTasteProfileVersion",
+                  "isOutdated",
+                  "ratedCount",
+                  "hardFloor",
+                  "minForConfidence",
+                  "generatedAt",
+                  "similarRatedBooks",
+                  "traits",
+                  "errorCode"
+                ],
+                "type": "object"
+              },
+              "pollAfterMs": {
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991,
+                "minimum": 0,
+                "nullable": true,
+                "type": "integer"
+              },
+              "publicReception": {
+                "additionalProperties": false,
+                "properties": {
+                  "complaints": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "evidenceIds": {
+                          "items": {
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "type": "string"
+                          },
+                          "minItems": 1,
+                          "type": "array"
+                        },
+                        "text": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "evidenceIds"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "evidence": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "displayAllowed": {
+                          "type": "boolean"
+                        },
+                        "excerpt": {
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "id": {
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                          "type": "string"
+                        },
+                        "kind": {
+                          "enum": [
+                            "review",
+                            "description",
+                            "source_aggregate"
+                          ],
+                          "type": "string"
+                        },
+                        "number": {
+                          "exclusiveMinimum": true,
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "postedAt": {
+                          "format": "date-time",
+                          "nullable": true,
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                          "type": "string"
+                        },
+                        "rating": {
+                          "maximum": 5,
+                          "minimum": 1,
+                          "nullable": true,
+                          "type": "integer"
+                        },
+                        "reviewCount": {
+                          "exclusiveMinimum": true,
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "nullable": true,
+                          "type": "integer"
+                        },
+                        "source": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "number",
+                        "kind",
+                        "source",
+                        "rating",
+                        "excerpt",
+                        "displayAllowed",
+                        "reviewCount",
+                        "postedAt"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "evidenceConfidence": {
+                    "additionalProperties": false,
+                    "nullable": true,
+                    "properties": {
+                      "level": {
+                        "enum": [
+                          "low",
+                          "medium",
+                          "high"
+                        ],
+                        "type": "string"
+                      },
+                      "reasons": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "level",
+                      "reasons"
+                    ],
+                    "type": "object"
+                  },
+                  "evidenceState": {
+                    "enum": [
+                      "sufficient",
+                      "limited",
+                      "insufficient",
+                      "unavailable"
+                    ],
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "generatedAt": {
+                    "format": "date-time",
+                    "nullable": true,
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                    "type": "string"
+                  },
+                  "praises": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "evidenceIds": {
+                          "items": {
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "type": "string"
+                          },
+                          "minItems": 1,
+                          "type": "array"
+                        },
+                        "text": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "text",
+                        "evidenceIds"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "sources": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "fetchedAt": {
+                          "format": "date-time",
+                          "nullable": true,
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                          "type": "string"
+                        },
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "outcome": {
+                          "enum": [
+                            "ok",
+                            "empty",
+                            "failed",
+                            "rate_limited",
+                            "not_permitted"
+                          ],
+                          "type": "string"
+                        },
+                        "providesText": {
+                          "type": "boolean"
+                        },
+                        "ratingAverage": {
+                          "maximum": 5,
+                          "minimum": 1,
+                          "nullable": true,
+                          "type": "number"
+                        },
+                        "ratingCount": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "nullable": true,
+                          "type": "integer"
+                        },
+                        "ratingScope": {
+                          "enum": [
+                            "edition",
+                            "work"
+                          ],
+                          "nullable": true,
+                          "type": "string"
+                        },
+                        "reviewsUsed": {
+                          "maximum": 9007199254740991,
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "name",
+                        "outcome",
+                        "providesText",
+                        "ratingAverage",
+                        "ratingCount",
+                        "ratingScope",
+                        "reviewsUsed",
+                        "fetchedAt"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "status": {
+                    "enum": [
+                      "pending",
+                      "running",
+                      "done",
+                      "failed",
+                      "skipped"
+                    ],
+                    "type": "string"
+                  },
+                  "summary": {
+                    "nullable": true,
+                    "type": "string"
+                  },
+                  "traits": {
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "evidenceIds": {
+                          "items": {
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "type": "string"
+                          },
+                          "type": "array"
+                        },
+                        "trait": {
+                          "enum": [
+                            "pace",
+                            "tone",
+                            "themes",
+                            "contentIntensity"
+                          ],
+                          "type": "string"
+                        },
+                        "values": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "trait",
+                        "values",
+                        "evidenceIds"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "status",
+                  "evidenceState",
+                  "summary",
+                  "praises",
+                  "complaints",
+                  "traits",
+                  "sources",
+                  "evidence",
+                  "evidenceConfidence",
+                  "generatedAt"
+                ],
+                "type": "object"
+              },
+              "recalculatedFromId": {
+                "format": "uuid",
+                "nullable": true,
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "running",
+                  "complete",
+                  "partial",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "steps": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "errorCode": {
+                      "enum": [
+                        "VALIDATION_FAILED",
+                        "UNAUTHENTICATED",
+                        "TOKEN_EXPIRED",
+                        "INVALID_CREDENTIALS",
+                        "NOT_FOUND",
+                        "RATE_LIMITED",
+                        "SCAN_QUOTA_EXCEEDED",
+                        "UPLOAD_TOO_LARGE",
+                        "UNSUPPORTED_TYPE",
+                        "NOT_A_BOOK",
+                        "UNREADABLE_IMAGE",
+                        "IDENTIFICATION_UNAVAILABLE",
+                        "SOURCES_UNAVAILABLE",
+                        "LLM_QUOTA_EXHAUSTED",
+                        "INVALID_MODEL_OUTPUT",
+                        "MODEL_UNAVAILABLE",
+                        "CONFLICT",
+                        "EMAIL_IN_USE",
+                        "INTERNAL_ERROR"
+                      ],
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "name": {
+                      "enum": [
+                        "resolve",
+                        "fetchReviews",
+                        "selectReviews",
+                        "extractTraits",
+                        "publicSummary",
+                        "evidenceConfidence",
+                        "personalMatch",
+                        "finalize"
+                      ],
+                      "type": "string"
+                    },
+                    "status": {
+                      "enum": [
+                        "pending",
+                        "running",
+                        "done",
+                        "failed",
+                        "skipped"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "status",
+                    "errorCode"
+                  ],
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "pollAfterMs",
+              "createdAt",
+              "finishedAt",
+              "recalculatedFromId",
+              "canRetry",
+              "edition",
+              "steps",
+              "publicReception",
+              "personalMatch",
+              "feedback"
+            ],
+            "type": "object"
+          },
+          "traitDifferences": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "a": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "b": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "trait": {
+                  "enum": [
+                    "pace",
+                    "tone",
+                    "themes",
+                    "contentIntensity"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "trait",
+                "a",
+                "b"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "a",
+          "b",
+          "traitDifferences"
+        ],
+        "type": "object"
+      },
       "ConfidenceLevel": {
         "enum": [
           "low",
@@ -1785,6 +3393,19 @@
           "high"
         ],
         "type": "string"
+      },
+      "DeleteMyDataRequest": {
+        "properties": {
+          "password": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "password"
+        ],
+        "type": "object"
       },
       "ErrorCode": {
         "enum": [
@@ -1852,6 +3473,65 @@
           "unavailable"
         ],
         "type": "string"
+      },
+      "FeedbackRequest": {
+        "properties": {
+          "analysisId": {
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "type": "string"
+          },
+          "target": {
+            "enum": [
+              "public",
+              "personal"
+            ],
+            "type": "string"
+          },
+          "value": {
+            "enum": [
+              "accurate",
+              "not_for_me"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "analysisId",
+          "target",
+          "value"
+        ],
+        "type": "object"
+      },
+      "FeedbackSaved": {
+        "additionalProperties": false,
+        "properties": {
+          "target": {
+            "enum": [
+              "public",
+              "personal"
+            ],
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "type": "string"
+          },
+          "value": {
+            "enum": [
+              "accurate",
+              "not_for_me"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "target",
+          "value",
+          "updatedAt"
+        ],
+        "type": "object"
       },
       "FeedbackTarget": {
         "enum": [
@@ -2408,6 +4088,257 @@
           "rating"
         ],
         "type": "object"
+      },
+      "ReadingList": {
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "addedAt": {
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                  "type": "string"
+                },
+                "analysisId": {
+                  "format": "uuid",
+                  "nullable": true,
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                  "type": "string"
+                },
+                "edition": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "author": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "coverUrl": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "editionId": {
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "type": "string"
+                    },
+                    "format": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "language": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "publisher": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "subtitle": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "year": {
+                      "maximum": 9007199254740991,
+                      "minimum": -9007199254740991,
+                      "nullable": true,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "editionId",
+                    "title",
+                    "subtitle",
+                    "author",
+                    "year",
+                    "language",
+                    "publisher",
+                    "format",
+                    "coverUrl"
+                  ],
+                  "type": "object"
+                },
+                "group": {
+                  "enum": [
+                    "ranked",
+                    "low_confidence",
+                    "no_match"
+                  ],
+                  "type": "string"
+                },
+                "personalMatch": {
+                  "additionalProperties": false,
+                  "nullable": true,
+                  "properties": {
+                    "currentTasteProfileVersion": {
+                      "maximum": 9007199254740991,
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "evidenceConfidence": {
+                      "additionalProperties": false,
+                      "nullable": true,
+                      "properties": {
+                        "level": {
+                          "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                          ],
+                          "type": "string"
+                        },
+                        "reasons": {
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "level",
+                        "reasons"
+                      ],
+                      "type": "object"
+                    },
+                    "isFallback": {
+                      "type": "boolean"
+                    },
+                    "isOutdated": {
+                      "type": "boolean"
+                    },
+                    "modelId": {
+                      "enum": [
+                        "B0",
+                        "B1",
+                        "B2",
+                        "B3",
+                        "B4"
+                      ],
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "scale": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "max": {
+                          "enum": [
+                            5
+                          ],
+                          "type": "number"
+                        },
+                        "min": {
+                          "enum": [
+                            1
+                          ],
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "min",
+                        "max"
+                      ],
+                      "type": "object"
+                    },
+                    "score": {
+                      "maximum": 5,
+                      "minimum": 1,
+                      "nullable": true,
+                      "type": "number"
+                    },
+                    "status": {
+                      "enum": [
+                        "done",
+                        "running",
+                        "failed",
+                        "skipped",
+                        "needs_taste_data",
+                        "below_floor"
+                      ],
+                      "type": "string"
+                    },
+                    "tasteProfileVersion": {
+                      "exclusiveMinimum": true,
+                      "maximum": 9007199254740991,
+                      "minimum": 0,
+                      "nullable": true,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "score",
+                    "scale",
+                    "modelId",
+                    "isFallback",
+                    "evidenceConfidence",
+                    "tasteProfileVersion",
+                    "currentTasteProfileVersion",
+                    "isOutdated"
+                  ],
+                  "type": "object"
+                }
+              },
+              "required": [
+                "edition",
+                "addedAt",
+                "analysisId",
+                "group",
+                "personalMatch"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "type": "object"
+      },
+      "ReadingListAdd": {
+        "properties": {
+          "editionId": {
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "editionId"
+        ],
+        "type": "object"
+      },
+      "ReadingListEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "addedAt": {
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "type": "string"
+          },
+          "editionId": {
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "editionId",
+          "addedAt"
+        ],
+        "type": "object"
+      },
+      "ReadingListGroup": {
+        "enum": [
+          "ranked",
+          "low_confidence",
+          "no_match"
+        ],
+        "type": "string"
       },
       "RegisterRequest": {
         "properties": {
@@ -3538,6 +5469,143 @@
         ]
       }
     },
+    "/api/v1/compare": {
+      "get": {
+        "operationId": "CompareController_compare",
+        "parameters": [
+          {
+            "description": "Another analysis id",
+            "in": "query",
+            "name": "b",
+            "required": true,
+            "schema": {}
+          },
+          {
+            "description": "Analysis id",
+            "in": "query",
+            "name": "a",
+            "required": true,
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comparison"
+                }
+              }
+            },
+            "description": ""
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          }
+        },
+        "tags": [
+          "compare"
+        ]
+      }
+    },
+    "/api/v1/feedback": {
+      "put": {
+        "operationId": "FeedbackController_save",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedbackSaved"
+                }
+              }
+            },
+            "description": "Saved or replaced"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "CONFLICT"
+          }
+        },
+        "tags": [
+          "feedback"
+        ]
+      }
+    },
     "/api/v1/me": {
       "get": {
         "operationId": "MeController_me",
@@ -3562,6 +5630,60 @@
               }
             },
             "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          }
+        },
+        "tags": [
+          "account"
+        ]
+      }
+    },
+    "/api/v1/me/data": {
+      "delete": {
+        "operationId": "MyDataController_delete",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteMyDataRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Deleted; onboarding starts again"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
           }
         },
         "tags": [
@@ -4106,6 +6228,149 @@
         },
         "tags": [
           "taste"
+        ]
+      }
+    },
+    "/api/v1/reading-list": {
+      "get": {
+        "operationId": "ReadingListController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingList"
+                }
+              }
+            },
+            "description": "Ranked by stored match where confident; the rest labeled, newest first"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          }
+        },
+        "tags": [
+          "reading-list"
+        ]
+      },
+      "post": {
+        "operationId": "ReadingListController_add",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadingListAdd"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingListEntry"
+                }
+              }
+            },
+            "description": "Already on the list"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadingListEntry"
+                }
+              }
+            },
+            "description": "Added"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          }
+        },
+        "tags": [
+          "reading-list"
+        ]
+      }
+    },
+    "/api/v1/reading-list/{editionId}": {
+      "delete": {
+        "operationId": "ReadingListController_remove",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "editionId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Removed, or was not on the list"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          }
+        },
+        "tags": [
+          "reading-list"
         ]
       }
     },
