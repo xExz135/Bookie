@@ -46,6 +46,7 @@ export class ScanService {
     }
     const image = checkImage(file.buffer);
     if (!image.ok) {
+      this.logger.log(`Scan by user ${userId}: refused before reading (${image.reason})`);
       throw new ApiError(
         image.reason === 'unsupported_type' ? 'UNSUPPORTED_TYPE' : 'UNREADABLE_IMAGE',
       );
@@ -59,7 +60,13 @@ export class ScanService {
       throw await this.identificationFailed(error, usageId);
     }
     if (!reading.isBook) throw new ApiError('NOT_A_BOOK');
-    if (!reading.readable) throw new ApiError('UNREADABLE_IMAGE');
+    if (!reading.readable) {
+      // Blocker 6: say why a cover was refused, without logging the photo.
+      this.logger.log(
+        `Scan by user ${userId}: the model could not read the cover (certainty ${reading.certainty})`,
+      );
+      throw new ApiError('UNREADABLE_IMAGE');
+    }
 
     const thresholds = {
       minTitle: this.config.SCAN_MIN_CONFIDENCE,
@@ -98,6 +105,7 @@ export class ScanService {
       (error.kind === 'blocked' || error.kind === 'invalid_request')
     ) {
       // The model refused or could not take this image: a problem with the photo.
+      this.logger.warn(`Vision model refused the image (${error.kind}): ${error.message}`);
       return new ApiError('UNREADABLE_IMAGE');
     }
     await this.quota.release(usageId);

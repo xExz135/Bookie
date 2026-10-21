@@ -1,6 +1,5 @@
 {
   "endpoint": "POST /api/v1/analyses",
-  "planned": "BE-8",
   "outcomes": {
     "started": {
       "status": 201,

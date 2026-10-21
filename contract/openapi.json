@@ -166,6 +166,7 @@
                   "SOURCES_UNAVAILABLE",
                   "LLM_QUOTA_EXHAUSTED",
                   "INVALID_MODEL_OUTPUT",
+                  "MODEL_UNAVAILABLE",
                   "CONFLICT",
                   "EMAIL_IN_USE",
                   "INTERNAL_ERROR"
@@ -742,6 +743,7 @@
                     "SOURCES_UNAVAILABLE",
                     "LLM_QUOTA_EXHAUSTED",
                     "INVALID_MODEL_OUTPUT",
+                    "MODEL_UNAVAILABLE",
                     "CONFLICT",
                     "EMAIL_IN_USE",
                     "INTERNAL_ERROR"
@@ -1801,6 +1803,7 @@
           "SOURCES_UNAVAILABLE",
           "LLM_QUOTA_EXHAUSTED",
           "INVALID_MODEL_OUTPUT",
+          "MODEL_UNAVAILABLE",
           "CONFLICT",
           "EMAIL_IN_USE",
           "INTERNAL_ERROR"
@@ -2815,6 +2818,344 @@
   },
   "openapi": "3.0.0",
   "paths": {
+    "/api/v1/analyses": {
+      "get": {
+        "operationId": "AnalysisController_list",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "1 to 50, default 20",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisList"
+                }
+              }
+            },
+            "description": "History, newest first"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          }
+        },
+        "tags": [
+          "analyses"
+        ]
+      },
+      "post": {
+        "operationId": "AnalysisController_start",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartAnalysis"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                }
+              }
+            },
+            "description": "Joined the analysis already running for this edition and taste-profile version"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                }
+              }
+            },
+            "description": "Started"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
+          }
+        },
+        "tags": [
+          "analyses"
+        ]
+      }
+    },
+    "/api/v1/analyses/{id}": {
+      "get": {
+        "operationId": "AnalysisController_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                }
+              }
+            },
+            "description": ""
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          }
+        },
+        "tags": [
+          "analyses"
+        ]
+      }
+    },
+    "/api/v1/analyses/{id}/recalculate": {
+      "post": {
+        "operationId": "AnalysisController_recalculate",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                }
+              }
+            },
+            "description": "A new analysis for the current taste profile"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "CONFLICT"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
+          }
+        },
+        "tags": [
+          "analyses"
+        ]
+      }
+    },
+    "/api/v1/analyses/{id}/retry": {
+      "post": {
+        "operationId": "AnalysisController_retry",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetryAnalysis"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analysis"
+                }
+              }
+            },
+            "description": "Running again"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "VALIDATION_FAILED"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "UNAUTHENTICATED, TOKEN_EXPIRED"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "NOT_FOUND"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "CONFLICT"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            },
+            "description": "RATE_LIMITED"
+          }
+        },
+        "tags": [
+          "analyses"
+        ]
+      }
+    },
     "/api/v1/auth/forgot-password": {
       "post": {
         "operationId": "AuthController_forgotPassword",

@@ -1,6 +1,5 @@
 {
   "endpoint": "POST /api/v1/analyses/{id}/recalculate",
-  "planned": "BE-8",
   "outcomes": {
     "recalculated": {
       "status": 201,

@@ -383,6 +383,36 @@ export const PARAMS = {
     description: 'pollAfterMs returned to the client while an analysis runs.',
     source: 'CONTRACT 4.4',
   },
+  ANALYSIS_MAX_CONCURRENT: {
+    schema: int(2),
+    description:
+      'Analyses this API process runs at once; the rest wait in order. They run in the background, so leaving the page never cancels one (RES-1).',
+    source: 'D-021 (hypothesis)',
+  },
+  ANALYSIS_RECOVER_ON_START: {
+    schema: z.stringbool().default(true),
+    description:
+      'On start-up, resume analyses that were running when the API stopped (RES-1). Never done when NODE_ENV is test, because test apps share one database.',
+    source: 'D-021',
+  },
+  EVIDENCE_SUFFICIENT_REVIEWS: {
+    schema: int(10),
+    description:
+      'Usable reviews with text needed for evidence to count as sufficient; fewer is limited (spec 8). Also the count for medium public confidence.',
+    source: 'Spec 8, D-021 (hypothesis)',
+  },
+  PUBLIC_CONFIDENCE_HIGH_REVIEWS: {
+    schema: int(40),
+    description:
+      'Usable reviews with text needed for high public evidence confidence, when no source failed and praise and complaints are both present.',
+    source: 'Spec 4, D-021 (hypothesis)',
+  },
+  GEMINI_SUMMARY_MODEL: {
+    schema: z.string().min(1).default('gemini-3.5-flash-lite'),
+    description:
+      'Model for the written summary, praise and complaints (spec 10: the small model unless measurement shows the larger one is needed).',
+    source: 'D-021, H2',
+  },
   RATE_LIMIT_ANALYSES_PER_HOUR: {
     schema: int(30),
     description: 'New analyses a reader may start per hour.',

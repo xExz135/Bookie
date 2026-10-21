@@ -4,6 +4,70 @@
  */
 
 export interface paths {
+    "/api/v1/analyses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AnalysisController_list"];
+        put?: never;
+        post: operations["AnalysisController_start"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analyses/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AnalysisController_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analyses/{id}/recalculate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AnalysisController_recalculate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analyses/{id}/retry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AnalysisController_retry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/forgot-password": {
         parameters: {
             query?: never;
@@ -348,7 +412,7 @@ export interface components {
             personalMatch: {
                 currentTasteProfileVersion: number;
                 /** @enum {string|null} */
-                errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
+                errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "MODEL_UNAVAILABLE" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
                 evidenceConfidence: {
                     /** @enum {string} */
                     level: "low" | "medium" | "high";
@@ -455,7 +519,7 @@ export interface components {
             status: "running" | "complete" | "partial" | "failed";
             steps: {
                 /** @enum {string|null} */
-                errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
+                errorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "MODEL_UNAVAILABLE" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR" | null;
                 /** @enum {string} */
                 name: "resolve" | "fetchReviews" | "selectReviews" | "extractTraits" | "publicSummary" | "evidenceConfidence" | "personalMatch" | "finalize";
                 /** @enum {string} */
@@ -672,7 +736,7 @@ export interface components {
         /** @enum {string} */
         ConfidenceLevel: "low" | "medium" | "high";
         /** @enum {string} */
-        ErrorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR";
+        ErrorCode: "VALIDATION_FAILED" | "UNAUTHENTICATED" | "TOKEN_EXPIRED" | "INVALID_CREDENTIALS" | "NOT_FOUND" | "RATE_LIMITED" | "SCAN_QUOTA_EXCEEDED" | "UPLOAD_TOO_LARGE" | "UNSUPPORTED_TYPE" | "NOT_A_BOOK" | "UNREADABLE_IMAGE" | "IDENTIFICATION_UNAVAILABLE" | "SOURCES_UNAVAILABLE" | "LLM_QUOTA_EXHAUSTED" | "INVALID_MODEL_OUTPUT" | "MODEL_UNAVAILABLE" | "CONFLICT" | "EMAIL_IN_USE" | "INTERNAL_ERROR";
         ErrorResponseDto: {
             code: components["schemas"]["ErrorCode"];
             /** @description Present only for VALIDATION_FAILED: field name to message. */
@@ -891,6 +955,276 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    AnalysisController_list: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                /** @description 1 to 50, default 20 */
+                limit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description History, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnalysisList"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    AnalysisController_start: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartAnalysis"];
+            };
+        };
+        responses: {
+            /** @description Joined the analysis already running for this edition and taste-profile version */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Analysis"];
+                };
+            };
+            /** @description Started */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Analysis"];
+                };
+            };
+            /** @description VALIDATION_FAILED */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description NOT_FOUND */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    AnalysisController_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Analysis"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description NOT_FOUND */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    AnalysisController_recalculate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A new analysis for the current taste profile */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Analysis"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description NOT_FOUND */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description CONFLICT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
+    AnalysisController_retry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RetryAnalysis"];
+            };
+        };
+        responses: {
+            /** @description Running again */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Analysis"];
+                };
+            };
+            /** @description VALIDATION_FAILED */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description UNAUTHENTICATED, TOKEN_EXPIRED */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description NOT_FOUND */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description CONFLICT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+            /** @description RATE_LIMITED */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseDto"];
+                };
+            };
+        };
+    };
     AuthController_forgotPassword: {
         parameters: {
             query?: never;

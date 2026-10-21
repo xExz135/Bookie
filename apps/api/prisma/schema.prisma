@@ -780,6 +780,8 @@ model AnalysisStep {
   attemptCount Int        @default(0) @map("attempt_count")
   errorCode    String?    @map("error_code")
   durationMs   Int?       @map("duration_ms")
+  /// What the step produced (IDs, numbers, model-written text), reused by retries (RES-2).
+  output       Json?
   startedAt    DateTime?  @map("started_at") @db.Timestamptz(3)
   finishedAt   DateTime?  @map("finished_at") @db.Timestamptz(3)
   analysis     Analysis   @relation(fields: [analysisId], references: [id], onDelete: Cascade)

@@ -1,4 +1,5 @@
 import { type DynamicModule, Module } from '@nestjs/common';
+import { AnalysisModule } from './analysis/analysis.module';
 import { AuthModule } from './auth/auth.module';
 import type { AppConfig } from './config/app-config';
 import { ConfigModule } from './config/config.module';
@@ -22,6 +23,7 @@ export class AppModule {
         AuthModule,
         DiscoveryModule,
         TasteModule,
+        AnalysisModule,
       ],
       controllers: [HealthController],
     };

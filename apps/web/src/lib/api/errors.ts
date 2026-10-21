@@ -55,6 +55,7 @@ const MESSAGES: Record<ErrorCode, (body: ErrorBody) => string> = {
     'Review sources could not be reached. This does not mean there are no reviews.',
   LLM_QUOTA_EXHAUSTED: () => 'Analysis is paused for now. Try again later.',
   INVALID_MODEL_OUTPUT: () => 'A step failed. You can retry it.',
+  MODEL_UNAVAILABLE: () => 'Personal matching is not available yet.',
   CONFLICT: () => 'That cannot be done right now.',
   EMAIL_IN_USE: () => 'An account with this email already exists.',
   INTERNAL_ERROR: () => 'Something went wrong on our side. Please try again.',

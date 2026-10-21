@@ -1,6 +1,5 @@
 {
   "endpoint": "GET /api/v1/analyses",
-  "planned": "BE-8",
   "outcomes": {
     "history": {
       "status": 200,

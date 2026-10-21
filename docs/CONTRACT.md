@@ -51,6 +51,7 @@
 | `SOURCES_UNAVAILABLE` | 503 | All sources failed. Never reported as 'no reviews'. |
 | `LLM_QUOTA_EXHAUSTED` | 503 | Cached results still served; retry later |
 | `INVALID_MODEL_OUTPUT` | 502 | A step failed after its one retry |
+| `MODEL_UNAVAILABLE` | 503 | No taste model is shipped yet, so the personal match cannot be scored. Used only as a step `errorCode` (D-021); the public reception is unaffected |
 | `CONFLICT` | 409 | State conflict (for example, import already confirmed) |
 | `EMAIL_IN_USE` | 409 | Register only: the email already has an account (accepted trade-off, D-001) |
 | `INTERNAL_ERROR` | 500 | Unexpected server error. Details are logged on the server, never returned |
@@ -149,7 +150,7 @@ Every save (rating, removal, questionnaire, confirmed import) creates a new immu
 
 ### 4.4 Analyses
 
-**Status: agreed 2026-10-21** (D-019; approved by the owner for both roles). Shapes are published in `contract/openapi.json` (`Analysis`, `AnalysisSummary`, `AnalysisList`, `StartAnalysis`, `RetryAnalysis`) ahead of the endpoints (BE-8). Examples of every outcome are in `contract/fixtures/analyses-*.json`, marked `"planned": "BE-8"`.
+**Status: agreed 2026-10-21** (D-019; approved by the owner for both roles). Built in BE-8 (D-021). Shapes and paths are in `contract/openapi.json` (`Analysis`, `AnalysisSummary`, `AnalysisList`, `StartAnalysis`, `RetryAnalysis`); examples of every outcome are in `contract/fixtures/analyses-*.json`.
 
 | Method and path | Request | Response | Errors |
 |---|---|---|---|
@@ -218,6 +219,7 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
 - `personalMatch.status = needs_taste_data`: no taste profile yet. Show the invitation to rate books (ONB-2). `score` is null.
 - `personalMatch.status = below_floor`: fewer than `hardFloor` rated books. **No score is shown** (MODEL-4); say how many books are rated (`ratedCount`) and how many are needed.
 - `running` covers both waiting and running; `failed` comes with `errorCode` and, if retryable, `canRetry`; `skipped` means a step it needs failed.
+- `failed` with `errorCode = MODEL_UNAVAILABLE`: the reader has enough rated books, but no taste model is shipped yet (D-021). Say personal matching is not available yet; `canRetry` stays false until a model ships.
 - ★ `score` is set exactly when `status = done`. ★ It is on `scale` (1 to 5) and already rounded to one decimal: display it as given, for example "4.2 / 5", never as a percentage (D-007, D-010).
 - ★ A score always comes with `modelId`, `modelVersion` and `evidenceConfidence` (MODEL-3). ★ `isFallback = true` means B0 or B1 produced it (cold start), and its confidence is always `low`: show the score, label it low confidence, and name the fallback model.
 - Explanations come from the model (spec 7). ★ They exist only with a score. `similarRatedBooks` are the reader's rated books most similar to this one. `traits` group as: `aligned` → "Why it fits", `conflicting` → "Things to keep in mind", `unknown` → "Not factored in". For `unknown`, empty `yourValues` means the reader has no preference on record, and empty `bookValues` means the book's trait is unknown. Unknown preferences never affect the score (MODEL-2).
@@ -263,3 +265,4 @@ The separate evidence endpoint in v0.2 is dropped: the evidence a section cites 
 | 2026-10-21 | BE-6: `Candidate` gains `publisher` and `format`, and its fields are nullable; search and scan responses gain `external`; scan gains `recognized`; one candidate per work; meaning rules and scan error rules in 4.3. Fixtures added. Proposed by backend; approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-21 | BE-7: 4.2 filled in: `GET /ratings`, `DELETE /ratings/:editionId`, `POST /onboarding/skip`, `yourRating` and `external` on catalog search, `importId`, `format`, `totalRows`, `ignoredRows` and `rating` on the import view, `tasteProfileVersion: 0` before the first save, import and version rules. Fixtures added. Proposed by backend; approved by the owner for both roles on 2026-10-21 | n/a |
 | 2026-10-21 | 4.4 rewritten with the result-screen and history mockups: `steps` as an ordered list with `errorCode`; `canRetry`; `edition` gains `isbn13`, `pageCount`, `description` (was `summary`); `ratings` merged into `sources` (with `ratingScope`, `providesText`, `reviewsUsed`, `fetchedAt`); cited `evidence` included in the analysis, replacing `GET /analyses/:id/evidence/:evidenceId`; book `traits` on the public side; personal `isFallback`, `currentTasteProfileVersion`, `ratedCount`, `hardFloor`, `minForConfidence`, `errorCode`, trait fits with `bookValues` and `yourValues`; `notFactoredIn` replaced by `unknown` trait fits; `feedback`; `AnalysisSummary`; error statuses per endpoint; rules checked in code. Planned fixtures (`analyses-*.json`). Proposed with D-019; approved by the owner for both roles on 2026-10-21 | n/a |
+| 2026-10-21 | BE-8: the five 4.4 endpoints are built, so the `analyses-*.json` fixtures lose their `planned` mark. New error code `MODEL_UNAVAILABLE` (503, section 2), used only as the personal step's `errorCode` while no taste model is shipped (D-021); new fixture outcome `analyses-get.json` → `personalUnavailable`. `GET /analyses` ignores a cursor or limit it cannot read instead of returning 400 (no 400 is documented for it). Approved by the owner for both roles on 2026-10-21 | n/a |

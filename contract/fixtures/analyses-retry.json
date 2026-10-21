@@ -1,6 +1,5 @@
 {
   "endpoint": "POST /api/v1/analyses/{id}/retry",
-  "planned": "BE-8",
   "outcomes": {
     "retrying": {
       "status": 200,
