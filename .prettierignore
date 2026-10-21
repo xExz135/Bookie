@@ -8,3 +8,7 @@ dist/
 coverage/
 node_modules/
 apps/api/src/generated/
+.next/
+next-env.d.ts
+# Generated from contract/openapi.json by pnpm generate
+apps/web/src/api/schema.d.ts

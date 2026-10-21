@@ -33,3 +33,6 @@ Thumbs.db
 npm-debug.log*
 pnpm-debug.log*
 /apps/api/src/generated/
+
+# Next.js generated type references (recreated by next typegen, dev and build)
+next-env.d.ts

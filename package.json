@@ -12,8 +12,8 @@
     "test": "pnpm -r test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "generate": "pnpm --filter @bookie/api generate",
-    "generate:check": "pnpm --filter @bookie/api generate:check"
+    "generate": "pnpm --filter @bookie/api generate && pnpm --filter @bookie/web generate",
+    "generate:check": "pnpm --filter @bookie/api generate:check && pnpm --filter @bookie/web generate:check"
   },
   "devDependencies": {
     "prettier": "^3.9.10"

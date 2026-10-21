@@ -23,7 +23,7 @@ The spec says the evaluation harness comes before the interface, so model decisi
 
 | ID | Package | Acceptance IDs | Status | Branch | Notes |
 |---|---|---|---|---|---|
-| FE-1 | App shell and auth screens | SEC-2 | todo | | Auth flows per D-001 and CONTRACT 4.1 |
+| FE-1 | App shell and auth screens | SEC-2 | done | fe-1-auth | Next.js 16 app in `apps/web`: sign in, create account, forgot and reset password, app shell with sign out, protected pages (SEC-2: signed-out readers go to sign in with a safe `?next=`). Access token in memory only; silent refresh on `TOKEN_EXPIRED`, one refresh at a time (shared in the tab, Web Lock across tabs); sign in and out follow across tabs. Typed client generated from `contract/openapi.json`; tests use the contract fixtures through MSW and run in Strict Mode. Design tokens generated from `docs/design/DESIGN.md`. Checked in a real browser (Edge) against the live API: refresh cookie flags, reload, two tabs, reset email from Mailpit, used link refused, old password refused |
 | FE-2 | Taste capture (import, quick rate, questionnaire, skip) | ONB-1, ONB-2, ONB-3 | todo | | Skip allowed (D-002); questionnaire fields per D-011 |
 | FE-3 | Import review screen (unmatched rows) | ONB-1 | todo | | |
 | FE-4 | Discovery (search, scan, confirmation) | DISC-1, DISC-2, DISC-4, DISC-5 | todo | | |
@@ -81,11 +81,13 @@ Record results as they are, including unfavorable ones.
 | 2 | Live sources may not offer usable review text | Backend | 2026-10-20 | Complete `docs/DATA_SOURCES.md` |
 | 3 | Dataset terms say academic use only; Bookie is a non-commercial portfolio project (owner accepted, D-004) | Owner | 2026-10-20 | Revisit before any public deployment; optionally ask the dataset authors |
 | 4 | Dataset files are large (reviews about 5 GB, books about 2 GB) | Backend | 2026-10-20 | BE-4: stream-parse; load a filtered subset first |
+| 5 | Imported rows (title, author, rating) are kept after an import is confirmed; D-009 says raw rows are deleted on confirm | Backend | 2026-10-21 | BE-7 follow-up: delete the rows in the confirm transaction (or record why they stay in D-018) |
 
 ## Session log (newest first)
 
 | Date | Role and package | What changed | Left for next session |
 |---|---|---|---|
+| 2026-10-21 | Frontend, FE-1 | Web app set up (Next.js, Tailwind tokens from DESIGN.md, typed API client, Vitest and MSW with contract fixtures). Auth screens and session handling per D-001, D-016 and CONTRACT 4.1; SEC-2 redirect. Browser check found the reset page lost its token when React ran its effect twice in development; fixed, and tests now render in Strict Mode. No contract changes | Owner reviews and merges. Next: agree the `Analysis` object with the result-screen mockup, then FE-2 (taste capture) and FE-4 (search and scan) against the live API, or BE-8 |
 | 2026-10-21 | Owner, contract | Approved, for both roles, every pending contract addition: BE-1 (`INTERNAL_ERROR`, `/health`), BE-3 (4.1 session rules, `GET /me`), BE-6 (4.3 candidate fields, `external`, `recognized`), BE-7 (4.2). Recorded in the CONTRACT change log | Frontend: FE-1 (auth screens) can start against the live API; agree the `Analysis` object with the result-screen mockup before BE-8 |
 | 2026-10-21 | Backend, BE-7 | Taste capture per D-018: versions, quick rate, questionnaire, onboarding skip, Goodreads and StoryGraph import with matching and confirm, contract fixtures | Owner reviews and merges; frontend approves CONTRACT 4.2; then BE-8 (analysis pipeline) or BE-13 (taste models) |
 | 2026-10-21 | Backend, BE-6 | Typed search and cover scan per D-017, Open Library search client and catalog import, image checks, scan quota, contract fixtures | Owner reviews and merges; frontend approves CONTRACT 4.3 additions; then BE-7 (taste capture, reuses this search for import matching) or BE-5 (rating adapters) |

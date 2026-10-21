@@ -27,6 +27,7 @@ Mailpit shows the emails the app sends at http://localhost:8025.
 | `pnpm test` | Unit, end-to-end and database tests (needs `docker compose up -d`) |
 | `pnpm typecheck` | TypeScript checks in every package |
 | `pnpm build` | Builds every package |
+| `pnpm --filter @bookie/web dev` | Web app on http://localhost:3000 (start the API first) |
 | `pnpm generate` | Regenerates `contract/openapi.json` and `.env.example` from the API code |
 | `pnpm generate:check` | Fails if those generated files are out of date (runs in CI) |
 | `pnpm --filter @bookie/api db:migrate` | Creates and applies a migration on the dev database |
@@ -40,7 +41,7 @@ Mailpit shows the emails the app sends at http://localhost:8025.
 
 ```
 apps/api/        NestJS backend
-apps/web/        Next.js frontend (not started)
+apps/web/        Next.js frontend
 eval/            Python evaluation harness (not started)
 contract/        openapi.json (generated) and fixtures/
 docs/            SPEC, CONTRACT, STATUS, DECISIONS, DATA_SOURCES, roles/, design/, reference/

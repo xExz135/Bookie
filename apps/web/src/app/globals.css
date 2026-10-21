@@ -1,0 +1,129 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens from docs/design/DESIGN.md (the YAML block is the official set).
+ * Colours, type scale and radii; fonts come from next/font in app/layout.tsx.
+ */
+@theme {
+  --color-surface: #f8f9ff;
+  --color-surface-dim: #cbdbf5;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #eff4ff;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-highest: #d3e4fe;
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #45464d;
+  --color-inverse-surface: #213145;
+  --color-inverse-on-surface: #eaf1ff;
+  --color-outline: #76777d;
+  --color-outline-variant: #c6c6cd;
+  --color-surface-tint: #565e74;
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #131b2e;
+  --color-on-primary-container: #7c839b;
+  --color-inverse-primary: #bec6e0;
+  --color-secondary: #9b4500;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #fd8a42;
+  --color-on-secondary-container: #682c00;
+  --color-tertiary: #000000;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #002114;
+  --color-on-tertiary-container: #069669;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-primary-fixed: #dae2fd;
+  --color-primary-fixed-dim: #bec6e0;
+  --color-on-primary-fixed: #131b2e;
+  --color-on-primary-fixed-variant: #3f465c;
+  --color-secondary-fixed: #ffdbca;
+  --color-secondary-fixed-dim: #ffb68e;
+  --color-on-secondary-fixed: #331200;
+  --color-on-secondary-fixed-variant: #763300;
+  --color-tertiary-fixed: #85f8c4;
+  --color-tertiary-fixed-dim: #68dba9;
+  --color-on-tertiary-fixed: #002114;
+  --color-on-tertiary-fixed-variant: #005137;
+  --color-background: #f8f9ff;
+  --color-on-background: #0b1c30;
+  --color-surface-variant: #d3e4fe;
+
+  --font-serif: var(--font-newsreader), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --text-display-lg: 3.5rem;
+  --text-display-lg--line-height: 4.25rem;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 400;
+  --text-display-lg-mobile: 2.25rem;
+  --text-display-lg-mobile--line-height: 2.75rem;
+  --text-display-lg-mobile--letter-spacing: -0.01em;
+  --text-display-lg-mobile--font-weight: 400;
+  --text-headline-lg: 2.25rem;
+  --text-headline-lg--line-height: 2.75rem;
+  --text-headline-lg--letter-spacing: -0.015em;
+  --text-headline-lg--font-weight: 500;
+  --text-headline-lg-mobile: 1.75rem;
+  --text-headline-lg-mobile--line-height: 2.25rem;
+  --text-headline-lg-mobile--letter-spacing: -0.01em;
+  --text-headline-lg-mobile--font-weight: 500;
+  --text-headline-md: 1.625rem;
+  --text-headline-md--line-height: 2.125rem;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 500;
+  --text-headline-sm: 1.25rem;
+  --text-headline-sm--line-height: 1.625rem;
+  --text-headline-sm--font-weight: 600;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.875rem;
+  --text-body-lg--font-weight: 400;
+  --text-body-md: 0.9375rem;
+  --text-body-md--line-height: 1.5rem;
+  --text-body-md--font-weight: 400;
+  --text-body-sm: 0.8125rem;
+  --text-body-sm--line-height: 1.25rem;
+  --text-body-sm--font-weight: 400;
+  --text-metric-num: 1.75rem;
+  --text-metric-num--line-height: 2rem;
+  --text-metric-num--letter-spacing: -0.02em;
+  --text-metric-num--font-weight: 600;
+  --text-label-lg: 0.875rem;
+  --text-label-lg--line-height: 1.25rem;
+  --text-label-lg--letter-spacing: 0.01em;
+  --text-label-lg--font-weight: 600;
+  --text-label-md: 0.75rem;
+  --text-label-md--line-height: 1rem;
+  --text-label-md--letter-spacing: 0.05em;
+  --text-label-md--font-weight: 600;
+  --text-label-sm: 0.6875rem;
+  --text-label-sm--line-height: 0.875rem;
+  --text-label-sm--letter-spacing: 0.06em;
+  --text-label-sm--font-weight: 500;
+
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+}
+
+html {
+  background: var(--color-background);
+  color: var(--color-on-background);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Visible keyboard focus everywhere: a solid ring, no glow (DESIGN.md, inputs). */
+:focus-visible {
+  outline: 2px solid var(--color-on-surface);
+  outline-offset: 2px;
+}
