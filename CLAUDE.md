@@ -85,6 +85,8 @@ pnpm --filter @bookie/api dev   # API on :3001, health at /health
 pnpm --filter @bookie/api db:migrate   # create/apply a migration on the dev database
 pnpm --filter @bookie/api db:deploy    # apply migrations (CI and fresh databases)
 pnpm --filter @bookie/api import:goodreads [--limit-books N]   # load the dataset from data/raw (D-014)
+pnpm --filter @bookie/api embed:books [--limit N]   # embed the most popular editions with Gemini; re-runnable (D-015)
+pnpm --filter @bookie/api traits:sample [--limit N] [--model small|large]   # trait extraction sample to data/derived/
 pnpm eval                # (planned, BE-14) one command reproduces every reported number (EVAL-1)
 ```
 

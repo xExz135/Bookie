@@ -11,7 +11,9 @@
 // extensions (pgvector, pg_trgm), CHECK constraints, immutability triggers,
 // the one-running-analysis partial unique index and seed rows.
 // When `prisma migrate dev` creates a later migration, check it does not try
-// to drop `analyses_one_running_per_request`; delete such lines if it does.
+// to drop `analyses_one_running_per_request` or `book_embeddings_embedding_hnsw`
+// (the vector index from the embedding_dimensions migration); delete such
+// lines if it does. A database test fails if either index goes missing.
 
 generator client {
   provider     = "prisma-client"
@@ -806,12 +808,13 @@ model ModelVersion {
   @@map("model_versions")
 }
 
-/// Sentence embedding of a book. The vector dimension is fixed when the
-/// embedding model is chosen (BE-12); its index is added then.
+/// Sentence embedding of a book (BE-12, D-015). 768 dimensions; the model key
+/// names the model, size and text recipe so different vectors never mix.
+/// Cosine HNSW index added in the embedding_dimensions migration.
 model BookEmbedding {
   editionId      String                @map("edition_id") @db.Uuid
   embeddingModel String                @map("embedding_model")
-  embedding      Unsupported("vector")
+  embedding      Unsupported("vector(768)")
   createdAt      DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
   edition        Edition               @relation(fields: [editionId], references: [id], onDelete: Cascade)
 
@@ -823,7 +826,7 @@ model BookEmbedding {
 model TasteVector {
   tasteProfileVersionId String                @map("taste_profile_version_id") @db.Uuid
   modelVersionId        String                @map("model_version_id") @db.Uuid
-  embedding             Unsupported("vector")
+  embedding             Unsupported("vector(768)")
   createdAt             DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
   tasteProfileVersion   TasteProfileVersion   @relation(fields: [tasteProfileVersionId], references: [id], onDelete: Cascade)
   modelVersion          ModelVersion          @relation(fields: [modelVersionId], references: [id])

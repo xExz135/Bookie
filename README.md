@@ -32,6 +32,8 @@ Mailpit shows the emails the app sends at http://localhost:8025.
 | `pnpm --filter @bookie/api db:migrate` | Creates and applies a migration on the dev database |
 | `pnpm --filter @bookie/api db:deploy` | Applies migrations to a fresh database |
 | `pnpm --filter @bookie/api import:goodreads` | Loads the Goodreads dataset from `data/raw/` (add `--limit-books 5000` for a quick sample). Safe to re-run |
+| `pnpm --filter @bookie/api embed:books --limit 100` | Embeds the most popular editions with Gemini (needs `GEMINI_API_KEY` in `.env`). Skips books already embedded, so it can be stopped and re-run |
+| `pnpm --filter @bookie/api traits:sample --limit 5` | Extracts traits for a few books and saves the results, without review text, to `data/derived/` |
 | `pnpm format` / `pnpm format:check` | Prettier |
 
 ## Repository layout

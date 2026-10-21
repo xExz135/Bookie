@@ -259,3 +259,21 @@ Decision:
 - **Missing references:** a book whose work is not in the works file gets its own placeholder work; author links to authors missing from the authors file are dropped; reviews of books not in the catalog are dropped.
 - Cover URLs point at Goodreads' image server as recorded in 2017; nothing is downloaded or stored. Some links may no longer work.
 Consequences: search (BE-6) and the pipeline (BE-8) read only the catalog tables, never the files.
+
+## D-015 Book representation: embeddings, evidence selection and trait vocabulary
+Status: **DECIDED** (backend role, BE-12; defaults are configurable and to be measured)
+Date: 2026-10-21
+Affects: BE-8, BE-12, BE-13, BE-14, BE-15; spec sections 7 and 8
+Context: spec 7 asks for "a sentence-embedding of the description and selected review text, plus LLM-extracted traits (pace, tone, themes, content intensity), each stored with the supporting evidence". D-006 left the embedding model and vector size to this package.
+Decision:
+- **Embedding model `gemini-embedding-001`, 768 dimensions**, vectors normalised to length 1 and stored in `book_embeddings` with a cosine HNSW index. `gemini-embedding-2` accepts longer input (8,192 tokens) but its free-tier quota ran out after one request of about 47,000 tokens on 2026-10-21, so it is not practical without a paid plan. The stored model key (`gemini-embedding-001:768:text-v1`) names model, size and text recipe so vectors made differently never mix. BE-14 may compare models.
+- **Embedding text:** title, authors, genres, description and up to 20 selected reviews, cut to 7,000 characters (the model accepts 2,048 tokens).
+- **Evidence selection (spec 8), shared with the pipeline:** reviews under 80 characters are dropped; duplicates (same text after normalising) are dropped; reviews must be detected as English (`tinyld`, offline) and undetectable ones are dropped; complaints, praise, mixed and unrated reviews are taken in turn so both sides are represented; each review is cut to 1,000 characters at a word boundary; at most 75 per edition. Candidates are a stable sample of 400 reviews per edition, ordered by ID, so the same set comes back every time (MODEL-1).
+- **Trait vocabularies** (closed lists, so accuracy and macro-F1 can be measured for H2): pace = slow, moderate, fast; tone = dark, light, serious, humorous, hopeful, melancholic, tense, romantic (one per book); content intensity = low, moderate, high; themes = up to 5 of 17 fixed themes, including addiction, violence, tragedy and grief and loss so they line up with the "themes to avoid" questionnaire. Any trait may be "unknown", which never cites evidence.
+- **Trait extraction model:** `gemini-3.5-flash-lite` (small) by default; `gemini-3.5-flash` is the larger model for the H2 comparison. Temperature 0, JSON schema output.
+- **Untrusted text (RES-6):** reviews, description and title are wrapped in tags and any `<` or `>` inside them is replaced, so they cannot close a tag or pose as another review. Rules live in the system prompt, data in the user message.
+- **Validation in code (RES-5):** values must be in the vocabularies; every non-unknown value must cite evidence; every citation must exist in this evidence set (0 = description, 1..N = reviews). Invalid output is retried once, then the step fails with INVALID_MODEL_OUTPUT.
+- **Rate limits:** the client paces requests per minute and estimated tokens per minute (default 30,000, measured: the free tier rejected about 60,000 tokens in a minute), waits a full minute after a rate limit without a stated delay, and reports a quota that stays exhausted as `quota` (LLM_QUOTA_EXHAUSTED).
+Consequences:
+- On the free tier, embedding is slow: roughly 15 to 20 books a minute. Embedding the 5,000-book sample takes hours, and the whole catalog is not practical. BE-14 should embed only the books its evaluation needs, or the owner can choose a paid plan.
+- Traits are stored with a public analysis by the pipeline (BE-8). Until then, `traits:sample` writes results to `data/derived/` (git-ignored) for review and the H2 comparison.

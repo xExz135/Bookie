@@ -15,7 +15,9 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
-    "import:goodreads": "nest build && node dist/tools/import-goodreads.js"
+    "import:goodreads": "nest build && node dist/tools/import-goodreads.js",
+    "embed:books": "nest build && node dist/tools/embed-books.js",
+    "traits:sample": "nest build && node dist/tools/sample-traits.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.2.0",
@@ -28,6 +30,7 @@
     "pg-copy-streams": "^7.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
+    "tinyld": "^1.3.4",
     "zod": "^4.6.7"
   },
   "devDependencies": {

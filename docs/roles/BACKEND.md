@@ -27,7 +27,7 @@ Read `CLAUDE.md` first, then this file. You build the API, data, analysis pipeli
 - Ownership is checked on every user-owned resource. Another user's id returns 404.
 - Secrets stay on the server. Never log passwords, tokens, API keys or review text beyond what the terms allow.
 - Authentication is custom email and password (D-001). Build exactly the in-scope list there; email verification, lockout and token-family tracking are out.
-- Schema v2 lives in `apps/api/prisma/` (D-009, D-012). After `prisma migrate dev` creates a new migration, check it does not drop the hand-written `analyses_one_running_per_request` index. Never edit a migration that has been pushed; add a new one.
+- Schema v2 lives in `apps/api/prisma/` (D-009, D-012). After `prisma migrate dev` creates a new migration, check it does not drop the hand-written `analyses_one_running_per_request` or `book_embeddings_embedding_hnsw` indexes (a database test guards both). Prisma does not see changes to vector column types: write those migrations by hand. Never edit a migration that has been pushed; add a new one.
 - Prisma blocks `migrate reset` and similar commands from AI agents. Ask the owner, state the exact command and database, and pass their consent only after a clear yes.
 - Models are scored in TypeScript from artifacts exported by Python, with a parity test in CI (D-006).
 - Never commit dataset files or review text. Labeled sets hold labels and IDs only (D-004).

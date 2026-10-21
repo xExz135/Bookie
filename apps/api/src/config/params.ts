@@ -200,6 +200,88 @@ export const PARAMS = {
     source: 'Spec 10 (hypothesis)',
   },
 
+  // --- Evidence selection (spec 8: deduplicate, filter language and length, balance, truncate) ---
+  EVIDENCE_MIN_REVIEW_CHARS: {
+    schema: int(80, 1),
+    description: 'Reviews shorter than this are not used as written evidence.',
+    source: 'Spec 8 (hypothesis)',
+  },
+  EVIDENCE_MAX_REVIEW_CHARS: {
+    schema: int(1000, 100),
+    description: 'Longer reviews are cut to this length before use.',
+    source: 'Spec 8 (hypothesis)',
+  },
+  EVIDENCE_LANGUAGES: {
+    schema: z
+      .string()
+      .regex(/^[a-z]{2,3}(,[a-z]{2,3})*$/)
+      .default('en'),
+    description: 'Comma-separated languages a review must be detected as to count as evidence.',
+    source: 'Spec 8, D-015',
+  },
+  EVIDENCE_CANDIDATE_LIMIT: {
+    schema: int(400, 10),
+    description:
+      'Reviews per edition considered before selection (a stable sample for very popular books).',
+    source: 'D-015 (hypothesis)',
+  },
+
+  // --- Language model and embeddings (D-006, D-015) ---
+  GEMINI_EMBEDDING_MODEL: {
+    schema: z.string().min(1).default('gemini-embedding-001'),
+    description:
+      'Embedding model for book representations (768 dimensions, fixed by migration). gemini-embedding-2 accepts longer input but its free-tier quota ran out after about 47,000 tokens (D-015).',
+    source: 'D-015',
+  },
+  GEMINI_TRAIT_MODEL: {
+    schema: z.string().min(1).default('gemini-3.5-flash-lite'),
+    description: 'Smaller model used for trait extraction (spec 10: small model first).',
+    source: 'D-015, H2',
+  },
+  GEMINI_TRAIT_MODEL_LARGE: {
+    schema: z.string().min(1).default('gemini-3.5-flash'),
+    description: 'Larger model compared against the smaller one for trait extraction (H2).',
+    source: 'D-015, H2',
+  },
+  GEMINI_TIMEOUT_MS: {
+    schema: int(60_000, 1000),
+    description: 'Timeout for one Gemini request.',
+    source: 'D-015 (hypothesis)',
+  },
+  GEMINI_MAX_REQUESTS_PER_MINUTE: {
+    schema: int(30),
+    description: 'Client-side request pacing to stay under the API rate limit.',
+    source: 'D-015 (hypothesis)',
+  },
+  GEMINI_TOKENS_PER_MINUTE: {
+    schema: int(30_000, 1000),
+    description:
+      'Client-side cap on estimated input tokens per minute. The free tier rejected bursts of about 60,000 tokens a minute (D-015).',
+    source: 'D-015 (hypothesis, measured 2026-10-21)',
+  },
+  GEMINI_TRANSIENT_RETRIES: {
+    schema: int(2, 0),
+    description:
+      'Retries after an overloaded, unavailable or rate-limited response. Separate from the single retry for invalid output (spec 8).',
+    source: 'D-015 (hypothesis)',
+  },
+  EMBEDDING_MAX_REVIEWS: {
+    schema: int(20, 0),
+    description: 'Selected reviews included in a book embedding next to its description.',
+    source: 'Spec 7, D-015 (hypothesis)',
+  },
+  EMBEDDING_MAX_CHARS: {
+    schema: int(7_000, 1000),
+    description:
+      'Embedding input is cut to this length (gemini-embedding-001 accepts 2,048 tokens, about 8,000 characters).',
+    source: 'D-015',
+  },
+  EMBEDDING_BATCH_SIZE: {
+    schema: int(5),
+    description: 'Books embedded per API request.',
+    source: 'D-015 (hypothesis)',
+  },
+
   // --- Caching (spec 10) ---
   CACHE_METADATA_TTL_DAYS: {
     schema: int(60),

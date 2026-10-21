@@ -577,3 +577,22 @@ describe('SEC-3: deleting a reader removes their rows and keeps shared data', ()
     expect(await prisma.tasteProfileVersion.count({ where: { userId: other.id } })).toBe(1);
   });
 });
+
+describe('Hand-written database objects survive later migrations', () => {
+  // Prisma cannot express these, and a future `prisma migrate dev` may try to
+  // drop them. If this fails, remove the DROP lines from the new migration.
+  it.each([
+    ['analyses_one_running_per_request', 'analyses'],
+    ['book_embeddings_embedding_hnsw', 'book_embeddings'],
+  ])('index %s exists on %s', async (index, table) => {
+    const rows = await prisma.$queryRaw<Array<{ indexname: string }>>`
+      SELECT indexname FROM pg_indexes WHERE tablename = ${table} AND indexname = ${index}`;
+    expect(rows).toHaveLength(1);
+  });
+
+  it('immutability triggers exist', async () => {
+    const rows = await prisma.$queryRaw<Array<{ n: bigint }>>`
+      SELECT count(*) AS n FROM pg_trigger WHERE tgname LIKE '%_immutable' OR tgname LIKE '%_sealed'`;
+    expect(Number(rows[0]!.n)).toBe(12);
+  });
+});

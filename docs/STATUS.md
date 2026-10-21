@@ -55,7 +55,7 @@ The spec says the evaluation harness comes before the interface, so model decisi
 
 | ID | Package | Acceptance IDs | Status | Branch | Notes |
 |---|---|---|---|---|---|
-| BE-12 | Book representation (embeddings, traits with evidence) | n/a | todo | | |
+| BE-12 | Book representation (embeddings, traits with evidence) | RES-5, RES-6 | in review | be-12-representation | Per D-015: Gemini client with pacing and retries, evidence selection, embeddings (gemini-embedding-001, 768 dimensions, HNSW cosine index), trait extraction with fixed vocabularies, citation checks and one retry. Dev run 2026-10-21: 135 popular editions embedded (100 in 6 minutes at the free-tier token cap); neighbours look right (Harry Potter to the other Potter books, Pride and Prejudice to Sense and Sensibility and Jane Eyre). Trait sample, small model: 5 of 5 valid on the first try, about 8,700 input tokens per book, model latency about 2 s. Traits are stored by the public-analysis pipeline (BE-8). Note for BE-13: another edition of the same work can be a book's nearest neighbour (Gone Girl), so exclude same-work editions when recommending |
 | BE-13 | Models B0 to B4 | MODEL-1 to MODEL-4 | todo | | Served per D-006 (Python artifacts, TypeScript scoring, parity test) |
 | BE-14 | Offline evaluation harness | EVAL-1, EVAL-2 | todo | | |
 | BE-15 | LLM evaluation and regression suite | EVAL-3, EVAL-4, H2 to H4 | todo | | |
@@ -86,6 +86,7 @@ Record results as they are, including unfavorable ones.
 
 | Date | Role and package | What changed | Left for next session |
 |---|---|---|---|
+| 2026-10-21 | Backend, BE-12 | Gemini client, evidence selection, book embeddings (new migration: vector(768) plus HNSW index), trait extraction with RES-5 and RES-6 checks, `embed:books` and `traits:sample` tools, D-015 | Owner reviews and merges; then BE-6 (search), BE-5 adapters or BE-13 (taste models) |
 | 2026-10-20 | Backend, BE-4 | Goodreads importer with unit and database tests; sample import of the 5,000 most-rated books into the dev database; titles fixed on re-run (series markers) | Owner decides on the full import; then BE-12 (book representation) or BE-6 (search) |
 | 2026-10-20 | Backend, BE-2 | Schema v2 with Prisma 7, first migration with constraints, triggers and seed rows, database tests, CI database service. Local dev database reset once with the owner's consent | Owner reviews; then BE-5 (source audit) or BE-4 (catalog import) |
 | 2026-10-20 | Backend, BE-1 | Moved docs into `docs/` (design mockups to `docs/design/`, old schema to `docs/reference/`), removed the duplicate Stitch export, set up Git and BE-1 foundations. Contract: added `INTERNAL_ERROR` and the `/health` exception (frontend to approve) | Run `docker compose up -d` once Docker Desktop is open; next package BE-2 (schema v2) or BE-5 (source audit) |
