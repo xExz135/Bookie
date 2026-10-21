@@ -290,7 +290,7 @@ Decision:
 - **Throttling** uses fixed windows in Redis, counted per action, per IP and per email. Email keys are hashed, so Redis never holds an address. If Redis is down, counting continues in the API process's memory (spec 10: continue without the cache layer) instead of letting every request through. The same limiter will serve scans and analyses.
 - **Reset links** put the token in the URL fragment (`/reset-password#token=...`), which browsers never send to a server or in a Referer header. Requesting a reset sends the email in the background, so response time does not reveal whether the email has an account. A successful reset also voids the account's other unused links.
 - **Login timing:** an unknown email still costs one argon2id check against a dummy hash, so it takes as long as a wrong password.
-- **`GET /me`** was added so the frontend can load the user after a page reload (refresh, then `/me`). Proposed in CONTRACT 4.5; frontend to approve.
+- **`GET /me`** was added so the frontend can load the user after a page reload (refresh, then `/me`). Proposed in CONTRACT 4.5; approved by the owner on 2026-10-21.
 - **Refresh races:** with rotation and no token families (D-001), two parallel refreshes with the same cookie cannot both succeed. The frontend runs one refresh at a time (CONTRACT 4.1).
 - **Accepted risk:** per-email login throttling means someone who knows a reader's email can keep that reader from logging in for up to one window (default 15 minutes) by sending wrong passwords. This is the trade-off of throttling without lockout or CAPTCHA, and fits a portfolio deployment.
 - **Behind a reverse proxy**, set `TRUST_PROXY=true` so per-IP throttling sees the real client address.
@@ -309,7 +309,7 @@ Decision:
 - **Upload handling (DISC-3, DISC-4):** multer keeps the file in memory with a size limit that stops the upload once exceeded. The type is taken from the file's bytes; only JPEG and PNG are accepted (the client sends JPEG). The file must parse; EXIF, XMP, comments and PNG text chunks are removed before the photo is sent to the vision model, since they can hold the reader's location. Nothing is written to disk or the database; `scan_usages` holds only the reader and the time.
 - **Scan quota:** `SCAN_DAILY_QUOTA` scans in any 24 hours, counted in the database under a per-reader lock. Rejected uploads do not count. A scan is given back when identification fails on our side (service down, quota, invalid output), not when the photo is the problem (not a book, unreadable).
 - **Search rate limit** per reader (`SEARCH_RATE_LIMIT_PER_MINUTE`), mainly to protect Open Library.
-- **Contract additions** (CONTRACT 4.3, frontend to approve): `publisher` and `format` on `Candidate`, nullable fields, `external` on search and scan, `recognized` on scan.
+- **Contract additions** (CONTRACT 4.3, approved by the owner on 2026-10-21): `publisher` and `format` on `Candidate`, nullable fields, `external` on search and scan, `recognized` on scan.
 Known limits: "gone girl" also lists "Julie and Julia" (its long title contains "one girl"): the word-inside-title score is generous. Ranking quality should be measured with a small labelled query set later (BE-15).
 
 ## D-018 Taste capture: versions, import matching and onboarding
