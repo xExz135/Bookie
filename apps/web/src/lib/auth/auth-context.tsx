@@ -24,6 +24,8 @@ interface AuthContextValue {
   logout(): Promise<void>;
   /** Forget the session in this tab without calling the API (for example after a password reset). */
   forget(): void;
+  /** Reads the reader again (for example after onboarding changed `onboardingState`). */
+  reloadUser(): Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -107,6 +109,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       },
       forget: signedOut,
+      async reloadUser() {
+        setUser(await call(api.GET('/api/v1/me')));
+      },
     }),
     [status, user, sessionExpired, signedIn, signedOut],
   );

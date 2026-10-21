@@ -17,3 +17,13 @@ export const SCAN_JPEG_QUALITY = 0.85;
 /** Typed search accepts 2 to 200 characters (CONTRACT 4.3). */
 export const SEARCH_MIN_LENGTH = 2;
 export const SEARCH_MAX_LENGTH = 200;
+
+/**
+ * Rating imports (CONTRACT 4.2): how often to ask whether matching has
+ * finished, and the largest file to send. The API's default limit is 10 MB
+ * (IMPORT_MAX_BYTES); it enforces its own, this only avoids a useless upload.
+ */
+export const IMPORT_POLL_MS = Number(process.env.NEXT_PUBLIC_IMPORT_POLL_MS ?? 1500);
+export const IMPORT_MAX_BYTES = Number(
+  process.env.NEXT_PUBLIC_IMPORT_MAX_BYTES ?? 10 * 1024 * 1024,
+);

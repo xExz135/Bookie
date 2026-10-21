@@ -293,6 +293,10 @@ describe('Three separate signals', () => {
     renderScreen();
     const personal = within(await screen.findByRole('region', { name: 'Your personal match' }));
     expect(personal.getByText(/Rate some books you have read/)).toBeVisible();
+    expect(personal.getByRole('link', { name: 'Rate books you have read' })).toHaveAttribute(
+      'href',
+      '/taste/rate',
+    );
     expect(personal.queryByText('/ 5')).not.toBeInTheDocument();
   });
 

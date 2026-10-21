@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Alert } from '@/components/ui/alert';
 import type { Evidence, PersonalMatch, Step } from '@/lib/analysis/api';
 import { formatDateTime, MODEL_NAMES, TRAIT_LABELS } from '@/lib/analysis/labels';
@@ -61,18 +62,24 @@ function PersonalBody({
       );
     case 'needs_taste_data':
       return (
-        <p className="text-body-md text-on-surface">
-          Rate some books you have read to see how this one fits your taste. You need at least{' '}
-          {match.hardFloor} rated books for a personal match.
-        </p>
+        <div className="flex flex-col items-start gap-3">
+          <p className="text-body-md text-on-surface">
+            Rate some books you have read to see how this one fits your taste. You need at least{' '}
+            {match.hardFloor} rated books for a personal match.
+          </p>
+          <RateBooksLink />
+        </div>
       );
     case 'below_floor':
       return (
-        <p className="text-body-md text-on-surface">
-          You have rated {match.ratedCount} {match.ratedCount === 1 ? 'book' : 'books'}. Rate at
-          least {match.hardFloor} to see a personal match; {match.minForConfidence} or more make it
-          more reliable.
-        </p>
+        <div className="flex flex-col items-start gap-3">
+          <p className="text-body-md text-on-surface">
+            You have rated {match.ratedCount} {match.ratedCount === 1 ? 'book' : 'books'}. Rate at
+            least {match.hardFloor} to see a personal match; {match.minForConfidence} or more make
+            it more reliable.
+          </p>
+          <RateBooksLink />
+        </div>
       );
     case 'skipped':
       return (
@@ -99,6 +106,18 @@ function PersonalBody({
     case 'done':
       return <MatchResult match={match} evidence={evidence} />;
   }
+}
+
+/** The invitation to rate books (ONB-2). */
+function RateBooksLink() {
+  return (
+    <Link
+      href="/taste/rate"
+      className="rounded-sm border border-outline-variant px-4 py-2 text-label-lg text-on-surface hover:bg-surface-container-low"
+    >
+      Rate books you have read
+    </Link>
+  );
 }
 
 function MatchResult({

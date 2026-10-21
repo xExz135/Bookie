@@ -9,6 +9,7 @@ import { Wordmark } from './wordmark';
 const NAV = [
   { href: '/', label: 'Discover' },
   { href: '/history', label: 'History' },
+  { href: '/taste', label: 'Taste profile' },
 ];
 
 /** Header and frame for signed-in pages. */
@@ -30,7 +31,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      aria-current={pathname === item.href ? 'page' : undefined}
+                      aria-current={
+                        (item.href === '/' ? pathname === '/' : pathname.startsWith(item.href))
+                          ? 'page'
+                          : undefined
+                      }
                       className="text-label-lg text-on-surface-variant hover:text-on-surface aria-[current=page]:text-on-surface"
                     >
                       {item.label}
