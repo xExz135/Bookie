@@ -5,12 +5,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { type Analysis, getAnalysis, retryAnalysis, type StepName } from '@/lib/analysis/api';
-import { PERSONAL_STEPS, PUBLIC_STEPS } from '@/lib/analysis/labels';
+import { formatDateTime, PERSONAL_STEPS, PUBLIC_STEPS } from '@/lib/analysis/labels';
 import { ApiRequestError, errorMessage } from '@/lib/api/errors';
 import { BookHeader } from './book-header';
 import { EvidenceList } from './evidence-list';
 import { PersonalMatchSection } from './personal-match';
 import { PublicReceptionSection, type RetryControl } from './public-reception';
+import { OutdatedNotice, useRecalculate } from './recalculate';
 import { SectionRetry } from './section-retry';
 import { StatusBadge, StatusMessage } from './status-banner';
 import { StepRail } from './step-rail';
@@ -89,6 +90,7 @@ function useAnalysis(id: string) {
  */
 export function AnalysisScreen({ id }: { id: string }) {
   const { analysis, setAnalysis, loadError, pollError, reload } = useAnalysis(id);
+  const recalc = useRecalculate();
   const [retrying, setRetrying] = useState<SectionKey | null>(null);
   const [retryError, setRetryError] = useState<{ section: SectionKey; message: string } | null>(
     null,
@@ -137,8 +139,19 @@ export function AnalysisScreen({ id }: { id: string }) {
     onRetry: () => void retry(section, steps),
   });
 
+  const match = analysis.personalMatch;
+
   return (
     <div className="flex flex-col gap-6">
+      {match.isOutdated ? (
+        <OutdatedNotice
+          usedVersion={match.tasteProfileVersion}
+          currentVersion={match.currentTasteProfileVersion}
+          busy={recalc.busy(id)}
+          error={recalc.errorFor(id)}
+          onRecalculate={() => void recalc.recalculate(id)}
+        />
+      ) : null}
       <section
         aria-label="Analysis progress"
         className="flex flex-col gap-4 rounded-md border border-outline-variant bg-surface-container-lowest p-5 sm:p-6"
@@ -147,6 +160,20 @@ export function AnalysisScreen({ id }: { id: string }) {
           <p className="text-label-md uppercase text-on-surface">Analysis progress</p>
           <StatusBadge status={analysis.status} />
         </div>
+        <p className="text-body-sm text-on-surface-variant">
+          Analyzed {formatDateTime(analysis.createdAt)}
+          {analysis.recalculatedFromId ? (
+            <>
+              {' · '}
+              <Link
+                href={`/analyses/${analysis.recalculatedFromId}`}
+                className="text-secondary underline underline-offset-4"
+              >
+                Recalculated from an earlier result
+              </Link>
+            </>
+          ) : null}
+        </p>
         <div aria-live="polite">
           <StatusMessage analysis={analysis} />
         </div>

@@ -26,3 +26,20 @@ export function retryAnalysis(id: string, steps?: StepName[]): Promise<Analysis>
     }),
   );
 }
+
+export type AnalysisSummary = Schemas['AnalysisSummary'];
+export type AnalysisList = Schemas['AnalysisList'];
+
+/** The reader's analyses, newest first (CONTRACT 4.4). Pass `nextCursor` for the next page. */
+export function listAnalyses(cursor?: string): Promise<AnalysisList> {
+  return call(api.GET('/api/v1/analyses', { params: { query: cursor ? { cursor } : {} } }));
+}
+
+/**
+ * A new analysis of the same book for the reader's current taste profile
+ * (ONB-4). The old one is left as it was; the new one names it in
+ * `recalculatedFromId`.
+ */
+export function recalculateAnalysis(id: string): Promise<Analysis> {
+  return call(api.POST('/api/v1/analyses/{id}/recalculate', { params: { path: { id } } }));
+}

@@ -7,6 +7,7 @@ import { session } from '@/lib/api/client';
 import type { Analysis } from '@/lib/analysis/api';
 import { API_URL } from '@/lib/config';
 import { fixture } from '@/test/fixtures';
+import { router } from '@/test/navigation';
 import { server } from '@/test/server';
 import { AnalysisScreen } from './analysis-screen';
 import { MATCH_DISCLAIMER } from './personal-match';
@@ -16,6 +17,7 @@ vi.mock('next/navigation', async () => (await import('@/test/navigation')).navig
 const ID = '0b10b26f-04e1-598b-a2ac-cdac933ae226';
 const GET = `${API_URL}/api/v1/analyses/${ID}`;
 const RETRY = `${API_URL}/api/v1/analyses/${ID}/retry`;
+const RECALCULATE = `${API_URL}/api/v1/analyses/${ID}/recalculate`;
 
 /** A fixture outcome as an Analysis, with a short poll interval so tests do not wait 1.5 s. */
 function outcome(file: string, name: string): Analysis {
@@ -52,6 +54,7 @@ const stepItems = () =>
   within(screen.getByRole('list', { name: 'Analysis steps' })).getAllByRole('listitem');
 
 beforeEach(() => {
+  router.push.mockReset();
   session.clear();
   server.events.removeAllListeners();
 });
@@ -233,6 +236,7 @@ describe('Three separate signals', () => {
     expect(personal.getByText(MATCH_DISCLAIMER)).toBeVisible();
     expect(personal.getByText('B4 (hybrid model), version 2026-10-20.1')).toBeVisible();
     expect(personal.getByText('Version 4')).toBeVisible();
+    expect(screen.getByText(/^Analyzed /)).toHaveTextContent(/2026/);
     expect(personal.getByText('Generated').nextElementSibling).toHaveTextContent(/2026/);
   });
 
@@ -305,12 +309,57 @@ describe('Three separate signals', () => {
     ).toHaveTextContent('Low');
   });
 
-  it('ONB-4: an outdated match names both taste-profile versions', async () => {
+  it('ONB-4: an outdated result names both taste-profile versions and recalculates into a new analysis', async () => {
     serve(analysis('outdated'));
+    const recalculated = outcome('analyses-recalculate.json', 'recalculated');
+    let asked = false;
+    server.use(
+      http.post(RECALCULATE, () => {
+        asked = true;
+        return HttpResponse.json(recalculated, { status: 201 });
+      }),
+    );
     renderScreen();
     expect(
-      await screen.findByText(/it used version 3, and your profile is now version 4/),
+      await screen.findByText(/used taste profile version 3; yours is now version 4/),
     ).toBeVisible();
+    expect(within(personalSection()).getByText('Version 3 (yours is now version 4)')).toBeVisible();
+    await userEvent.click(screen.getByRole('button', { name: 'Recalculate' }));
+    expect(asked).toBe(true);
+    expect(router.push).toHaveBeenCalledWith(`/analyses/${recalculated.id}`);
+  });
+
+  it('ONB-4: says so when the result already uses the current profile', async () => {
+    serve(analysis('outdated'));
+    server.use(
+      http.post(RECALCULATE, () =>
+        HttpResponse.json(fixture('analyses-recalculate.json', 'alreadyCurrent').body, {
+          status: 409,
+        }),
+      ),
+    );
+    renderScreen();
+    await userEvent.click(await screen.findByRole('button', { name: 'Recalculate' }));
+    expect(
+      await screen.findByText('This result already uses your current taste profile.'),
+    ).toBeVisible();
+    expect(router.push).not.toHaveBeenCalled();
+  });
+
+  it('offers no recalculation when the result uses the current profile', async () => {
+    serve(analysis('complete'));
+    renderScreen();
+    await screen.findByText('Complete');
+    expect(screen.queryByRole('button', { name: 'Recalculate' })).not.toBeInTheDocument();
+  });
+
+  it('a recalculated result links back to the one it came from, which stays as it was', async () => {
+    const recalculated = outcome('analyses-recalculate.json', 'recalculated');
+    serve(recalculated);
+    renderScreen();
+    expect(
+      await screen.findByRole('link', { name: 'Recalculated from an earlier result' }),
+    ).toHaveAttribute('href', `/analyses/${recalculated.recalculatedFromId}`);
   });
 });
 

@@ -6,7 +6,10 @@ import { useState } from 'react';
 import { useAuth } from '@/lib/auth/auth-context';
 import { Wordmark } from './wordmark';
 
-const NAV = [{ href: '/', label: 'Discover' }];
+const NAV = [
+  { href: '/', label: 'Discover' },
+  { href: '/history', label: 'History' },
+];
 
 /** Header and frame for signed-in pages. */
 export function AppShell({ children }: { children: React.ReactNode }) {

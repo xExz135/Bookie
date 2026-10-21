@@ -218,7 +218,7 @@ function TraitGroup({
   );
 }
 
-/** What produced the score (MODEL-3), and whether the taste profile has changed since (ONB-4). */
+/** What produced the score (MODEL-3). */
 function MatchDetails({ match }: { match: PersonalMatch }) {
   return (
     <div className="flex flex-col gap-2 border-t border-outline-variant/60 pt-4">
@@ -236,7 +236,12 @@ function MatchDetails({ match }: { match: PersonalMatch }) {
         {match.tasteProfileVersion !== null ? (
           <>
             <dt className="text-on-surface-variant">Taste profile</dt>
-            <dd className="text-on-surface">Version {match.tasteProfileVersion}</dd>
+            <dd className="text-on-surface">
+              Version {match.tasteProfileVersion}
+              {match.isOutdated
+                ? ` (yours is now version ${match.currentTasteProfileVersion})`
+                : ''}
+            </dd>
           </>
         ) : null}
         {match.generatedAt ? (
@@ -246,13 +251,6 @@ function MatchDetails({ match }: { match: PersonalMatch }) {
           </>
         ) : null}
       </dl>
-      {match.isOutdated ? (
-        <Alert tone="info">
-          Your taste profile has changed since this match was made: it used version{' '}
-          {match.tasteProfileVersion}, and your profile is now version{' '}
-          {match.currentTasteProfileVersion}.
-        </Alert>
-      ) : null}
     </div>
   );
 }
