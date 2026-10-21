@@ -10,6 +10,7 @@ const NAV = [
   { href: '/', label: 'Discover' },
   { href: '/history', label: 'History' },
   { href: '/taste', label: 'Taste profile' },
+  { href: '/settings', label: 'Settings' },
 ];
 
 /** Header and frame for signed-in pages. */
@@ -23,12 +24,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-outline-variant/60 bg-surface-container-lowest">
         <div className="mx-auto flex max-w-[1280px] items-start justify-between gap-4 px-4 py-3 sm:items-center sm:px-8">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2">
             <Wordmark />
             <nav aria-label="Main">
-              <ul className="flex gap-4 whitespace-nowrap">
+              <ul className="flex flex-wrap gap-x-4 gap-y-1">
                 {NAV.map((item) => (
-                  <li key={item.href}>
+                  <li key={item.href} className="whitespace-nowrap">
                     <Link
                       href={item.href}
                       aria-current={
@@ -45,7 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </ul>
             </nav>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3">
             <span className="hidden text-body-sm text-on-surface-variant sm:inline">
               {user?.displayName}
             </span>
