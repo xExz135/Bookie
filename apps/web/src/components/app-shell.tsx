@@ -22,11 +22,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="border-b border-outline-variant/60 bg-surface-container-lowest">
-        <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-4 px-4 py-3 sm:px-8">
-          <div className="flex items-center gap-6">
+        <div className="mx-auto flex max-w-[1280px] items-start justify-between gap-4 px-4 py-3 sm:items-center sm:px-8">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <Wordmark />
             <nav aria-label="Main">
-              <ul className="flex gap-4">
+              <ul className="flex gap-4 whitespace-nowrap">
                 {NAV.map((item) => (
                   <li key={item.href}>
                     <Link
@@ -60,7 +60,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   router.replace('/login');
                 }
               }}
-              className="rounded-sm border border-outline-variant px-3 py-1.5 text-label-md text-on-surface hover:bg-surface-container-low disabled:opacity-60"
+              className="whitespace-nowrap rounded-sm border border-outline-variant px-3 py-1.5 text-label-md text-on-surface hover:bg-surface-container-low disabled:opacity-60"
             >
               {signingOut ? 'Signing out…' : 'Sign out'}
             </button>

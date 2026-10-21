@@ -213,7 +213,7 @@ describe('Import (ONB-1)', () => {
   const csv = () =>
     new File(['Title,Author,My Rating\n'], 'goodreads_library_export.csv', { type: 'text/csv' });
 
-  it('ONB-1: uploads the export, waits for matching, lists every unmatched row, and saves with them skipped', async () => {
+  it('ONB-1: uploads the export, waits for matching, lists every unmatched row, and saves skipped rows explicitly', async () => {
     signedInAs({ onboardingState: 'completed' });
     let polls = 0;
     server.use(
@@ -249,12 +249,13 @@ describe('Import (ONB-1)', () => {
     const rows = within(screen.getByRole('list', { name: 'Rows not matched' })).getAllByRole(
       'listitem',
     );
-    expect(rows[0]).toHaveTextContent('Pride and Prejudice · Jane Austen');
-    expect(rows[0]).toHaveTextContent('2 possible books');
+    expect(rows[0]).toHaveTextContent('Pride and Prejudice');
+    expect(rows[0]).toHaveTextContent('Jane Austen · your rating 3 / 5');
+    expect(within(rows[0]!).getAllByRole('radio')).toHaveLength(3);
     expect(rows[1]).toHaveTextContent('A Book Nobody Has');
-    expect(rows[1]).toHaveTextContent('no close match');
+    expect(rows[1]).toHaveTextContent('No close match was suggested');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Save 205 matched ratings' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Save 205 ratings' }));
     expect(
       await screen.findByText(/You now have 209 rated books \(taste profile version 2\)/),
     ).toBeVisible();
@@ -264,6 +265,32 @@ describe('Import (ONB-1)', () => {
         { rowIndex: 88, skip: true },
       ],
     });
+  });
+
+  it('shows a refused save and keeps the review open', async () => {
+    signedInAs({ onboardingState: 'completed' });
+    const { importId } = fixture('ratings-import.json', 'started').body as { importId: string };
+    server.use(
+      respond('get', '/api/v1/taste-profile', 'taste-profile.json', 'withAnswers'),
+      respond('post', '/api/v1/ratings/import', 'ratings-import.json', 'started'),
+      respond(
+        'get',
+        `/api/v1/ratings/import/${importId}`,
+        'ratings-import-get.json',
+        'needsReview',
+      ),
+      respond(
+        'post',
+        `/api/v1/ratings/import/${importId}/confirm`,
+        'ratings-import-confirm.json',
+        'alreadyConfirmed',
+      ),
+    );
+    renderPage(<ImportRatings />);
+    await userEvent.upload(await screen.findByLabelText('Export file (CSV)'), csv());
+    await userEvent.click(await screen.findByRole('button', { name: 'Save 205 ratings' }));
+    expect(await screen.findByText('This import was already saved.')).toBeVisible();
+    expect(screen.getByRole('list', { name: 'Rows not matched' })).toBeVisible();
   });
 
   it('shows why the API refused the file', async () => {

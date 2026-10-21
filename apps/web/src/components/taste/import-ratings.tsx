@@ -11,18 +11,18 @@ import {
   getImport,
   type ProfileSaved,
   type RatingImport,
+  type Resolution,
   startImport,
 } from '@/lib/taste/api';
+import { ImportReview } from './import-review';
 import { useTasteProfile } from './use-taste';
-
-const FORMAT_NAMES = { goodreads: 'Goodreads', storygraph: 'StoryGraph' } as const;
 
 type Stage =
   | { kind: 'choose' }
   | { kind: 'uploading' }
   | { kind: 'matching'; importId: string; progress: RatingImport | null }
   | { kind: 'review'; data: RatingImport }
-  | { kind: 'saved'; data: RatingImport; saved: ProfileSaved }
+  | { kind: 'saved'; count: number; saved: ProfileSaved }
   | { kind: 'failed' };
 
 /**
@@ -91,17 +91,13 @@ export function ImportRatings() {
     };
   }, [stage]);
 
-  async function save(data: RatingImport) {
+  async function save(data: RatingImport, resolutions: Resolution[], count: number) {
     setSaving(true);
     setSaveError(null);
     try {
-      // Every listed row is skipped explicitly, so nothing is dropped silently.
-      const saved = await confirmImport(
-        data.importId,
-        data.unmatched.map((row) => ({ rowIndex: row.rowIndex, skip: true as const })),
-      );
+      const saved = await confirmImport(data.importId, resolutions);
       taste.saved(saved);
-      setStage({ kind: 'saved', data, saved });
+      setStage({ kind: 'saved', count, saved });
     } catch (e) {
       setSaveError(
         e instanceof ApiRequestError && e.code === 'CONFLICT'
@@ -188,7 +184,7 @@ export function ImportRatings() {
           data={stage.data}
           saving={saving}
           error={saveError}
-          onSave={() => void save(stage.data)}
+          onSave={(resolutions, count) => void save(stage.data, resolutions, count)}
           onCancel={() => setStage({ kind: 'choose' })}
         />
       ) : null}
@@ -196,8 +192,8 @@ export function ImportRatings() {
       {stage.kind === 'saved' ? (
         <div className="flex flex-col items-start gap-3">
           <Alert tone="success">
-            Saved {stage.data.matchedCount} {stage.data.matchedCount === 1 ? 'rating' : 'ratings'}.
-            You now have {stage.saved.ratedCount} rated books (taste profile version{' '}
+            Saved {stage.count} {stage.count === 1 ? 'rating' : 'ratings'}. You now have{' '}
+            {stage.saved.ratedCount} rated books (taste profile version{' '}
             {stage.saved.tasteProfileVersion}).
           </Alert>
           <div className="flex flex-wrap gap-4">
@@ -214,102 +210,5 @@ export function ImportRatings() {
         </div>
       ) : null}
     </section>
-  );
-}
-
-function ImportReview({
-  data,
-  saving,
-  error,
-  onSave,
-  onCancel,
-}: {
-  data: RatingImport;
-  saving: boolean;
-  error: string | null;
-  onSave: () => void;
-  onCancel: () => void;
-}) {
-  if (data.status === 'confirmed') {
-    return <Alert tone="success">This import was already saved.</Alert>;
-  }
-  return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-col gap-2 rounded-md border border-outline-variant bg-surface-container-lowest p-5">
-        <h2 className="font-serif text-headline-sm text-on-surface">
-          {data.format ? `${FORMAT_NAMES[data.format]} export` : 'Your export'} is ready
-        </h2>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-body-md">
-          <dt className="text-on-surface-variant">Rated rows</dt>
-          <dd className="text-on-surface">{data.totalRows}</dd>
-          <dt className="text-on-surface-variant">Matched to a book</dt>
-          <dd className="text-on-surface">{data.matchedCount}</dd>
-          <dt className="text-on-surface-variant">Not matched</dt>
-          <dd className="text-on-surface">{data.unmatched.length}</dd>
-          <dt className="text-on-surface-variant">Ignored, no rating</dt>
-          <dd className="text-on-surface">{data.ignoredRows}</dd>
-        </dl>
-        {data.ignoredRows > 0 ? (
-          <p className="text-body-sm text-on-surface-variant">
-            Rows without a star rating (for example books on a to-read shelf) are not used.
-          </p>
-        ) : null}
-      </div>
-
-      {data.unmatched.length > 0 ? (
-        <div className="flex flex-col gap-2">
-          <h2 className="text-label-md uppercase text-on-surface-variant">
-            Not matched ({data.unmatched.length})
-          </h2>
-          <p className="text-body-sm text-on-surface-variant">
-            We could not tell which book these rows mean, so they are skipped when you save. You can
-            rate them afterwards with Quick rate.
-          </p>
-          <ul
-            aria-label="Rows not matched"
-            className="flex flex-col divide-y divide-outline-variant/60 rounded-sm border border-outline-variant/60"
-          >
-            {data.unmatched.map((row) => (
-              <li
-                key={row.rowIndex}
-                className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-2.5"
-              >
-                <span className="min-w-0">
-                  <span className="text-body-md text-on-surface">{row.rawTitle}</span>
-                  {row.rawAuthor ? (
-                    <span className="text-body-sm text-on-surface-variant"> · {row.rawAuthor}</span>
-                  ) : null}
-                </span>
-                <span className="text-body-sm text-on-surface-variant">
-                  Your rating {row.rating} / 5
-                  {row.candidates.length > 0
-                    ? ` · ${row.candidates.length} possible ${row.candidates.length === 1 ? 'book' : 'books'}`
-                    : ' · no close match'}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-
-      <div className="flex flex-col items-start gap-3">
-        <div className="flex flex-wrap gap-3">
-          <Button busy={saving} onClick={onSave} disabled={data.matchedCount === 0}>
-            {saving
-              ? 'Saving…'
-              : `Save ${data.matchedCount} matched ${data.matchedCount === 1 ? 'rating' : 'ratings'}`}
-          </Button>
-          <Button variant="secondary" onClick={onCancel} disabled={saving}>
-            Upload a different file
-          </Button>
-        </div>
-        {data.matchedCount === 0 ? (
-          <p className="text-body-sm text-on-surface-variant">
-            No rows matched a book, so there is nothing to save.
-          </p>
-        ) : null}
-        {error ? <Alert>{error}</Alert> : null}
-      </div>
-    </div>
   );
 }
