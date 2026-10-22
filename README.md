@@ -48,7 +48,7 @@ docs/            SPEC, CONTRACT, STATUS, DECISIONS, DATA_SOURCES, roles/, design
 data/raw/        Dataset files (git-ignored, never committed)
 ```
 
-Start with `CLAUDE.md`, then `docs/SPEC.md`.
+Start with `docs/SPEC.md`.
 
 ## Data
 

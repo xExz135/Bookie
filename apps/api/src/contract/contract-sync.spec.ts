@@ -6,7 +6,7 @@ import { ERROR_CODES } from './error-codes';
 
 /**
  * Keeps the code and docs/CONTRACT.md in step: a change to either one
- * without the other fails here (CLAUDE.md: contract changes go in both).
+ * without the other fails here (contract changes go in both).
  */
 const contract = readFileSync(join(findRepoRoot(), 'docs', 'CONTRACT.md'), 'utf8');
 

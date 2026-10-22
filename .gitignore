@@ -36,3 +36,7 @@ pnpm-debug.log*
 
 # Next.js generated type references (recreated by next typegen, dev and build)
 next-env.d.ts
+
+# AI assistant instructions: kept locally, not published
+/CLAUDE.md
+AGENTS.md
