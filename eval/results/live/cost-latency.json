@@ -1,0 +1,276 @@
+{
+  "window": {
+    "since": "2026-10-22T07:05:22.939Z",
+    "until": "2026-10-22T07:23:30.310Z"
+  },
+  "method": [
+    "Analyses created in the window and finished; latency is server time from the request to the final status (the reader also waits for the first poll).",
+    "Cold: the analysis built the public reception. Cached: it reused a fresh one at once. Shared: it waited for another analysis building the same book (PERF-2).",
+    "Latency leaves out analyses with a retried step (their time includes the reader), stale fallbacks (PERF-3) and failed ones.",
+    "Quantiles interpolate linearly (numpy default). Intervals are 95% percentile bootstrap over analyses, seeded; rates use the Wilson interval.",
+    "Tokens and cost: cold builds that called the model and reused no earlier output; a book with no usable reviews makes only the trait call. Cost uses paid-tier list prices; the free tier used here costs nothing.",
+    "Pacing wait: time our client held requests back for the free-tier per-minute caps; the two model steps run in parallel, so the longer step counts."
+  ],
+  "analyses": {
+    "finished": 40,
+    "byKind": {
+      "cold": 20,
+      "cached": 20,
+      "shared": 0
+    },
+    "byStatus": {
+      "complete": 40
+    },
+    "excludedFromLatency": {
+      "retried": 0,
+      "stale": 0,
+      "failed": 0
+    }
+  },
+  "latencyMs": {
+    "cold": {
+      "n": 20,
+      "p50": {
+        "value": 11150.5,
+        "low": 8242.5,
+        "high": 12765.5,
+        "n": 20
+      },
+      "p95": {
+        "value": 14892.95,
+        "low": 12952.976250000002,
+        "high": 15671,
+        "n": 20
+      }
+    },
+    "cached": {
+      "n": 20,
+      "p50": {
+        "value": 240.5,
+        "low": 206,
+        "high": 304,
+        "n": 20
+      },
+      "p95": {
+        "value": 1465.65,
+        "low": 387.4000000000009,
+        "high": 1592,
+        "n": 20
+      }
+    },
+    "shared": {
+      "n": 0,
+      "p50": {
+        "value": null,
+        "low": null,
+        "high": null,
+        "n": 0
+      },
+      "p95": {
+        "value": null,
+        "low": null,
+        "high": null,
+        "n": 0
+      }
+    }
+  },
+  "coldBreakdownMs": {
+    "pacingWait": {
+      "p50": {
+        "value": 4793.5,
+        "low": 2628,
+        "high": 7265.5,
+        "n": 20
+      },
+      "p95": {
+        "value": 8955.5,
+        "low": 7362.350000000001,
+        "high": 9858,
+        "n": 20
+      }
+    },
+    "modelTime": {
+      "p50": {
+        "value": 3217.5,
+        "low": 3036.5,
+        "high": 3398,
+        "n": 20
+      },
+      "p95": {
+        "value": 4044.05,
+        "low": 3698,
+        "high": 4064,
+        "n": 20
+      }
+    },
+    "withoutPacingWait": {
+      "p50": {
+        "value": 5401.5,
+        "low": 5026.5,
+        "high": 5679.5,
+        "n": 20
+      },
+      "p95": {
+        "value": 6948.450000000003,
+        "low": 5900,
+        "high": 10282,
+        "n": 20
+      }
+    },
+    "steps": {
+      "resolve": {
+        "n": 20,
+        "p50": 30,
+        "p95": 40
+      },
+      "selectReviews": {
+        "n": 20,
+        "p50": 488,
+        "p95": 624
+      },
+      "evidenceConfidence": {
+        "n": 20,
+        "p50": 317,
+        "p95": 559
+      },
+      "personalMatch": {
+        "n": 20,
+        "p50": 78,
+        "p95": 103
+      },
+      "finalize": {
+        "n": 20,
+        "p50": 30,
+        "p95": 44
+      },
+      "fetchReviews": {
+        "n": 20,
+        "p50": 1376,
+        "p95": 2017
+      },
+      "publicSummary": {
+        "n": 20,
+        "p50": 5302,
+        "p95": 11676
+      },
+      "extractTraits": {
+        "n": 20,
+        "p50": 3267,
+        "p95": 9999
+      }
+    }
+  },
+  "tokensPerColdAnalysis": {
+    "n": 20,
+    "calls": {
+      "value": 2,
+      "low": 2,
+      "high": 2,
+      "n": 20
+    },
+    "inputTokens": {
+      "value": 16800.9,
+      "low": 15901.19,
+      "high": 17685.2875,
+      "n": 20
+    },
+    "outputTokens": {
+      "value": 801.85,
+      "low": 771.2975,
+      "high": 838.05,
+      "n": 20
+    }
+  },
+  "costPerColdAnalysisUsd": {
+    "measured": {
+      "value": 0.007044895000000001,
+      "low": 0.006782496750000001,
+      "high": 0.007311597750000001,
+      "n": 20
+    },
+    "comparison": {
+      "value": 0.015607612500000001,
+      "low": 0.01495438875,
+      "high": 0.016274137499999997,
+      "n": 20,
+      "model": "gemini-3.8-flash"
+    },
+    "savedPerAnalysis": 0.0085627175,
+    "unpricedModels": []
+  },
+  "reuse": {
+    "publicReception": {
+      "hits": 20,
+      "n": 40,
+      "value": 0.5,
+      "low": 0.35199526826950456,
+      "high": 0.6480047317304954
+    },
+    "sourceAnswers": {
+      "hits": 0,
+      "n": 40,
+      "value": 0,
+      "low": 0,
+      "high": 0.08762160245846368
+    },
+    "modelOutputsReused": 0,
+    "buildsAvoided": 20,
+    "modelCallsAvoided": 40
+  },
+  "modelCalls": {
+    "total": 40,
+    "byOutcome": {
+      "ok": 40
+    },
+    "invalidOutput": {
+      "hits": 0,
+      "n": 40,
+      "value": 0,
+      "low": 0,
+      "high": 0.08762160245846368
+    }
+  },
+  "sources": {
+    "hardcover": {
+      "answers": 20,
+      "cached": 0,
+      "live": 20,
+      "outcomes": {
+        "ok": 20
+      },
+      "details": {},
+      "liveMs": {
+        "p50": 1029,
+        "p95": 1978
+      }
+    },
+    "open_library": {
+      "answers": 20,
+      "cached": 0,
+      "live": 20,
+      "outcomes": {
+        "ok": 20
+      },
+      "details": {},
+      "liveMs": {
+        "p50": 1300,
+        "p95": 1368
+      }
+    }
+  },
+  "params": {
+    "resamples": 1000,
+    "seed": 20261022,
+    "prices": {
+      "gemini-3.5-flash-lite": {
+        "input": 0.3,
+        "output": 2.5
+      },
+      "gemini-3.8-flash": {
+        "input": 0.75,
+        "output": 3.75
+      }
+    },
+    "sharedAfterMs": 500
+  }
+}

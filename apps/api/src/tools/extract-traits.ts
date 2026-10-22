@@ -25,6 +25,7 @@ import {
   extractTraits,
 } from '../representation/traits';
 import { runCli, startCli, timestamp, wholeNumber } from './cli';
+import { traitExtractLimit } from './trait-extract-limit';
 
 runCli(async () => {
   const { root, config, values } = startCli({
@@ -32,7 +33,10 @@ runCli(async () => {
     model: { type: 'string', default: 'small' },
     'retry-failed': { type: 'boolean', default: false },
   });
-  const limit = wholeNumber(values.limit, '--limit', 100);
+  const limit = traitExtractLimit(
+    wholeNumber(values.limit, '--limit', 100),
+    config.TRAITS_EXTRACT_MAX_BOOKS,
+  );
   if (values.model !== 'small' && values.model !== 'large')
     throw new Error('--model must be small or large');
   const model =

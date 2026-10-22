@@ -528,6 +528,12 @@ export const PARAMS = {
       'Model that labels the LLM evaluation set and judges summary claims, following eval/llm/*-instructions.md. Must differ from both measured models. The strongest model with a free tier on 2026-10-22 (gemini-2.5-pro is closed to new users; gemini-3.1-pro-preview has no free tier).',
     source: 'D-028 (owner: labels by Gemini instead of by hand)',
   },
+  TRAITS_EXTRACT_MAX_BOOKS: {
+    schema: int(1000),
+    description:
+      'Most books `traits:extract` may cover: the offline evaluation set (eval/params.toml top_editions). It shares the daily model quota with live analyses, so a larger --limit is refused unless this is raised on purpose.',
+    source: 'D-023',
+  },
   LLM_EVAL_CATALOG: {
     schema: int(5000),
     description:
