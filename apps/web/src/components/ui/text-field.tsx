@@ -1,5 +1,11 @@
 import { useId, type ComponentPropsWithRef } from 'react';
 
+/**
+ * The border of text and search fields: `outline`, darker than DESIGN.md's
+ * light border so the edge of a field has 3:1 contrast (D-029, WCAG 1.4.11).
+ */
+export const FIELD_BORDER = 'border-outline';
+
 /** A labelled input with its error message tied to it for screen readers. */
 export function TextField({
   label,
@@ -22,7 +28,7 @@ export function TextField({
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy || undefined}
         className={`rounded-sm border bg-surface-container-lowest px-3 py-2.5 text-body-md text-on-surface outline-none focus:border-transparent focus:ring-[1.5px] focus:ring-on-surface ${
-          error ? 'border-error' : 'border-outline-variant'
+          error ? 'border-error' : FIELD_BORDER
         }`}
       />
       {hint && !error ? (

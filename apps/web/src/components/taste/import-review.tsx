@@ -5,6 +5,7 @@ import { Cover } from '@/components/analysis/parts';
 import { editionLine } from '@/components/discovery/candidate-card';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { FIELD_BORDER } from '@/components/ui/text-field';
 import { ApiRequestError, errorMessage } from '@/lib/api/errors';
 import { SEARCH_MAX_LENGTH, SEARCH_MIN_LENGTH } from '@/lib/config';
 import { type Candidate, searchBooks } from '@/lib/discovery/api';
@@ -249,7 +250,7 @@ function UnmatchedRowChoice({
                   void search();
                 }
               }}
-              className="min-w-0 flex-1 rounded-sm border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface outline-none focus:border-transparent focus:ring-[1.5px] focus:ring-on-surface"
+              className={`min-w-0 flex-1 rounded-sm border ${FIELD_BORDER} bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface outline-none focus:border-transparent focus:ring-[1.5px] focus:ring-on-surface`}
             />
             <Button variant="secondary" busy={searching} onClick={() => void search()}>
               {searching ? 'Searching…' : 'Search'}

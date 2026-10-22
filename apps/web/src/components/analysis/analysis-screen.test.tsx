@@ -229,6 +229,24 @@ describe('Failures and retry', () => {
     await waitFor(() => expect(calls.count).toBeGreaterThan(2));
   });
 
+  it('FE-11: a rate-limited retry says when it can be tried again and keeps the retry', async () => {
+    serve(analysis('personalFailed'));
+    server.use(
+      http.post(RETRY, () =>
+        HttpResponse.json(fixture('analyses-retry.json', 'rateLimited').body, { status: 429 }),
+      ),
+    );
+    renderScreen();
+    await userEvent.click(await screen.findByRole('button', { name: 'Retry personal match' }));
+    expect(
+      await within(personalSection()).findByText('Too many attempts. Try again in 1 minute.'),
+    ).toBeVisible();
+    expect(
+      within(personalSection()).getByRole('button', { name: 'Retry personal match' }),
+    ).toBeEnabled();
+    expect(publicSection()).toBeVisible();
+  });
+
   it('says when the analysis cannot be found, without telling whose it is', async () => {
     server.use(
       http.get(GET, () =>

@@ -9,6 +9,7 @@ import { API_URL } from '@/lib/config';
 import { fixture } from '@/test/fixtures';
 import { router, setLocation } from '@/test/navigation';
 import { respond, server, signedIn, signedOut } from '@/test/server';
+import { History } from '@/components/history/history';
 import ProtectedLayout from './(app)/layout';
 import ForgotPasswordPage from './(auth)/forgot-password/page';
 import LoginPage from './(auth)/login/page';
@@ -87,6 +88,45 @@ describe('SEC-2: protected pages', () => {
     expect(loggedOut).toBe(true);
     expect(session.accessToken).toBeNull();
   });
+
+  it('FE-11: a session that ends while in use goes to sign in, says why, and keeps the page to return to', async () => {
+    server.use(
+      ...signedIn(),
+      respond('get', '/api/v1/analyses', 'analyses-list.json', 'unauthenticated'),
+    );
+    setLocation('/history');
+    renderWithAuth(
+      <ProtectedLayout>
+        <History />
+      </ProtectedLayout>,
+    );
+    await waitFor(() =>
+      expect(router.replace).toHaveBeenCalledWith('/login?next=%2Fhistory&reason=expired'),
+    );
+    expect(session.accessToken).toBeNull();
+  });
+
+  it('FE-11: an expired access token is refreshed silently and the page loads', async () => {
+    let calls = 0;
+    server.use(
+      ...signedIn(),
+      http.get(`${API_URL}/api/v1/analyses`, () => {
+        calls += 1;
+        const { status, body } = fixture(
+          'analyses-list.json',
+          calls === 1 ? 'tokenExpired' : 'history',
+        );
+        return HttpResponse.json(body as object, { status });
+      }),
+    );
+    renderWithAuth(
+      <ProtectedLayout>
+        <History />
+      </ProtectedLayout>,
+    );
+    expect(await screen.findByRole('list', { name: 'Analyses' })).toBeVisible();
+    expect(router.replace).not.toHaveBeenCalled();
+  });
 });
 
 describe('sign in', () => {
@@ -97,6 +137,13 @@ describe('sign in', () => {
     await fillLogin('ada@example.com', 'correct horse battery');
     await waitFor(() => expect(router.replace).toHaveBeenCalledWith('/history'));
     expect(session.accessToken).toEqual(expect.any(String));
+  });
+
+  it('FE-11: explains that the session ended when sent here for that reason', async () => {
+    server.use(...signedOut());
+    setLocation('/login?next=%2Fhistory&reason=expired');
+    renderWithAuth(<LoginPage />);
+    expect(await screen.findByText('Your session ended. Please sign in again.')).toBeVisible();
   });
 
   it('shows our message for a wrong password, and field messages for invalid input', async () => {

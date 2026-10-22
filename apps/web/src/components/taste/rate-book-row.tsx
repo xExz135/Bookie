@@ -70,7 +70,8 @@ export function RateBookRow({
                 className={`px-1 text-headline-sm leading-none transition-colors disabled:opacity-60 ${
                   rating !== null && n <= rating
                     ? 'text-secondary'
-                    : 'text-outline-variant hover:text-secondary-fixed-dim'
+                    : // An empty star is the control itself, so it needs 3:1 contrast (FE-11).
+                      'text-outline hover:text-secondary'
                 }`}
               >
                 {rating !== null && n <= rating ? '★' : '☆'}

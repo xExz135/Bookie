@@ -364,6 +364,33 @@ describe('Confirmation starts the analysis', () => {
     expect(body).toEqual({ editionId: ambiguous.candidates[1]!.editionId });
   });
 
+  it('FE-11: works with the keyboard alone: search, choose a book, start the analysis', async () => {
+    let body: unknown = null;
+    server.use(
+      respond('get', SEARCH, 'books-search.json', 'ambiguous'),
+      http.post(`${API_URL}${ANALYSES}`, async ({ request }) => {
+        body = await request.json();
+        return HttpResponse.json(started as object, { status: 201 });
+      }),
+    );
+    renderPage();
+    /** Presses Tab until the element is focused, as a keyboard reader would. */
+    async function tabTo(element: HTMLElement) {
+      for (let i = 0; i < 30 && document.activeElement !== element; i += 1) await userEvent.tab();
+      expect(element).toHaveFocus();
+    }
+    await tabTo(screen.getByLabelText('Title, author or ISBN'));
+    await userEvent.keyboard('harry potter{Enter}');
+    const radios = await screen.findAllByRole('radio');
+    await tabTo(radios[0]!);
+    await userEvent.keyboard('{ArrowDown}');
+    expect(radios[1]).toBeChecked();
+    await tabTo(screen.getByRole('button', { name: 'Analyze this book' }));
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith(`/analyses/${started.id}`));
+    expect(body).toEqual({ editionId: ambiguous.candidates[1]!.editionId });
+  });
+
   it('joins an analysis already running for the book', async () => {
     server.use(
       respond('post', SCAN, 'scan.json', 'uncertainTwoMatches'),

@@ -207,6 +207,26 @@ describe('Quick rate', () => {
     expect(await within(first).findByRole('alert')).toHaveTextContent('Too many attempts');
     expect(within(first).getByText('You rated it 5 / 5')).toBeVisible();
   });
+
+  it('FE-11: announces loading, says when the books cannot be loaded, and tries again', async () => {
+    signedInAs({ onboardingState: 'completed' });
+    let fail = true;
+    server.use(
+      respond('get', '/api/v1/taste-profile', 'taste-profile.json', 'withAnswers'),
+      http.get(url('/catalog/search'), () =>
+        fail
+          ? HttpResponse.error()
+          : HttpResponse.json(fixture('catalog-search.json', 'popular').body as object),
+      ),
+    );
+    renderPage(<QuickRate />);
+    expect(await screen.findByText('Loading books…')).toHaveAttribute('role', 'status');
+    expect(await screen.findByRole('alert')).toHaveTextContent('We cannot reach Bookie right now');
+    fail = false;
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByRole('list', { name: 'Books to rate' })).toBeVisible();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
 });
 
 describe('Import (ONB-1)', () => {
@@ -293,17 +313,21 @@ describe('Import (ONB-1)', () => {
     expect(screen.getByRole('list', { name: 'Rows not matched' })).toBeVisible();
   });
 
-  it('shows why the API refused the file', async () => {
+  it.each([
+    ['unknownFormat', 'Upload a Goodreads or StoryGraph export (CSV).'],
+    ['noRatings', 'No rated books were found in this file.'],
+    ['tooLarge', 'That file is too large.'],
+    ['notText', 'That type of file is not supported.'],
+    ['tooManyImports', 'Too many attempts. Try again in a minute.'],
+  ])('shows why the API refused the file: %s', async (outcome, message) => {
     signedInAs({ onboardingState: 'completed' });
     server.use(
       respond('get', '/api/v1/taste-profile', 'taste-profile.json', 'withAnswers'),
-      respond('post', '/api/v1/ratings/import', 'ratings-import.json', 'unknownFormat'),
+      respond('post', '/api/v1/ratings/import', 'ratings-import.json', outcome),
     );
     renderPage(<ImportRatings />);
     await userEvent.upload(await screen.findByLabelText('Export file (CSV)'), csv());
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Upload a Goodreads or StoryGraph export (CSV).',
-    );
+    expect(await screen.findByRole('alert')).toHaveTextContent(message);
   });
 
   it('never uploads a file over the size limit', async () => {
@@ -400,6 +424,30 @@ describe('Questionnaire (ONB-3)', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'Save answers' }));
     expect(await screen.findByText('"fiction" cannot be both liked and disliked.')).toBeVisible();
   });
+
+  it('FE-11: says when the choices cannot be loaded, and tries again', async () => {
+    signedInAs({ onboardingState: 'completed' });
+    let fail = true;
+    server.use(
+      respond('get', '/api/v1/taste-profile', 'taste-profile.json', 'newReader'),
+      http.get(url('/questionnaire/options'), () =>
+        fail
+          ? HttpResponse.json(
+              { code: 'INTERNAL_ERROR', message: 'Internal error.', retryable: true },
+              { status: 500 },
+            )
+          : HttpResponse.json(fixture('questionnaire-options.json', 'options').body as object),
+      ),
+    );
+    renderPage(<QuestionnaireForm />);
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Something went wrong on our side. Please try again.',
+    );
+    expect(screen.queryByRole('button', { name: 'Save answers' })).not.toBeInTheDocument();
+    fail = false;
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByRole('group', { name: 'Genres you enjoy' })).toBeVisible();
+  });
 });
 
 describe('Taste profile page', () => {
@@ -468,5 +516,44 @@ describe('Taste profile page', () => {
       '/taste/rate',
     );
     expect(screen.getByText(/Rate at least 3 books to see a personal match/)).toBeVisible();
+  });
+
+  it('FE-11: says when the profile cannot be loaded, without showing progress, and tries again', async () => {
+    signedInAs({ onboardingState: 'completed' });
+    let fail = true;
+    server.use(
+      http.get(url('/taste-profile'), () =>
+        fail
+          ? HttpResponse.error()
+          : HttpResponse.json(fixture('taste-profile.json', 'withAnswers').body as object),
+      ),
+      respond('get', '/api/v1/ratings', 'ratings-list.json', 'firstPage'),
+    );
+    renderPage(<TasteProfilePage />);
+    expect(await screen.findByRole('alert')).toHaveTextContent('We cannot reach Bookie right now');
+    expect(screen.queryByText(/for a confident match/)).not.toBeInTheDocument();
+    fail = false;
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByText('6 of 10 for a confident match')).toBeVisible();
+  });
+
+  it('FE-11: a failed list of ratings keeps the rest of the profile and tries again on its own', async () => {
+    signedInAs({ onboardingState: 'completed' });
+    let fail = true;
+    server.use(
+      respond('get', '/api/v1/taste-profile', 'taste-profile.json', 'withAnswers'),
+      http.get(url('/ratings'), () =>
+        fail
+          ? HttpResponse.error()
+          : HttpResponse.json(fixture('ratings-list.json', 'firstPage').body as object),
+      ),
+    );
+    renderPage(<TasteProfilePage />);
+    expect(await screen.findByRole('alert')).toHaveTextContent('We cannot reach Bookie right now');
+    expect(screen.getByText('6 of 10 for a confident match')).toBeVisible();
+    expect(screen.getByRole('heading', { name: 'Questionnaire (optional)' })).toBeVisible();
+    fail = false;
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByRole('list', { name: 'Your ratings' })).toBeVisible();
   });
 });

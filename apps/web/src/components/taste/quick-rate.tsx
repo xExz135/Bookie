@@ -131,6 +131,12 @@ export function QuickRate() {
         </div>
       ) : null}
 
+      {!result && loading ? (
+        <p role="status" className="text-body-md text-on-surface-variant">
+          Loading books…
+        </p>
+      ) : null}
+
       {result ? (
         <div className="flex flex-col gap-3">
           <h2 className="text-label-md uppercase text-on-surface-variant" aria-live="polite">

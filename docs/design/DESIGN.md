@@ -249,6 +249,6 @@ The dual verdict pillar prevents the conflation of critical consensus and indivi
 - Verified step: Deep slate solid node with a clean checkmark.
 
 ### Input Fields & Search Bars
-- Minimalist parchment-white inputs framed by clean 1px borders (`#CBD5E1`).
+- Minimalist parchment-white inputs framed by clean 1px borders in the `outline` token (`#76777d`), so the edge of a field has 3:1 contrast (D-029; the original `#CBD5E1` was about 1.5:1).
 - Focus state: Replaces border with a 1.5px solid archival slate ring (`#0F172A`) with zero glowing halo.
 - Placeholder text: Stylized in italicized `Newsreader` to evoke a quiet library inquiry prompt.

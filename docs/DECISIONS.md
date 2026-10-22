@@ -515,3 +515,15 @@ Not covered:
 Consequences:
 - BE-16 takes the extraction table and the faithfulness rate from `eval/results/llm/report.md`, described as agreement with a reference model.
 - Once the outputs are complete and reviewed, `pnpm eval llm --accept` writes the first baseline and they are committed.
+
+## D-029 Contrast of input and choice borders (FE-11)
+Status: **DECIDED** (option B, chosen by the owner on 2026-10-22)
+Date: 2026-10-22
+Affects: FE-11; `docs/design/DESIGN.md` (Input Fields & Search Bars); every form in `apps/web`
+Context: FE-11 checked colour contrast against WCAG 2.2 AA. All text passes (the lowest pair is 5.0:1), and the empty rating stars were moved from `outline-variant` to `outline` (1.7:1 to 4.5:1) because they are the controls themselves. One conflict remains: DESIGN.md asks for input borders of `#CBD5E1`, and the app uses `outline-variant` (`#c6c6cd`) for the borders of text fields, search boxes and the option cards around radios and checkboxes. That is about 1.7:1 against white, below the 3:1 WCAG 1.4.11 asks for the edge of a control. The spec sets no accessibility standard, so this is a style choice for the owner, not a rule the frontend may decide alone.
+Options:
+- A. Keep the DESIGN.md borders. Fields are still found by their visible labels and placeholders, and the focus ring is 14:1, but a reader with low vision may not see where a field starts.
+- B. Use `outline` (`#76777d`, 4.5:1) for the borders of text fields and search boxes only; option cards keep the light border since the native radio or checkbox inside them already passes. Small visual change, meets 1.4.11. (Recommended.)
+- C. Use `outline` for every control border, including cards and buttons with outlines. Heaviest look.
+Decision: **B.** Text and search fields use `outline` (`#76777d`) for their border, from one constant (`FIELD_BORDER` in `components/ui/text-field.tsx`) used by the shared text field and the import review's row search. Option cards and buttons keep the light border. Chosen by the owner on 2026-10-22.
+Consequences: DESIGN.md's input border line now names the `outline` token. `src/app/contrast.test.ts` checks that the field border and the error border reach 3:1 on the page and card backgrounds, and fails if a field (an input styled with the text field's focus ring) uses `border-outline-variant` again.
