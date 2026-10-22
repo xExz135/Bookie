@@ -7,10 +7,13 @@ import { findRepoRoot } from '../repo-root';
 /** Shared start-up for command-line tools: root .env, settings, arguments. */
 export function startCli<T extends NonNullable<ParseArgsConfig['options']>>(
   options: T,
+  settings: { positionals?: boolean } = {},
 ): {
   root: string;
   config: AppConfig;
   values: ReturnType<typeof parseArgs<{ options: T }>>['values'];
+  /** Words that are not options, e.g. a step name; only with `positionals: true`. */
+  positionals: string[];
 } {
   const root = findRepoRoot();
   const envFile = join(root, '.env');
@@ -18,8 +21,12 @@ export function startCli<T extends NonNullable<ParseArgsConfig['options']>>(
   const config = loadConfig();
   // pnpm may pass a leading "--" separator through; ignore it.
   const args = process.argv.slice(2).filter((arg, i) => !(i === 0 && arg === '--'));
-  const { values } = parseArgs({ args, options });
-  return { root, config, values };
+  const { values, positionals } = parseArgs({
+    args,
+    options,
+    allowPositionals: settings.positionals ?? false,
+  });
+  return { root, config, values, positionals };
 }
 
 export function wholeNumber(value: string | undefined, name: string, fallback: number): number {

@@ -20,7 +20,8 @@
     "traits:sample": "nest build && node dist/tools/sample-traits.js",
     "traits:extract": "nest build && node dist/tools/extract-traits.js",
     "models:load": "nest build && node dist/tools/load-models.js",
-    "sources:check": "nest build && node dist/tools/check-sources.js"
+    "sources:check": "nest build && node dist/tools/check-sources.js",
+    "llm-eval": "nest build && node dist/tools/llm-eval.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.2.0",

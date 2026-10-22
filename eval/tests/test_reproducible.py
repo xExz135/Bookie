@@ -1,6 +1,7 @@
 """EVAL-1: one command, fixed seeds, the same numbers every time."""
 
 import json
+import re
 
 import tomllib
 
@@ -11,7 +12,8 @@ def _toml(table, prefix=""):
     """A small TOML writer for the parameter tables (strings, numbers, lists, nested tables)."""
     lines, subtables = [], []
     for key, value in table.items():
-        name = json.dumps(key) if " " in key else key
+        # Bare keys are letters, digits, "_" and "-"; anything else (model names have dots) is quoted.
+        name = key if re.fullmatch(r"[A-Za-z0-9_-]+", key) else json.dumps(key)
         if isinstance(value, dict):
             subtables.append((f"{prefix}{name}", value))
         else:

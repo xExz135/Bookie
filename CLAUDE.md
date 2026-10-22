@@ -68,7 +68,7 @@ Work on **one work package** per session (IDs like FE-4, BE-8 in `docs/STATUS.md
 ```
 apps/api/            NestJS backend
 apps/web/            Next.js frontend
-eval/                Python evaluation harness (BE-14), results in eval/results/; labeled sets later (BE-15)
+eval/                Python evaluation harness (BE-14), results in eval/results/; LLM evaluation set in eval/llm/ (BE-15)
 contract/            openapi.json (generated, never edited by hand) and fixtures/
 docs/                SPEC, CONTRACT, STATUS, DECISIONS, DATA_SOURCES, roles/, design/ (mockups), reference/ (old v1 schema)
 data/raw/            Dataset files: git-ignored, never committed (D-004)
@@ -97,6 +97,9 @@ pnpm eval:test           # harness tests on synthetic data (CI)
 pnpm eval export         # run, then export the models as a release in data/derived/models/ (D-024)
 pnpm eval parity         # rewrite the Python/TypeScript parity fixture (D-006)
 pnpm eval study          # the user study report from the database to eval/results/study/ (D-027)
+pnpm --filter @bookie/api llm-eval all   # LLM evaluation: set, models, reference labels, claims (re-runnable; D-028)
+pnpm eval label-sheet    # the hand-labelling workbook in data/derived/llm-eval/labelling/ (after `llm-eval sheet`)
+pnpm eval llm [--check | --accept]   # score eval/llm/ to eval/results/llm/; --check is the CI regression test (EVAL-4)
 pnpm --filter @bookie/api models:load   # load the newest release into the database and ship its model
 ```
 

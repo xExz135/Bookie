@@ -168,7 +168,11 @@ export class GeminiClient {
     const data = raw as {
       candidates?: Array<{ content?: { parts?: Array<{ text?: string }> }; finishReason?: string }>;
       promptFeedback?: { blockReason?: string };
-      usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number };
+      usageMetadata?: {
+        promptTokenCount?: number;
+        candidatesTokenCount?: number;
+        thoughtsTokenCount?: number;
+      };
     };
     const candidate = data.candidates?.[0];
     const text = candidate?.content?.parts?.map((p) => p.text ?? '').join('') ?? '';
@@ -183,7 +187,10 @@ export class GeminiClient {
       usage: {
         model,
         inputTokens: data.usageMetadata?.promptTokenCount ?? 0,
-        outputTokens: data.usageMetadata?.candidatesTokenCount ?? 0,
+        // Thinking tokens are billed as output (price page: "output, including thinking tokens").
+        outputTokens:
+          (data.usageMetadata?.candidatesTokenCount ?? 0) +
+          (data.usageMetadata?.thoughtsTokenCount ?? 0),
         latencyMs,
         waitedMs,
       },

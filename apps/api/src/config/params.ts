@@ -517,9 +517,45 @@ export const PARAMS = {
     source: 'D-015, H2',
   },
   GEMINI_TRAIT_MODEL_LARGE: {
-    schema: z.string().min(1).default('gemini-3.5-flash'),
-    description: 'Larger model compared against the smaller one for trait extraction (H2).',
-    source: 'D-015, H2',
+    schema: z.string().min(1).default('gemini-3.6-flash'),
+    description:
+      'Larger model compared against the smaller one for trait extraction (H2). Named explicitly: gemini-3.5-flash now routes to gemini-3.6-flash.',
+    source: 'D-015, H2, D-028',
+  },
+  GEMINI_REFERENCE_MODEL: {
+    schema: z.string().min(1).default('gemini-3.8-flash'),
+    description:
+      'Model that labels the LLM evaluation set and judges summary claims, following eval/llm/*-instructions.md. Must differ from both measured models. The strongest model with a free tier on 2026-10-22 (gemini-2.5-pro is closed to new users; gemini-3.1-pro-preview has no free tier).',
+    source: 'D-028 (owner: labels by Gemini instead of by hand)',
+  },
+  LLM_EVAL_CATALOG: {
+    schema: int(5000),
+    description:
+      'The evaluation set is drawn from this many most-rated editions (the catalog in use).',
+    source: 'D-028',
+  },
+  LLM_EVAL_BOOKS: {
+    schema: int(200),
+    description:
+      'Books in the trait evaluation set (spec 9: about 50 hand-labelled; larger because labels come from a model).',
+    source: 'Spec 9, D-028',
+  },
+  LLM_EVAL_SUMMARY_BOOKS: {
+    schema: int(25),
+    description:
+      'Books of the set that get a golden summary, whose claims are sampled for faithfulness.',
+    source: 'D-028',
+  },
+  LLM_EVAL_CLAIMS: {
+    schema: int(100),
+    description: 'Summary claims judged for faithfulness (spec 9: about 100).',
+    source: 'Spec 9, D-028',
+  },
+  LLM_EVAL_SEED: {
+    schema: int(20261022, 0),
+    description:
+      'Seed of the evaluation set and claim sample, so the same books and claims are chosen again.',
+    source: 'D-028',
   },
   GEMINI_TIMEOUT_MS: {
     schema: int(60_000, 1000),

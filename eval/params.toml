@@ -38,6 +38,25 @@ calibration_bin_width = 0.5
 # (STUDY_HELD_OUT_BOOKS, STUDY_MIN_RATED_BOOKS).
 seed = 20261022
 
+[llm]
+# The LLM evaluation (BE-15, D-028). The set, its sizes and the models are API settings
+# (LLM_EVAL_*, GEMINI_*_MODEL); this is how the committed outputs in eval/llm/ are scored.
+seed = 20261022
+bootstrap_samples = 1000
+
+[llm.prices]
+# Paid-tier list prices, US dollars per million tokens (thinking tokens count as output),
+# from ai.google.dev/gemini-api/docs/pricing on 2026-10-22. The free tier costs nothing.
+"gemini-3.5-flash-lite" = { input = 0.30, output = 2.50 }
+"gemini-3.8-flash" = { input = 0.75, output = 3.75 }
+"gemini-3.6-flash" = { input = 0.75, output = 3.75 }
+
+[llm.regression]
+# EVAL-4: a change fails when a headline metric (each model's mean macro-F1 and accuracy per
+# trait, and the claim support rate) drops more than this below the accepted baseline
+# (eval/llm/baseline.json). Hypothesis: about the bootstrap half-width at 200 books.
+max_drop = 0.05
+
 [models.baseline]
 # Shrinkage of item and reader averages toward the global mean (B0, B3 baselines).
 # Common defaults for rating data; not tuned.

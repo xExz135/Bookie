@@ -15,3 +15,6 @@ apps/web/src/api/schema.d.ts
 # Written by the offline evaluation harness (pnpm eval)
 eval/results/
 eval/parity/
+# Written by llm-eval (BE-15)
+eval/llm/*.json
+eval/llm/traits/

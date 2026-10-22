@@ -57,6 +57,22 @@ describe('GeminiClient', () => {
     expect(calls[0]!.url).not.toContain('test-key');
   });
 
+  it('counts thinking tokens as output tokens, as they are billed (H4)', async () => {
+    const reply = jsonReply('{}');
+    (reply.body as { usageMetadata: object }).usageMetadata = {
+      promptTokenCount: 120,
+      candidatesTokenCount: 30,
+      thoughtsTokenCount: 200,
+    };
+    const { gemini } = client([reply]);
+    const result = await gemini.generateJson('thinking-model', {
+      system: 's',
+      user: 'u',
+      schema: {},
+    });
+    expect(result.usage).toMatchObject({ inputTokens: 120, outputTokens: 230 });
+  });
+
   it('asks for JSON with the schema and reports token usage', async () => {
     const { gemini, calls } = client([jsonReply('{"a":1}')]);
     const result = await gemini.generateJson('small-model', {

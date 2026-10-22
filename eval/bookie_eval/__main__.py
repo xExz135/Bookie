@@ -6,6 +6,8 @@
     python -m bookie_eval export     # run, then export the models for the API (BE-13)
     python -m bookie_eval parity     # rewrite the Python/TypeScript parity fixture (D-006)
     python -m bookie_eval study      # the user study report from the database (FE-10, D-027)
+    python -m bookie_eval llm        # the LLM evaluation from eval/llm/ (BE-15); --check fails on a regression
+    python -m bookie_eval label-sheet  # the hand-labelling workbook (BE-15, local only)
 
 Results go to eval/results/offline/ and are committed: they hold numbers only.
 """
@@ -19,6 +21,7 @@ for _var in ("OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "OMP_NUM_THREADS"):
     os.environ.setdefault(_var, "1")
 
 import argparse  # noqa: E402
+import json  # noqa: E402
 import hashlib  # noqa: E402
 import platform  # noqa: E402
 import sys  # noqa: E402
@@ -28,8 +31,8 @@ from pathlib import Path  # noqa: E402
 import numpy as np  # noqa: E402
 import scipy  # noqa: E402
 
-from . import experiment, export, parity, report, snapshot, study  # noqa: E402
-from .params import DEFAULT_PARAMS, EVAL_DIR, load_params  # noqa: E402
+from . import experiment, export, llm, parity, report, snapshot, study  # noqa: E402
+from .params import DEFAULT_PARAMS, EVAL_DIR, REPO_ROOT, load_params  # noqa: E402
 
 RESULTS_DIR = EVAL_DIR / "results" / "offline"
 
@@ -66,19 +69,62 @@ def run(params_path: Path, snapshot_dir: Path, out_dir: Path, export_to: Path | 
     return results
 
 
+def run_llm(params: dict, check: bool, accept: bool) -> int:
+    data = llm.load()
+    if data is None:
+        print("No LLM evaluation outputs in eval/llm/ yet (run `pnpm --filter @bookie/api llm-eval all`).")
+        return 0
+    results = llm.compute(data, params)
+    if check:
+        baseline = json.loads(llm.BASELINE.read_text("utf-8")) if llm.BASELINE.exists() else None
+        problems = llm.check(results, baseline, params)
+        if baseline is None:
+            print("No accepted baseline yet (eval/llm/baseline.json): nothing to compare.")
+        for p in problems:
+            print(f"Regression: {p}", file=sys.stderr)
+        if not problems:
+            print(f"LLM regression check passed ({len(llm.headline(results))} metrics).")
+        return 1 if problems else 0
+    out = llm.write(results)
+    print(llm.markdown(results))
+    if accept:
+        llm.BASELINE.write_text(
+            json.dumps({"metrics": report.rounded(llm.headline(results))}, indent=2, sort_keys=True) + "\n",
+            "utf-8",
+            newline="\n",
+        )
+        print(f"Baseline written to {llm.BASELINE}")
+    print(f"Written to {out}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="bookie_eval", description=__doc__)
-    parser.add_argument("command", nargs="?", default="all", choices=["all", "extract", "run", "export", "parity", "study"])
+    parser.add_argument("command", nargs="?", default="all", choices=["all", "extract", "run", "export", "parity", "study", "llm", "label-sheet"])
     parser.add_argument("--params", type=Path, default=DEFAULT_PARAMS)
     parser.add_argument("--snapshot", type=Path, default=None, help="snapshot folder (default under data/derived/eval)")
     parser.add_argument("--out", type=Path, default=RESULTS_DIR)
     parser.add_argument("--models-out", type=Path, default=None, help="release folder root (default data/derived/models)")
+    parser.add_argument("--check", action="store_true", help="llm: fail when a metric dropped below the baseline")
+    parser.add_argument("--accept", action="store_true", help="llm: make the current metrics the baseline")
     args = parser.parse_args(argv)
 
     if args.command == "parity":
         print(f"Parity fixture written to {parity.write()}")
         return 0
     params = load_params(args.params)
+    if args.command == "label-sheet":
+        from . import labelling
+
+        folder = REPO_ROOT / "data" / "derived" / "llm-eval" / "labelling"
+        if not (folder / "books.json").exists():
+            print("Run `pnpm --filter @bookie/api llm-eval sheet` first.", file=sys.stderr)
+            return 1
+        n = labelling.build(folder / "books.json", folder / "bookie-trait-labels.xlsx")
+        print(f"Workbook for {n} books: {folder / 'bookie-trait-labels.xlsx'}")
+        return 0
+    if args.command == "llm":
+        return run_llm(params, check=args.check, accept=args.accept)
     if args.command == "study":
         participants, feedback = study.load(snapshot._database_url())
         results = study.compute(participants, feedback, params)
