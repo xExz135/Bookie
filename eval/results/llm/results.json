@@ -1,0 +1,164 @@
+{
+  "books": 100,
+  "models": {
+    "small": {
+      "model": "gemini-3.5-flash-lite",
+      "traits": {
+        "pace": {
+          "accuracy": {
+            "value": 0.52,
+            "low": 0.43,
+            "high": 0.62,
+            "books": 100
+          },
+          "macroF1": {
+            "value": 0.505576,
+            "low": 0.403549,
+            "high": 0.603429,
+            "books": 100
+          },
+          "referenceUnknown": 0,
+          "answeredUnknown": 1
+        },
+        "tone": {
+          "accuracy": {
+            "value": 0.68,
+            "low": 0.58,
+            "high": 0.77,
+            "books": 100
+          },
+          "macroF1": {
+            "value": 0.582607,
+            "low": 0.445054,
+            "high": 0.695314,
+            "books": 100
+          },
+          "referenceUnknown": 0,
+          "answeredUnknown": 0
+        },
+        "contentIntensity": {
+          "accuracy": {
+            "value": 0.39,
+            "low": 0.29975,
+            "high": 0.48,
+            "books": 100
+          },
+          "macroF1": {
+            "value": 0.381019,
+            "low": 0.280819,
+            "high": 0.475205,
+            "books": 100
+          },
+          "referenceUnknown": 0,
+          "answeredUnknown": 0
+        },
+        "themes": {
+          "macroF1": {
+            "value": 0.559076,
+            "low": 0.487952,
+            "high": 0.605305,
+            "books": 100
+          },
+          "jaccard": {
+            "value": 0.444048,
+            "low": 0.405514,
+            "high": 0.486811,
+            "books": 100
+          }
+        }
+      },
+      "overallMacroF1": {
+        "value": 0.50707,
+        "low": 0.454363,
+        "high": 0.54732,
+        "books": 100
+      },
+      "failed": 0,
+      "retried": 2,
+      "costPerBookUsd": 0.003355,
+      "tokensPerBook": {
+        "input": 8965.1,
+        "output": 266.11
+      },
+      "tokensRecorded": true,
+      "priced": true
+    }
+  },
+  "difference": {},
+  "claims": {
+    "summaryModel": "gemini-3.5-flash-lite",
+    "judgeModel": "gemini-3.8-flash",
+    "sampled": 0,
+    "judged": 0,
+    "supported": {
+      "hits": 0,
+      "n": 0,
+      "value": null,
+      "low": null,
+      "high": null
+    },
+    "byKind": {
+      "praise": {
+        "hits": 0,
+        "n": 0,
+        "value": null,
+        "low": null,
+        "high": null
+      },
+      "complaint": {
+        "hits": 0,
+        "n": 0,
+        "value": null,
+        "low": null,
+        "high": null
+      }
+    },
+    "summaries": {
+      "books": 0,
+      "invalidTwice": 0,
+      "retriedOnce": 0
+    }
+  },
+  "provenance": {
+    "manifest": {
+      "traitPromptVersion": "traits-v1",
+      "summaryPromptVersion": "summary-v1",
+      "models": {
+        "small": "gemini-3.5-flash-lite",
+        "large": "gemini-3.6-flash",
+        "summary": "gemini-3.5-flash-lite",
+        "reference": "gemini-3.8-flash"
+      },
+      "evidence": {
+        "maxReviews": 75,
+        "candidateLimit": 400,
+        "minReviewChars": 80,
+        "maxReviewChars": 1000
+      }
+    },
+    "traitReference": "hand",
+    "handLabelled": {
+      "labelled": 100,
+      "of": 100
+    },
+    "referenceModel": "gemini-3.8-flash",
+    "referenceInstructionsSha256": "261c8d10c059de94354b257bf4008caf6506ce4664eec98f87f90aa21c690395",
+    "seed": 20261022,
+    "bootstrapSamples": 1000,
+    "interval": 0.95,
+    "prices": {
+      "gemini-3.5-flash-lite": {
+        "input": 0.3,
+        "output": 2.5
+      },
+      "gemini-3.8-flash": {
+        "input": 0.75,
+        "output": 3.75
+      },
+      "gemini-3.6-flash": {
+        "input": 0.75,
+        "output": 3.75
+      }
+    }
+  }
+}

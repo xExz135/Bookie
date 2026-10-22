@@ -2,6 +2,7 @@
 
     pnpm --filter @bookie/api llm-eval sheet   # the evidence, from the dataset (local only)
     pnpm eval label-sheet                      # this workbook, next to it
+    pnpm eval label-import                     # the finished labels into eval/llm/hand-traits.json
 
 One row per evaluation book with dropdowns for the trait vocabularies, the
 reviews the models read on a second sheet, and the instructions of
@@ -15,7 +16,7 @@ import json
 import re
 from pathlib import Path
 
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from openpyxl.comments import Comment
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
@@ -30,6 +31,9 @@ def clean(text):
     text = html.unescape(re.sub(r"<br\s*/?>|</p>", "\n", text, flags=re.I))
     text = re.sub(r"<[^>]+>", "", text)
     return ILLEGAL_CHARACTERS_RE.sub("", text).strip()
+
+# The workbook's file name in data/derived/llm-eval/labelling/.
+WORKBOOK = "bookie-trait-labels.xlsx"
 
 PACE = ["slow", "moderate", "fast", "unknown"]
 TONE = ["dark", "light", "serious", "humorous", "hopeful", "melancholic", "tense", "romantic", "unknown"]
@@ -191,4 +195,92 @@ def build(src, out) -> int:
     wb.calculation.fullCalcOnLoad = True
     wb.save(out)
     return n
+
+
+# Columns of the Labels sheet (1-based), as build() writes them.
+COL_PACE, COL_TONE, COL_INTENSITY = 6, 7, 8
+COL_THEMES = range(9, 14)
+COL_EDITION = 16
+
+
+def _cell(row: tuple, col: int) -> str:
+    value = row[col - 1] if len(row) >= col else None
+    return "" if value is None else str(value).strip()
+
+
+def read_labels(workbook: Path, set_ids: list[str]) -> dict:
+    """The owner's labels from the workbook (D-028), checked, in the order of the set.
+
+    A row is imported when pace, tone and content intensity are all filled (the
+    workbook's "done"). Themes are a set: the five columns in any order, blanks
+    and repeats ignored, kept in the order entered. Rows partly filled are
+    reported as incomplete; values outside the vocabularies, unknown or repeated
+    edition IDs are problems, and nothing is written while any remain.
+    """
+    vocab = {"pace": PACE, "tone": TONE, "contentIntensity": INTENSITY}
+    columns = {"pace": COL_PACE, "tone": COL_TONE, "contentIntensity": COL_INTENSITY}
+    in_set = set(set_ids)
+    wb = load_workbook(workbook, read_only=True, data_only=True)
+    if "Labels" not in wb.sheetnames:
+        raise ValueError(f"{workbook} has no Labels sheet: is it the workbook from `pnpm eval label-sheet`?")
+    labels: dict[str, dict] = {}
+    seen: dict[str, int] = {}
+    problems: list[str] = []
+    incomplete: list[int] = []
+    for r, row in enumerate(wb["Labels"].iter_rows(min_row=2, values_only=True), start=2):
+        edition = _cell(row, COL_EDITION)
+        filled = {t: _cell(row, c).lower() for t, c in columns.items()}
+        themes_raw = [_cell(row, c).lower() for c in COL_THEMES]
+        if not edition:
+            if any(filled.values()) or any(themes_raw):
+                problems.append(f"row {r}: labels but no edition ID")
+            continue
+        if edition in seen:
+            problems.append(f"row {r}: edition {edition} already on row {seen[edition]}")
+            continue
+        seen[edition] = r
+        if edition not in in_set:
+            problems.append(f"row {r}: edition {edition} is not in eval/llm/set.json")
+            continue
+        if not all(filled.values()):
+            if any(filled.values()) or any(themes_raw):
+                incomplete.append(r)
+            continue
+        row_problems = [
+            f"row {r}: {t} \"{v}\" is not one of {', '.join(vocab[t])}" for t, v in filled.items() if v not in vocab[t]
+        ]
+        themes: list[str] = []
+        for t in themes_raw:
+            if not t or t in themes:
+                continue
+            if t not in THEMES:
+                row_problems.append(f"row {r}: theme \"{t}\" is not in the theme list")
+            themes.append(t)
+        if row_problems:
+            problems += row_problems
+            continue
+        labels[edition] = {**filled, "themes": themes}
+    wb.close()
+    return {
+        "books": {e: labels[e] for e in set_ids if e in labels},
+        "problems": problems,
+        "incomplete": incomplete,
+    }
+
+
+def import_labels(workbook: Path, set_path: Path, out: Path) -> dict:
+    """Writes the labels to `out` when there are no problems (committed: labels and
+    edition IDs only, never review text, D-004). Returns what was read."""
+    set_ids = [b["editionId"] for b in json.loads(set_path.read_text("utf-8"))["books"]]
+    result = read_labels(workbook, set_ids)
+    if not result["problems"]:
+        data = {
+            "labeller": "owner, by hand (D-028)",
+            "guide": "the workbook from `pnpm eval label-sheet`, following eval/llm/traits-instructions.md",
+            "labelled": len(result["books"]),
+            "of": len(set_ids),
+            "books": result["books"],
+        }
+        out.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", "utf-8", newline="\n")
+    return result
 

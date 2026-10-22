@@ -99,6 +99,7 @@ pnpm eval parity         # rewrite the Python/TypeScript parity fixture (D-006)
 pnpm eval study          # the user study report from the database to eval/results/study/ (D-027)
 pnpm --filter @bookie/api llm-eval all   # LLM evaluation: set, models, reference labels, claims (re-runnable; D-028)
 pnpm eval label-sheet    # the hand-labelling workbook in data/derived/llm-eval/labelling/ (after `llm-eval sheet`)
+pnpm eval label-import   # the workbook's finished rows into eval/llm/hand-traits.json (re-runnable)
 pnpm eval llm [--check | --accept]   # score eval/llm/ to eval/results/llm/; --check is the CI regression test (EVAL-4)
 pnpm --filter @bookie/api models:load   # load the newest release into the database and ship its model
 pnpm --filter @bookie/api bench:analyses [--books N]   # measure cold and cached analyses with real Gemini (H4, D-026)

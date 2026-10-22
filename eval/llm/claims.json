@@ -1,0 +1,9 @@
+{
+  "summaryModel": "gemini-3.5-flash-lite",
+  "summaryPromptVersion": "summary-v1",
+  "judgeModel": "gemini-3.8-flash",
+  "instructionsSha256": "c3c7c6e48dcfb6f73aa01abbb4705c4786349d27ca5a347d29b18f563b2cf6ab",
+  "seed": 20261022,
+  "summaries": [],
+  "claims": []
+}

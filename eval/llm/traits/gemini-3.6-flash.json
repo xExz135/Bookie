@@ -1,0 +1,48 @@
+{
+  "model": "gemini-3.6-flash",
+  "promptVersion": "traits-v1",
+  "books": {
+    "efecbf76-4587-57d2-a0cc-cec11bcda079": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "war and conflict",
+        "mental health",
+        "survival",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 8939,
+      "outputTokens": 3268
+    },
+    "a2a07907-1049-567e-8336-15a93d3f4362": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "unknown",
+      "themes": [
+        "coming of age",
+        "family",
+        "love and romance"
+      ],
+      "attempts": 1,
+      "inputTokens": 11372,
+      "outputTokens": 2145
+    },
+    "9832e168-cd99-5f64-b957-1622a0c695b9": {
+      "pace": "unknown",
+      "tone": "serious",
+      "contentIntensity": "high",
+      "themes": [
+        "faith and religion",
+        "love and romance",
+        "social class and inequality",
+        "coming of age",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 8297,
+      "outputTokens": 4084
+    }
+  }
+}

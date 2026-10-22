@@ -1,0 +1,1376 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "promptVersion": "traits-v1",
+  "books": {
+    "458b3d7f-aa45-504d-9357-382196c40a4e": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "low",
+      "themes": [
+        "tragedy",
+        "identity",
+        "family"
+      ],
+      "attempts": 1,
+      "inputTokens": 9732,
+      "outputTokens": 258
+    },
+    "f4e8d443-dd81-50c9-8e1f-5b1de192d698": {
+      "pace": "slow",
+      "tone": "humorous",
+      "contentIntensity": "low",
+      "themes": [
+        "family",
+        "love and romance",
+        "grief and loss",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 7400,
+      "outputTokens": 340
+    },
+    "efecbf76-4587-57d2-a0cc-cec11bcda079": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "war and conflict",
+        "tragedy",
+        "identity",
+        "survival",
+        "mental health"
+      ],
+      "attempts": 1,
+      "inputTokens": 8939,
+      "outputTokens": 317
+    },
+    "a2a07907-1049-567e-8336-15a93d3f4362": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "survival",
+        "coming of age",
+        "identity",
+        "social class and inequality",
+        "love and romance"
+      ],
+      "attempts": 1,
+      "inputTokens": 11372,
+      "outputTokens": 257
+    },
+    "00a40777-2fa9-55b8-81db-012b30324dac": {
+      "pace": "moderate",
+      "tone": "hopeful",
+      "contentIntensity": "low",
+      "themes": [
+        "family",
+        "love and romance",
+        "identity",
+        "grief and loss"
+      ],
+      "attempts": 1,
+      "inputTokens": 7566,
+      "outputTokens": 254
+    },
+    "1f11e308-1056-5783-b1f3-46d2cc2b014d": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "low",
+      "themes": [
+        "family",
+        "adventure and quest",
+        "crime and justice"
+      ],
+      "attempts": 1,
+      "inputTokens": 9128,
+      "outputTokens": 224
+    },
+    "9832e168-cd99-5f64-b957-1622a0c695b9": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "faith and religion",
+        "survival",
+        "coming of age",
+        "love and romance",
+        "social class and inequality"
+      ],
+      "attempts": 1,
+      "inputTokens": 8297,
+      "outputTokens": 303
+    },
+    "7e540a9c-4f5b-516d-ac0a-bee6f7c46fdf": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "family",
+        "crime and justice",
+        "identity",
+        "grief and loss",
+        "coming of age"
+      ],
+      "attempts": 1,
+      "inputTokens": 8356,
+      "outputTokens": 330
+    },
+    "d00d8f16-f996-5050-b254-5b8fc2df0025": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "faith and religion",
+        "power and politics"
+      ],
+      "attempts": 1,
+      "inputTokens": 9849,
+      "outputTokens": 196
+    },
+    "48ef9992-b24a-5ae2-875b-46940bcfda3e": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "family",
+        "identity",
+        "survival",
+        "power and politics",
+        "faith and religion"
+      ],
+      "attempts": 1,
+      "inputTokens": 8859,
+      "outputTokens": 311
+    },
+    "dc44808e-4ea8-58da-8b94-4d5270664f7f": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "war and conflict",
+        "identity",
+        "social class and inequality",
+        "power and politics"
+      ],
+      "attempts": 1,
+      "inputTokens": 8732,
+      "outputTokens": 257
+    },
+    "ecf42ff3-f995-5bf3-ad9e-09dfec677672": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "high",
+      "themes": [
+        "grief and loss",
+        "survival",
+        "tragedy",
+        "mental health",
+        "war and conflict"
+      ],
+      "attempts": 1,
+      "inputTokens": 9291,
+      "outputTokens": 340
+    },
+    "87e48add-7632-58d5-96ae-ddb096c0fb1f": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "violence"
+      ],
+      "attempts": 1,
+      "inputTokens": 8990,
+      "outputTokens": 200
+    },
+    "86b88691-c480-542c-8784-a6f9cfb26f49": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "war and conflict",
+        "survival",
+        "identity",
+        "love and romance"
+      ],
+      "attempts": 1,
+      "inputTokens": 10424,
+      "outputTokens": 254
+    },
+    "86635b9d-f990-5697-aaa0-ac4286315684": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "crime and justice",
+        "love and romance",
+        "social class and inequality",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 9167,
+      "outputTokens": 385
+    },
+    "3876d42e-5889-5098-a6be-8374d96fa13b": {
+      "pace": "fast",
+      "tone": "light",
+      "contentIntensity": "low",
+      "themes": [
+        "friendship",
+        "adventure and quest",
+        "coming of age",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 10527,
+      "outputTokens": 268
+    },
+    "b557a519-8642-5a2b-8f42-9249a554aaca": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "coming of age",
+        "love and romance",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 10203,
+      "outputTokens": 314
+    },
+    "ef984f32-3408-505e-8d2a-be0b62f77ec3": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [],
+      "attempts": 1,
+      "inputTokens": 5919,
+      "outputTokens": 93
+    },
+    "1ead41b8-06ef-52cf-af52-a7f281b2c1d9": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "faith and religion",
+        "family",
+        "crime and justice"
+      ],
+      "attempts": 1,
+      "inputTokens": 4862,
+      "outputTokens": 277
+    },
+    "b8102d72-d11c-5a6b-8a12-e6a5773dd32e": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "power and politics",
+        "love and romance",
+        "identity",
+        "social class and inequality",
+        "survival"
+      ],
+      "attempts": 1,
+      "inputTokens": 12039,
+      "outputTokens": 327
+    },
+    "0a282136-49ed-5ea1-99f3-48e0fa3b61fc": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "low",
+      "themes": [
+        "friendship",
+        "survival",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 8077,
+      "outputTokens": 180
+    },
+    "a9a9c09d-00ac-5905-bc24-92a0ba121621": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "coming of age",
+        "love and romance",
+        "power and politics",
+        "identity",
+        "faith and religion"
+      ],
+      "attempts": 1,
+      "inputTokens": 8742,
+      "outputTokens": 293
+    },
+    "9c178fb0-5f7c-562d-844a-4372d3c91c86": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "identity",
+        "survival",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 9281,
+      "outputTokens": 282
+    },
+    "a9cfcd25-bd18-5f79-81ed-fbf073350028": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "mental health",
+        "family"
+      ],
+      "attempts": 1,
+      "inputTokens": 7939,
+      "outputTokens": 249
+    },
+    "3abfbbd6-eda4-52ac-bc88-816e87f30c75": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "low",
+      "themes": [
+        "mental health",
+        "coming of age"
+      ],
+      "attempts": 1,
+      "inputTokens": 9001,
+      "outputTokens": 205
+    },
+    "d0c0ef02-3c34-5c05-8293-de5f06f78306": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "war and conflict",
+        "survival",
+        "identity",
+        "family"
+      ],
+      "attempts": 1,
+      "inputTokens": 10825,
+      "outputTokens": 295
+    },
+    "8d25c345-00a0-5847-9949-f9b06b1b5c5b": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "family"
+      ],
+      "attempts": 2,
+      "inputTokens": 13280,
+      "outputTokens": 227
+    },
+    "e98eaf52-ba8f-57e1-9fa6-e3b57dc0cfb7": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "low",
+      "themes": [
+        "adventure and quest",
+        "identity",
+        "survival",
+        "faith and religion"
+      ],
+      "attempts": 1,
+      "inputTokens": 8235,
+      "outputTokens": 269
+    },
+    "e0879f5e-bb06-558f-a256-6f86093b7b48": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "crime and justice",
+        "family",
+        "identity",
+        "survival",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 8402,
+      "outputTokens": 299
+    },
+    "bd895822-b5fb-5bfb-82ab-869d8dd0e423": {
+      "pace": "unknown",
+      "tone": "light",
+      "contentIntensity": "low",
+      "themes": [
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 1365,
+      "outputTokens": 145
+    },
+    "fa81f641-d6ca-5b04-9340-aa69f572eb9b": {
+      "pace": "fast",
+      "tone": "romantic",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "social class and inequality",
+        "identity",
+        "crime and justice"
+      ],
+      "attempts": 1,
+      "inputTokens": 9636,
+      "outputTokens": 358
+    },
+    "5a790e2a-e4ce-523f-ad37-8c4e74195f4d": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "identity",
+        "power and politics",
+        "addiction"
+      ],
+      "attempts": 1,
+      "inputTokens": 7984,
+      "outputTokens": 267
+    },
+    "8d576998-6c84-5f29-96b1-c68efa9d0648": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "survival",
+        "identity",
+        "friendship",
+        "power and politics"
+      ],
+      "attempts": 1,
+      "inputTokens": 8501,
+      "outputTokens": 249
+    },
+    "e2a64aff-fa24-5f18-8cef-b172b2ab857a": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "survival",
+        "tragedy",
+        "war and conflict",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 9971,
+      "outputTokens": 311
+    },
+    "6fcb7a4d-dec1-561b-89e0-12ca43a4ec8e": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "grief and loss",
+        "identity",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 9493,
+      "outputTokens": 206
+    },
+    "7202be78-63fd-5b24-8141-9960a491e4c8": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "survival",
+        "family",
+        "power and politics"
+      ],
+      "attempts": 1,
+      "inputTokens": 7603,
+      "outputTokens": 325
+    },
+    "d83d3357-dd96-5d68-950b-ffcbc80b5660": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "survival",
+        "adventure and quest",
+        "identity",
+        "social class and inequality"
+      ],
+      "attempts": 1,
+      "inputTokens": 10995,
+      "outputTokens": 257
+    },
+    "af8cbcdc-28ff-5669-804f-4625605f405b": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "war and conflict",
+        "social class and inequality",
+        "power and politics",
+        "crime and justice",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 7628,
+      "outputTokens": 325
+    },
+    "48d00d74-85ea-56fb-a7f3-a369d73c0296": {
+      "pace": "slow",
+      "tone": "melancholic",
+      "contentIntensity": "low",
+      "themes": [
+        "grief and loss",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 10097,
+      "outputTokens": 164
+    },
+    "e9a838d0-5e3f-5af8-bc21-f3ac524f9796": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "crime and justice",
+        "survival"
+      ],
+      "attempts": 1,
+      "inputTokens": 9579,
+      "outputTokens": 202
+    },
+    "f89caf88-a142-55a2-be6b-1668cbe60c5c": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "family",
+        "survival",
+        "coming of age",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 10169,
+      "outputTokens": 298
+    },
+    "49b79abf-5417-5c9f-bb60-8a1f6928d25a": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "survival",
+        "friendship",
+        "adventure and quest",
+        "grief and loss",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 8179,
+      "outputTokens": 328
+    },
+    "3f5d1586-1072-5b1b-bedb-71da721d6a25": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "grief and loss",
+        "identity",
+        "survival",
+        "power and politics"
+      ],
+      "attempts": 1,
+      "inputTokens": 10709,
+      "outputTokens": 262
+    },
+    "2825a82b-0285-589c-bae4-8097c3004a96": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "adventure and quest",
+        "family",
+        "crime and justice",
+        "survival",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 8263,
+      "outputTokens": 306
+    },
+    "bf737809-ece4-547d-8415-99f7b7964828": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "power and politics",
+        "crime and justice",
+        "survival"
+      ],
+      "attempts": 1,
+      "inputTokens": 8851,
+      "outputTokens": 139
+    },
+    "6043d0c4-ecaf-523a-8ff7-3af436581544": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "family",
+        "grief and loss"
+      ],
+      "attempts": 1,
+      "inputTokens": 7216,
+      "outputTokens": 274
+    },
+    "12e4ab4f-372d-579e-ba8b-fd321c7c5471": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "power and politics",
+        "war and conflict",
+        "love and romance",
+        "identity",
+        "friendship"
+      ],
+      "attempts": 1,
+      "inputTokens": 8584,
+      "outputTokens": 326
+    },
+    "0c23f843-e1e6-5563-ae19-d1ef62a34eef": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "adventure and quest",
+        "identity",
+        "grief and loss"
+      ],
+      "attempts": 1,
+      "inputTokens": 9451,
+      "outputTokens": 163
+    },
+    "cd50b985-1623-5dd2-846f-13a649bfdf42": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "identity",
+        "love and romance"
+      ],
+      "attempts": 1,
+      "inputTokens": 10700,
+      "outputTokens": 242
+    },
+    "337f5cfc-b365-5d70-b878-a4dbbd892775": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "family",
+        "identity",
+        "love and romance",
+        "power and politics",
+        "grief and loss"
+      ],
+      "attempts": 1,
+      "inputTokens": 9397,
+      "outputTokens": 357
+    },
+    "9eb6f31e-2daa-55c8-9e0a-e856abecf794": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "family",
+        "coming of age"
+      ],
+      "attempts": 1,
+      "inputTokens": 9355,
+      "outputTokens": 183
+    },
+    "5a4aebd4-9834-50cc-8ef9-15b913f3d15e": {
+      "pace": "slow",
+      "tone": "humorous",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "grief and loss",
+        "family",
+        "coming of age"
+      ],
+      "attempts": 1,
+      "inputTokens": 9088,
+      "outputTokens": 324
+    },
+    "1ff9fbe5-be57-5251-baa4-0287d2a7ac3d": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "faith and religion"
+      ],
+      "attempts": 1,
+      "inputTokens": 7803,
+      "outputTokens": 160
+    },
+    "d9545cf0-f45e-55fa-b784-7b6bc2195980": {
+      "pace": "moderate",
+      "tone": "light",
+      "contentIntensity": "low",
+      "themes": [
+        "friendship",
+        "coming of age",
+        "identity",
+        "grief and loss",
+        "love and romance"
+      ],
+      "attempts": 1,
+      "inputTokens": 6549,
+      "outputTokens": 316
+    },
+    "c75bfb76-fa45-5c5e-8c40-d29f829bbe9f": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "survival",
+        "family",
+        "adventure and quest"
+      ],
+      "attempts": 1,
+      "inputTokens": 9015,
+      "outputTokens": 178
+    },
+    "b900a596-ea42-5925-861c-94f48c1a33f2": {
+      "pace": "slow",
+      "tone": "melancholic",
+      "contentIntensity": "low",
+      "themes": [
+        "coming of age",
+        "grief and loss",
+        "crime and justice",
+        "friendship"
+      ],
+      "attempts": 1,
+      "inputTokens": 8604,
+      "outputTokens": 337
+    },
+    "e69ac313-769f-514b-9bff-eae446df70f8": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "love and romance",
+        "survival",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 6893,
+      "outputTokens": 321
+    },
+    "b1e942fc-a5aa-5a0b-a37e-673b7135b807": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [],
+      "attempts": 1,
+      "inputTokens": 7547,
+      "outputTokens": 103
+    },
+    "31a33f7d-c9a6-5b50-858b-da5ab89e809c": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "survival",
+        "war and conflict",
+        "identity",
+        "love and romance",
+        "grief and loss"
+      ],
+      "attempts": 1,
+      "inputTokens": 7652,
+      "outputTokens": 284
+    },
+    "df53c772-916f-5a47-8325-8241acf6bcd1": {
+      "pace": "slow",
+      "tone": "melancholic",
+      "contentIntensity": "low",
+      "themes": [
+        "grief and loss",
+        "survival",
+        "family",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 9210,
+      "outputTokens": 289
+    },
+    "7398b3dd-97ac-5811-a924-0cb6f8560c97": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "family",
+        "love and romance",
+        "grief and loss",
+        "mental health",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 9672,
+      "outputTokens": 269
+    },
+    "a3f19d31-aa1b-56e2-8272-ab4c344f4fa0": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "survival",
+        "identity",
+        "love and romance",
+        "crime and justice",
+        "war and conflict"
+      ],
+      "attempts": 1,
+      "inputTokens": 11094,
+      "outputTokens": 446
+    },
+    "da301988-ca31-5e99-bcdb-004000372f5a": {
+      "pace": "slow",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "survival",
+        "violence",
+        "identity",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 7461,
+      "outputTokens": 349
+    },
+    "5c832e44-3e40-5717-8f62-18b5881f3ea4": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "family",
+        "survival",
+        "identity",
+        "grief and loss"
+      ],
+      "attempts": 1,
+      "inputTokens": 6825,
+      "outputTokens": 342
+    },
+    "4c850941-8d21-55ad-bace-7dcf0b95d911": {
+      "pace": "slow",
+      "tone": "dark",
+      "contentIntensity": "low",
+      "themes": [
+        "coming of age",
+        "grief and loss",
+        "adventure and quest",
+        "friendship"
+      ],
+      "attempts": 1,
+      "inputTokens": 9039,
+      "outputTokens": 291
+    },
+    "e8566b69-b99b-5234-a5d5-5b13038cf196": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "family",
+        "mental health"
+      ],
+      "attempts": 1,
+      "inputTokens": 9035,
+      "outputTokens": 246
+    },
+    "b1b1b44d-9d3c-52ff-b659-def45d6cbe4e": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "faith and religion",
+        "war and conflict",
+        "survival",
+        "love and romance"
+      ],
+      "attempts": 1,
+      "inputTokens": 12167,
+      "outputTokens": 297
+    },
+    "f0087720-0f51-53c8-9fbc-b33529714981": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "mental health",
+        "family",
+        "coming of age"
+      ],
+      "attempts": 1,
+      "inputTokens": 8247,
+      "outputTokens": 253
+    },
+    "800537a8-5ab8-5469-8016-5dc5fac392ff": {
+      "pace": "moderate",
+      "tone": "melancholic",
+      "contentIntensity": "moderate",
+      "themes": [
+        "family",
+        "grief and loss",
+        "coming of age",
+        "friendship",
+        "love and romance"
+      ],
+      "attempts": 1,
+      "inputTokens": 9785,
+      "outputTokens": 319
+    },
+    "f0f1ffd3-a6bd-5a58-8762-d9e22ebad308": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "power and politics",
+        "addiction",
+        "faith and religion",
+        "social class and inequality"
+      ],
+      "attempts": 1,
+      "inputTokens": 11319,
+      "outputTokens": 338
+    },
+    "76a34721-4f34-5f41-9c0f-5a41118cd1b2": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "social class and inequality",
+        "power and politics",
+        "adventure and quest",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 9137,
+      "outputTokens": 286
+    },
+    "2a649c06-2dfb-5c9b-bad6-f28854d8d229": {
+      "pace": "moderate",
+      "tone": "light",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "family",
+        "friendship",
+        "grief and loss",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 7180,
+      "outputTokens": 321
+    },
+    "090442c0-5eb4-51b3-b25d-f5a8d6376c61": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "high",
+      "themes": [
+        "survival",
+        "mental health",
+        "violence"
+      ],
+      "attempts": 1,
+      "inputTokens": 8439,
+      "outputTokens": 240
+    },
+    "1d63effb-c5e4-5da8-8f17-c37392bd404a": {
+      "pace": "slow",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "identity",
+        "crime and justice"
+      ],
+      "attempts": 1,
+      "inputTokens": 10406,
+      "outputTokens": 302
+    },
+    "3c5d047a-a31d-5a3f-a4a3-fbbb1b6fd2fc": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "adventure and quest",
+        "survival",
+        "violence",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 2467,
+      "outputTokens": 253
+    },
+    "c363c00a-275f-5704-8840-e98f96bc2ccf": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "tragedy",
+        "love and romance",
+        "social class and inequality"
+      ],
+      "attempts": 1,
+      "inputTokens": 7257,
+      "outputTokens": 202
+    },
+    "0de6f44c-d154-5109-b863-4fee5c81fc72": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "survival",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 10122,
+      "outputTokens": 215
+    },
+    "6fcae2e7-7aa9-5646-959f-f774072a62b6": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 8528,
+      "outputTokens": 148
+    },
+    "e3ad251a-c09d-5514-b434-8a7aad0057a8": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "survival",
+        "coming of age",
+        "family",
+        "identity",
+        "grief and loss"
+      ],
+      "attempts": 1,
+      "inputTokens": 8890,
+      "outputTokens": 319
+    },
+    "118a2e73-1ca5-5b0b-abec-fd5124b155b7": {
+      "pace": "slow",
+      "tone": "romantic",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "family"
+      ],
+      "attempts": 1,
+      "inputTokens": 10233,
+      "outputTokens": 190
+    },
+    "d4b2474b-812a-5304-9cb1-5634f9cda940": {
+      "pace": "moderate",
+      "tone": "humorous",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family"
+      ],
+      "attempts": 1,
+      "inputTokens": 8355,
+      "outputTokens": 201
+    },
+    "e8060f8a-928c-5e0e-93f5-40e21c8273c7": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "friendship",
+        "survival",
+        "adventure and quest"
+      ],
+      "attempts": 1,
+      "inputTokens": 7790,
+      "outputTokens": 233
+    },
+    "c913405c-3c59-5a64-823e-d095ab83fe96": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "adventure and quest",
+        "war and conflict",
+        "identity",
+        "friendship"
+      ],
+      "attempts": 2,
+      "inputTokens": 21770,
+      "outputTokens": 462
+    },
+    "a9478e53-79a3-5df1-abb0-e885b90cd2c0": {
+      "pace": "moderate",
+      "tone": "humorous",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "adventure and quest"
+      ],
+      "attempts": 1,
+      "inputTokens": 8590,
+      "outputTokens": 213
+    },
+    "88c9ca1a-23cd-56b3-a669-287826e689b1": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "faith and religion",
+        "power and politics",
+        "survival",
+        "family",
+        "love and romance"
+      ],
+      "attempts": 1,
+      "inputTokens": 8111,
+      "outputTokens": 340
+    },
+    "671b3347-50ba-5a4a-a17b-8e4954296647": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 12325,
+      "outputTokens": 176
+    },
+    "c16e704d-1106-5c61-b120-5186bfe7e910": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "grief and loss",
+        "identity",
+        "violence",
+        "family"
+      ],
+      "attempts": 1,
+      "inputTokens": 8966,
+      "outputTokens": 379
+    },
+    "2024c692-5eff-56e7-8ee9-e0fc5b50253a": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "survival",
+        "violence"
+      ],
+      "attempts": 1,
+      "inputTokens": 9509,
+      "outputTokens": 181
+    },
+    "8bd66307-254b-5c43-920c-faa0ed7045ef": {
+      "pace": "moderate",
+      "tone": "humorous",
+      "contentIntensity": "low",
+      "themes": [
+        "addiction",
+        "grief and loss",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 7130,
+      "outputTokens": 240
+    },
+    "6b610f2e-a8cf-585c-989b-a21fa409d91f": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "identity",
+        "friendship",
+        "survival"
+      ],
+      "attempts": 1,
+      "inputTokens": 9812,
+      "outputTokens": 298
+    },
+    "d5d7596f-b4e5-5ca9-b0c9-fb86af6c0369": {
+      "pace": "fast",
+      "tone": "romantic",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "friendship",
+        "crime and justice",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 9642,
+      "outputTokens": 225
+    },
+    "b53d8704-65d6-5157-babb-ab074026c7e5": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "family",
+        "identity",
+        "survival",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 6840,
+      "outputTokens": 261
+    },
+    "a55b0aa2-ab51-5738-a43b-684e88b4a68a": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "adventure and quest",
+        "power and politics"
+      ],
+      "attempts": 1,
+      "inputTokens": 7661,
+      "outputTokens": 181
+    },
+    "b8ba4698-81df-5643-a6ed-64aafc57f991": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "faith and religion",
+        "love and romance",
+        "survival",
+        "adventure and quest",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 6205,
+      "outputTokens": 349
+    },
+    "84f25d41-3443-5685-b045-eeb6cd91fcfc": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "love and romance",
+        "violence",
+        "survival",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 7417,
+      "outputTokens": 290
+    },
+    "724da654-15e1-57a8-b56e-c2f1273a17f4": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [],
+      "attempts": 1,
+      "inputTokens": 8946,
+      "outputTokens": 109
+    },
+    "a7ac07b6-e45f-52bd-bdfb-79aac55a04f9": {
+      "pace": "moderate",
+      "tone": "light",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "friendship",
+        "coming of age",
+        "love and romance"
+      ],
+      "attempts": 1,
+      "inputTokens": 8738,
+      "outputTokens": 261
+    },
+    "98184e35-5fb9-5d27-8230-ea5b4f922dee": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "friendship",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 11261,
+      "outputTokens": 243
+    },
+    "3fa0efb6-102d-54d6-8709-3ea183a93baa": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "social class and inequality",
+        "tragedy"
+      ],
+      "attempts": 1,
+      "inputTokens": 8949,
+      "outputTokens": 286
+    },
+    "b40c73e8-b418-5875-9dd0-5df566643474": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "coming of age",
+        "grief and loss",
+        "love and romance",
+        "identity"
+      ],
+      "attempts": 1,
+      "inputTokens": 11669,
+      "outputTokens": 254
+    }
+  }
+}

@@ -8,6 +8,7 @@
     python -m bookie_eval study      # the user study report from the database (FE-10, D-027)
     python -m bookie_eval llm        # the LLM evaluation from eval/llm/ (BE-15); --check fails on a regression
     python -m bookie_eval label-sheet  # the hand-labelling workbook (BE-15, local only)
+    python -m bookie_eval label-import [--workbook PATH]  # its labels into eval/llm/hand-traits.json
 
 Results go to eval/results/offline/ and are committed: they hold numbers only.
 """
@@ -100,7 +101,8 @@ def run_llm(params: dict, check: bool, accept: bool) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="bookie_eval", description=__doc__)
-    parser.add_argument("command", nargs="?", default="all", choices=["all", "extract", "run", "export", "parity", "study", "llm", "label-sheet"])
+    parser.add_argument("command", nargs="?", default="all", choices=["all", "extract", "run", "export", "parity", "study", "llm", "label-sheet", "label-import"])
+    parser.add_argument("--workbook", type=Path, default=None, help="label-sheet, label-import: the workbook (default data/derived/llm-eval/labelling/hand-labels.xlsx)")
     parser.add_argument("--params", type=Path, default=DEFAULT_PARAMS)
     parser.add_argument("--snapshot", type=Path, default=None, help="snapshot folder (default under data/derived/eval)")
     parser.add_argument("--out", type=Path, default=RESULTS_DIR)
@@ -120,8 +122,33 @@ def main(argv: list[str] | None = None) -> int:
         if not (folder / "books.json").exists():
             print("Run `pnpm --filter @bookie/api llm-eval sheet` first.", file=sys.stderr)
             return 1
-        n = labelling.build(folder / "books.json", folder / "bookie-trait-labels.xlsx")
-        print(f"Workbook for {n} books: {folder / 'bookie-trait-labels.xlsx'}")
+        out = args.workbook or folder / labelling.WORKBOOK
+        if out.exists():
+            # It may hold the owner's labels: never overwrite it.
+            print(f"{out} already exists and may hold labels. Move or rename it first.", file=sys.stderr)
+            return 1
+        n = labelling.build(folder / "books.json", out)
+        print(f"Workbook for {n} books: {out}")
+        return 0
+    if args.command == "label-import":
+        from . import labelling, llm
+
+        workbook = args.workbook or REPO_ROOT / "data" / "derived" / "llm-eval" / "labelling" / labelling.WORKBOOK
+        if not workbook.exists():
+            print(f"No workbook at {workbook}. Run `pnpm eval label-sheet` first, or pass --workbook.", file=sys.stderr)
+            return 1
+        out = llm.LLM_DIR / "hand-traits.json"
+        result = labelling.import_labels(workbook, llm.LLM_DIR / "set.json", out)
+        if result["incomplete"]:
+            rows = ", ".join(str(r) for r in result["incomplete"][:20])
+            more = "" if len(result["incomplete"]) <= 20 else f" and {len(result['incomplete']) - 20} more"
+            print(f"Not imported, partly filled (pace, tone and content intensity are all needed): rows {rows}{more}")
+        if result["problems"]:
+            print("Nothing written. Fix these in the workbook and import again:", file=sys.stderr)
+            for p in result["problems"]:
+                print(f"  {p}", file=sys.stderr)
+            return 1
+        print(f"{len(result['books'])} labelled books written to {out}")
         return 0
     if args.command == "llm":
         return run_llm(params, check=args.check, accept=args.accept)

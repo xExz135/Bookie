@@ -3,7 +3,9 @@
  * faithfulness, measured against reference labels from a stronger model.
  *
  *   pnpm --filter @bookie/api llm-eval select       # choose the evaluation set (eval/llm/set.json)
- *   pnpm --filter @bookie/api llm-eval traits small # the measured models on the set
+ *   pnpm --filter @bookie/api llm-eval select traits  # ... from books with batch traits (D-028 update)
+ *   pnpm --filter @bookie/api llm-eval traits small # the measured models on the set (the small
+ *                                                   # model reuses traits:extract answers for the same evidence)
  *   pnpm --filter @bookie/api llm-eval traits large
  *   pnpm --filter @bookie/api llm-eval reference    # the reference labels
  *   pnpm --filter @bookie/api llm-eval summaries    # golden summaries for part of the set
@@ -25,7 +27,12 @@ import { Pool } from 'pg';
 import type { AppConfig } from '../config/app-config';
 import { SUMMARY_PROMPT_VERSION, SummaryError, generateSummary } from '../analysis/public-summary';
 import { LlmError, type LlmUsage } from '../llm/gemini.client';
-import { seededOrder } from '../llm-eval/eval-set';
+import {
+  type BatchTraitFile,
+  chooseFromBatch,
+  sameEvidence,
+  seededOrder,
+} from '../llm-eval/eval-set';
 import { ReferenceError, judgeClaim, labelTraits } from '../llm-eval/reference';
 import { EditionEvidenceRepository } from '../representation/edition-evidence.repository';
 import { selectEvidence } from '../representation/evidence-selection';
@@ -51,6 +58,9 @@ type Step = (typeof STEPS)[number];
 
 interface EvalSet {
   seed: number;
+  /** Where the books come from: the most-rated catalog, or the books with batch traits. */
+  source?: 'catalog' | 'traits:extract';
+  /** How many books the sample was drawn from. */
   catalog: number;
   minReviews: number;
   books: Array<{ editionId: string; goodreadsBookId: string | null; title: string }>;
@@ -150,12 +160,34 @@ class EvalContext {
       throw new QuotaStop(`Stopped: ${kind}`);
   }
 
-  /** A seeded sample of the most-rated editions with enough review text (spec 9). */
-  async select() {
+  /** Where `traits:extract` caches the small model's answers (D-023). */
+  private batchDir(): string {
+    return join(
+      this.root,
+      'data',
+      'derived',
+      'traits',
+      this.config.GEMINI_TRAIT_MODEL,
+      TRAIT_PROMPT_VERSION,
+    );
+  }
+
+  private batchFile(editionId: string): BatchTraitFile | null {
+    return this.read<BatchTraitFile>(join(this.batchDir(), `${editionId}.json`));
+  }
+
+  /**
+   * A seeded sample of the most-rated editions with enough review text (spec 9),
+   * or, with `select traits`, of the books whose traits `traits:extract` already
+   * has (D-028 update: the small model's answers cost nothing more).
+   */
+  async select(from?: string) {
+    if (from !== undefined && from !== 'traits') throw new Error('Say `select` or `select traits`');
     if (existsSync(this.setFile)) {
       console.log('eval/llm/set.json exists; delete it to choose a new set.');
       return;
     }
+    if (from === 'traits') return this.selectFromTraits();
     const top = await this.repository.popularEditionIds(this.config.LLM_EVAL_CATALOG);
     const eligible = await this.pool.query<{ id: string; title: string; goodreads: string | null }>(
       `SELECT e.id, e.title,
@@ -173,6 +205,7 @@ class EvalContext {
     );
     const set: EvalSet = {
       seed: this.config.LLM_EVAL_SEED,
+      source: 'catalog',
       catalog: this.config.LLM_EVAL_CATALOG,
       minReviews: this.config.EVIDENCE_SUFFICIENT_REVIEWS,
       books: chosen.map((r) => ({ editionId: r.id, goodreadsBookId: r.goodreads, title: r.title })),
@@ -181,6 +214,46 @@ class EvalContext {
     this.write(this.setFile, set);
     console.log(
       `${chosen.length} of ${eligible.rows.length} eligible books chosen; ${set.summaryBooks.length} get a golden summary`,
+    );
+  }
+
+  private async selectFromTraits() {
+    const dir = this.batchDir();
+    if (!existsSync(dir)) throw new Error(`No batch traits in ${dir}. Run traits:extract first.`);
+    const files = readdirSync(dir)
+      .filter((f) => f.endsWith('.json'))
+      .map((f) => this.read<BatchTraitFile>(join(dir, f))!)
+      .filter((f) => f.promptVersion === TRAIT_PROMPT_VERSION);
+    const ids = chooseFromBatch(files, {
+      seed: this.config.LLM_EVAL_SEED,
+      books: this.config.LLM_EVAL_BOOKS,
+      minReviews: this.config.EVIDENCE_SUFFICIENT_REVIEWS,
+    });
+    const rows = await this.pool.query<{ id: string; title: string; goodreads: string | null }>(
+      `SELECT e.id, e.title,
+              (SELECT x.external_id FROM edition_external_ids x JOIN review_sources s ON s.id = x.source_id
+                WHERE x.edition_id = e.id AND s.key = 'goodreads_dataset') AS goodreads
+         FROM editions e WHERE e.id = ANY($1::uuid[])`,
+      [ids],
+    );
+    const byId = new Map(rows.rows.map((r) => [r.id, r]));
+    const set: EvalSet = {
+      seed: this.config.LLM_EVAL_SEED,
+      source: 'traits:extract',
+      catalog: files.length,
+      minReviews: this.config.EVIDENCE_SUFFICIENT_REVIEWS,
+      books: ids.map((id) => ({
+        editionId: id,
+        goodreadsBookId: byId.get(id)?.goodreads ?? null,
+        title: byId.get(id)?.title ?? '',
+      })),
+      summaryBooks: ids.slice(0, this.config.LLM_EVAL_SUMMARY_BOOKS),
+    };
+    this.write(this.setFile, set);
+    const failed = ids.filter((id) => this.batchFile(id)?.error).length;
+    console.log(
+      `${ids.length} of ${files.length} books with batch traits chosen (${failed} with a failed answer, ` +
+        `counted as wrong); ${set.summaryBooks.length} get a golden summary`,
     );
   }
 
@@ -194,11 +267,35 @@ class EvalContext {
   async traits(which?: string) {
     const model = this.modelOf(which);
     const dir = join(this.cacheDir, 'traits', model, TRAIT_PROMPT_VERSION);
+    const set = this.set();
     let done = 0;
-    for (const book of this.set().books) {
+    let reused = 0;
+    let changed = 0;
+    for (const book of set.books) {
       const file = join(dir, `${book.editionId}.json`);
       if (existsSync(file)) continue;
-      const { input } = await this.evidence(book.editionId);
+      const { input, selected } = await this.evidence(book.editionId);
+      // The small model's answer from traits:extract, when it read exactly this evidence:
+      // same model, prompt and reviews, so asking again would only repeat it (D-028 update).
+      const batch =
+        model === this.config.GEMINI_TRAIT_MODEL ? this.batchFile(book.editionId) : null;
+      if (batch && batch.promptVersion === TRAIT_PROMPT_VERSION) {
+        if (sameEvidence(batch.citedReviewIds, selected)) {
+          this.write(file, {
+            model,
+            promptVersion: TRAIT_PROMPT_VERSION,
+            ...(batch.error ? { error: 'invalid_output' } : { traits: batch.traits }),
+            attempts: batch.attempts ?? null,
+            // traits:extract does not record tokens: cost is unknown, not zero.
+            reusedFrom: 'traits:extract',
+          });
+          reused++;
+          continue;
+        }
+        changed++;
+      }
+      // A set drawn from the batch is measured on the batch answers only: no new requests.
+      if (set.source === 'traits:extract' && model === this.config.GEMINI_TRAIT_MODEL) continue;
       try {
         const result = await extractTraits(this.client, model, input);
         this.write(file, {
@@ -225,7 +322,10 @@ class EvalContext {
         this.serviceError(error, book.title);
       }
     }
-    console.log(`${timestamp()} ${model}: ${done} new books`);
+    console.log(
+      `${timestamp()} ${model}: ${done} new books, ${reused} reused from traits:extract` +
+        (changed ? `, ${changed} not reused because their evidence changed since` : ''),
+    );
   }
 
   private instructions(name: 'traits' | 'claims'): { text: string; sha: string } {
@@ -409,7 +509,8 @@ class EvalContext {
               inputTokens: r.inputTokens,
               outputTokens: r.outputTokens,
             }
-          : { error: r.error, inputTokens: r.inputTokens ?? 0, outputTokens: r.outputTokens ?? 0 };
+          : // Answers reused from traits:extract have no token record: left out, not zero.
+            { error: r.error, inputTokens: r.inputTokens, outputTokens: r.outputTokens };
       }
       return { model, promptVersion: TRAIT_PROMPT_VERSION, books };
     };

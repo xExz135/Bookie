@@ -113,3 +113,59 @@ def test_report_says_the_labels_come_from_a_model(tmp_path):
 
 def test_no_outputs_yet(tmp_path):
     assert llm.load(tmp_path) is None
+
+
+def test_hand_labels_become_the_trait_reference_and_score_the_reference_model():
+    """D-028 update: the owner's labels replace the reference model's for traits."""
+    data = synthetic()
+    ids = [b["editionId"] for b in data["set"]["books"]]
+    # The person labelled 40 of the 60 books; on 10 of them the reference model disagrees on tone.
+    hand = {e: copy.deepcopy(data["reference"]["books"][e]) for e in ids[:40]}
+    for e in ids[:10]:
+        data["reference"]["books"][e]["tone"] = "light" if hand[e]["tone"] != "light" else "dark"
+    data["hand"] = {"labelled": 40, "of": 60, "books": hand}
+    r = llm.compute(data, load_params())
+    assert r["books"] == 40
+    assert r["provenance"]["traitReference"] == "hand"
+    # The small model copied the reference model's original labels, which equal the person's.
+    assert r["models"]["small"]["traits"]["tone"]["accuracy"]["value"] == 1.0
+    assert r["models"]["reference"]["traits"]["tone"]["accuracy"]["value"] == 30 / 40
+    # The regression check still watches the measured models only.
+    assert not any(k.startswith("reference.") for k in llm.headline(r))
+    md = llm.markdown(r)
+    assert "the owner's hand labels (40 of 60 books labelled" in md
+    assert "(reference labeller)" in md
+
+
+def test_without_hand_labels_nothing_changes():
+    data = synthetic()
+    data["hand"] = None
+    r = llm.compute(data, load_params())
+    assert r["provenance"]["traitReference"] == "model"
+    assert set(r["models"]) == {"small", "large"}
+
+
+def test_the_small_model_alone_is_scored_when_the_large_model_has_not_run():
+    """D-028 update: the large model is optional on the free tier; comparisons stay paired."""
+    data = synthetic()
+    ids = [b["editionId"] for b in data["set"]["books"]]
+    data["outputs"]["large"]["books"] = {e: data["outputs"]["large"]["books"][e] for e in ids[:30]}
+    r = llm.compute(data, load_params())
+    assert r["books"] == 60
+    assert set(r["models"]) == {"small"}
+    assert r["difference"] == {}
+    assert "large.overallMacroF1" not in llm.headline(r)
+    assert "no small-versus-large comparison yet" in llm.markdown(r)
+
+
+def test_answers_reused_without_tokens_have_an_unknown_cost_not_zero():
+    data = synthetic()
+    for row in data["outputs"]["small"]["books"].values():
+        row.pop("inputTokens", None)
+        row.pop("outputTokens", None)
+    r = llm.compute(data, load_params())
+    small = r["models"]["small"]
+    assert small["tokensRecorded"] is False
+    assert small["costPerBookUsd"] is None
+    assert r["difference"]["smallShareOfLargeCost"] is None
+    assert "not recorded" in llm.markdown(r)

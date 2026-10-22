@@ -541,9 +541,9 @@ export const PARAMS = {
     source: 'D-028',
   },
   LLM_EVAL_BOOKS: {
-    schema: int(200),
+    schema: int(100),
     description:
-      'Books in the trait evaluation set (spec 9: about 50 hand-labelled; larger because labels come from a model).',
+      'Books in the trait evaluation set, hand-labelled by the owner (spec 9: about 50; 100 to stay on the free tier, D-028 update).',
     source: 'Spec 9, D-028',
   },
   LLM_EVAL_SUMMARY_BOOKS: {

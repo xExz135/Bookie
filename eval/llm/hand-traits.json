@@ -1,0 +1,1207 @@
+{
+  "labeller": "owner, by hand (D-028)",
+  "guide": "the workbook from `pnpm eval label-sheet`, following eval/llm/traits-instructions.md",
+  "labelled": 100,
+  "of": 100,
+  "books": {
+    "458b3d7f-aa45-504d-9357-382196c40a4e": {
+      "pace": "moderate",
+      "tone": "melancholic",
+      "contentIntensity": "moderate",
+      "themes": [
+        "tragedy",
+        "family",
+        "love and romance",
+        "social class and inequality",
+        "grief and loss"
+      ]
+    },
+    "f4e8d443-dd81-50c9-8e1f-5b1de192d698": {
+      "pace": "moderate",
+      "tone": "humorous",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "friendship",
+        "identity",
+        "mental health"
+      ]
+    },
+    "efecbf76-4587-57d2-a0cc-cec11bcda079": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "war and conflict",
+        "grief and loss",
+        "mental health",
+        "survival",
+        "tragedy"
+      ]
+    },
+    "a2a07907-1049-567e-8336-15a93d3f4362": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "high",
+      "themes": [
+        "survival",
+        "friendship",
+        "coming of age",
+        "crime and justice",
+        "identity"
+      ]
+    },
+    "00a40777-2fa9-55b8-81db-012b30324dac": {
+      "pace": "moderate",
+      "tone": "hopeful",
+      "contentIntensity": "moderate",
+      "themes": [
+        "family",
+        "love and romance",
+        "friendship",
+        "grief and loss",
+        "social class and inequality"
+      ]
+    },
+    "1f11e308-1056-5783-b1f3-46d2cc2b014d": {
+      "pace": "fast",
+      "tone": "light",
+      "contentIntensity": "low",
+      "themes": [
+        "family",
+        "friendship",
+        "adventure and quest",
+        "identity",
+        "coming of age"
+      ]
+    },
+    "9832e168-cd99-5f64-b957-1622a0c695b9": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "faith and religion",
+        "love and romance",
+        "social class and inequality",
+        "family",
+        "identity"
+      ]
+    },
+    "7e540a9c-4f5b-516d-ac0a-bee6f7c46fdf": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "high",
+      "themes": [
+        "family",
+        "crime and justice",
+        "identity",
+        "love and romance",
+        "tragedy"
+      ]
+    },
+    "d00d8f16-f996-5050-b254-5b8fc2df0025": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "love and romance",
+        "faith and religion",
+        "friendship",
+        "power and politics"
+      ]
+    },
+    "48ef9992-b24a-5ae2-875b-46940bcfda3e": {
+      "pace": "fast",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "power and politics",
+        "faith and religion",
+        "friendship",
+        "survival"
+      ]
+    },
+    "dc44808e-4ea8-58da-8b94-4d5270664f7f": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "war and conflict",
+        "family",
+        "power and politics",
+        "love and romance",
+        "social class and inequality"
+      ]
+    },
+    "ecf42ff3-f995-5bf3-ad9e-09dfec677672": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "high",
+      "themes": [
+        "survival",
+        "grief and loss",
+        "faith and religion",
+        "mental health",
+        "tragedy"
+      ]
+    },
+    "87e48add-7632-58d5-96ae-ddb096c0fb1f": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "identity",
+        "mental health",
+        "violence",
+        "friendship",
+        "tragedy"
+      ]
+    },
+    "86b88691-c480-542c-8784-a6f9cfb26f49": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "war and conflict",
+        "survival",
+        "love and romance",
+        "identity",
+        "tragedy"
+      ]
+    },
+    "86635b9d-f990-5697-aaa0-ac4286315684": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "love and romance",
+        "identity",
+        "power and politics",
+        "family"
+      ]
+    },
+    "3876d42e-5889-5098-a6be-8374d96fa13b": {
+      "pace": "fast",
+      "tone": "light",
+      "contentIntensity": "moderate",
+      "themes": [
+        "friendship",
+        "coming of age",
+        "family",
+        "identity",
+        "adventure and quest"
+      ]
+    },
+    "b557a519-8642-5a2b-8f42-9249a554aaca": {
+      "pace": "slow",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "identity",
+        "mental health",
+        "power and politics",
+        "love and romance",
+        "survival"
+      ]
+    },
+    "ef984f32-3408-505e-8d2a-be0b62f77ec3": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "power and politics",
+        "survival",
+        "adventure and quest",
+        "friendship"
+      ]
+    },
+    "1ead41b8-06ef-52cf-af52-a7f281b2c1d9": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "faith and religion",
+        "family",
+        "violence",
+        "tragedy",
+        "survival"
+      ]
+    },
+    "b8102d72-d11c-5a6b-8a12-e6a5773dd32e": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "mental health",
+        "tragedy",
+        "survival",
+        "identity"
+      ]
+    },
+    "0a282136-49ed-5ea1-99f3-48e0fa3b61fc": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "family",
+        "friendship",
+        "survival",
+        "identity",
+        "tragedy"
+      ]
+    },
+    "a9a9c09d-00ac-5905-bc24-92a0ba121621": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "faith and religion",
+        "identity",
+        "power and politics",
+        "tragedy"
+      ]
+    },
+    "9c178fb0-5f7c-562d-844a-4372d3c91c86": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "violence",
+        "identity",
+        "power and politics",
+        "survival"
+      ]
+    },
+    "a9cfcd25-bd18-5f79-81ed-fbf073350028": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "mental health",
+        "family",
+        "friendship",
+        "survival"
+      ]
+    },
+    "3abfbbd6-eda4-52ac-bc88-816e87f30c75": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "moderate",
+      "themes": [
+        "mental health",
+        "family",
+        "identity",
+        "friendship",
+        "grief and loss"
+      ]
+    },
+    "d0c0ef02-3c34-5c05-8293-de5f06f78306": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "power and politics",
+        "identity",
+        "friendship",
+        "survival"
+      ]
+    },
+    "8d25c345-00a0-5847-9949-f9b06b1b5c5b": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "family",
+        "love and romance",
+        "survival",
+        "identity",
+        "friendship"
+      ]
+    },
+    "e98eaf52-ba8f-57e1-9fa6-e3b57dc0cfb7": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "moderate",
+      "themes": [
+        "adventure and quest",
+        "friendship",
+        "power and politics",
+        "identity",
+        "tragedy"
+      ]
+    },
+    "e0879f5e-bb06-558f-a256-6f86093b7b48": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "friendship",
+        "grief and loss",
+        "identity",
+        "family"
+      ]
+    },
+    "bd895822-b5fb-5bfb-82ab-869d8dd0e423": {
+      "pace": "fast",
+      "tone": "hopeful",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "friendship",
+        "coming of age",
+        "social class and inequality",
+        "family"
+      ]
+    },
+    "fa81f641-d6ca-5b04-9340-aa69f572eb9b": {
+      "pace": "moderate",
+      "tone": "romantic",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "family",
+        "social class and inequality",
+        "identity",
+        "crime and justice"
+      ]
+    },
+    "5a790e2a-e4ce-523f-ad37-8c4e74195f4d": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "family",
+        "mental health",
+        "tragedy",
+        "identity"
+      ]
+    },
+    "8d576998-6c84-5f29-96b1-c68efa9d0648": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "high",
+      "themes": [
+        "survival",
+        "crime and justice",
+        "identity",
+        "family",
+        "violence"
+      ]
+    },
+    "e2a64aff-fa24-5f18-8cef-b172b2ab857a": {
+      "pace": "moderate",
+      "tone": "romantic",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "identity",
+        "survival",
+        "violence",
+        "family"
+      ]
+    },
+    "6fcb7a4d-dec1-561b-89e0-12ca43a4ec8e": {
+      "pace": "slow",
+      "tone": "melancholic",
+      "contentIntensity": "moderate",
+      "themes": [
+        "family",
+        "love and romance",
+        "identity",
+        "social class and inequality",
+        "tragedy"
+      ]
+    },
+    "7202be78-63fd-5b24-8141-9960a491e4c8": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "violence",
+        "survival",
+        "power and politics",
+        "friendship"
+      ]
+    },
+    "d83d3357-dd96-5d68-950b-ffcbc80b5660": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "identity",
+        "family",
+        "survival",
+        "coming of age"
+      ]
+    },
+    "af8cbcdc-28ff-5669-804f-4625605f405b": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "war and conflict",
+        "power and politics",
+        "mental health",
+        "identity",
+        "tragedy"
+      ]
+    },
+    "48d00d74-85ea-56fb-a7f3-a369d73c0296": {
+      "pace": "slow",
+      "tone": "melancholic",
+      "contentIntensity": "moderate",
+      "themes": [
+        "grief and loss",
+        "identity",
+        "mental health",
+        "friendship",
+        "survival"
+      ]
+    },
+    "e9a838d0-5e3f-5af8-bc21-f3ac524f9796": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "mental health",
+        "power and politics",
+        "crime and justice",
+        "survival"
+      ]
+    },
+    "f89caf88-a142-55a2-be6b-1668cbe60c5c": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "friendship",
+        "identity",
+        "family",
+        "adventure and quest"
+      ]
+    },
+    "49b79abf-5417-5c9f-bb60-8a1f6928d25a": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "high",
+      "themes": [
+        "survival",
+        "friendship",
+        "grief and loss",
+        "mental health",
+        "tragedy"
+      ]
+    },
+    "3f5d1586-1072-5b1b-bedb-71da721d6a25": {
+      "pace": "fast",
+      "tone": "romantic",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "identity",
+        "family",
+        "mental health",
+        "survival"
+      ]
+    },
+    "2825a82b-0285-589c-bae4-8097c3004a96": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "adventure and quest",
+        "friendship",
+        "family",
+        "identity",
+        "crime and justice"
+      ]
+    },
+    "bf737809-ece4-547d-8415-99f7b7964828": {
+      "pace": "moderate",
+      "tone": "humorous",
+      "contentIntensity": "low",
+      "themes": [
+        "power and politics",
+        "social class and inequality",
+        "adventure and quest",
+        "identity",
+        "tragedy"
+      ]
+    },
+    "6043d0c4-ecaf-523a-8ff7-3af436581544": {
+      "pace": "moderate",
+      "tone": "humorous",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "friendship",
+        "identity",
+        "coming of age"
+      ]
+    },
+    "12e4ab4f-372d-579e-ba8b-fd321c7c5471": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "power and politics",
+        "family",
+        "love and romance",
+        "war and conflict",
+        "social class and inequality"
+      ]
+    },
+    "0c23f843-e1e6-5563-ae19-d1ef62a34eef": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "friendship",
+        "adventure and quest",
+        "social class and inequality",
+        "family"
+      ]
+    },
+    "cd50b985-1623-5dd2-846f-13a649bfdf42": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "identity",
+        "love and romance",
+        "violence",
+        "friendship"
+      ]
+    },
+    "337f5cfc-b365-5d70-b878-a4dbbd892775": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "high",
+      "themes": [
+        "family",
+        "love and romance",
+        "identity",
+        "power and politics",
+        "tragedy"
+      ]
+    },
+    "9eb6f31e-2daa-55c8-9e0a-e856abecf794": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "family",
+        "survival",
+        "violence",
+        "identity",
+        "tragedy"
+      ]
+    },
+    "5a4aebd4-9834-50cc-8ef9-15b913f3d15e": {
+      "pace": "moderate",
+      "tone": "hopeful",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "friendship",
+        "coming of age",
+        "grief and loss",
+        "family"
+      ]
+    },
+    "1ff9fbe5-be57-5251-baa4-0287d2a7ac3d": {
+      "pace": "fast",
+      "tone": "hopeful",
+      "contentIntensity": "low",
+      "themes": [
+        "faith and religion",
+        "identity",
+        "friendship",
+        "adventure and quest",
+        "love and romance"
+      ]
+    },
+    "d9545cf0-f45e-55fa-b784-7b6bc2195980": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "friendship",
+        "family",
+        "identity",
+        "grief and loss",
+        "crime and justice"
+      ]
+    },
+    "c75bfb76-fa45-5c5e-8c40-d29f829bbe9f": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "survival",
+        "family",
+        "friendship",
+        "identity",
+        "adventure and quest"
+      ]
+    },
+    "b900a596-ea42-5925-861c-94f48c1a33f2": {
+      "pace": "moderate",
+      "tone": "melancholic",
+      "contentIntensity": "high",
+      "themes": [
+        "grief and loss",
+        "love and romance",
+        "crime and justice",
+        "identity",
+        "tragedy"
+      ]
+    },
+    "e69ac313-769f-514b-9bff-eae446df70f8": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "friendship",
+        "love and romance",
+        "identity",
+        "family"
+      ]
+    },
+    "b1e942fc-a5aa-5a0b-a37e-673b7135b807": {
+      "pace": "moderate",
+      "tone": "hopeful",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "friendship",
+        "family",
+        "power and politics",
+        "survival"
+      ]
+    },
+    "31a33f7d-c9a6-5b50-858b-da5ab89e809c": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "high",
+      "themes": [
+        "war and conflict",
+        "survival",
+        "power and politics",
+        "faith and religion",
+        "social class and inequality"
+      ]
+    },
+    "df53c772-916f-5a47-8325-8241acf6bcd1": {
+      "pace": "moderate",
+      "tone": "melancholic",
+      "contentIntensity": "moderate",
+      "themes": [
+        "family",
+        "love and romance",
+        "grief and loss",
+        "identity",
+        "survival"
+      ]
+    },
+    "7398b3dd-97ac-5811-a924-0cb6f8560c97": {
+      "pace": "moderate",
+      "tone": "hopeful",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "friendship",
+        "identity",
+        "grief and loss"
+      ]
+    },
+    "a3f19d31-aa1b-56e2-8272-ab4c344f4fa0": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "high",
+      "themes": [
+        "identity",
+        "survival",
+        "family",
+        "violence",
+        "power and politics"
+      ]
+    },
+    "da301988-ca31-5e99-bcdb-004000372f5a": {
+      "pace": "slow",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "power and politics",
+        "survival",
+        "tragedy",
+        "social class and inequality"
+      ]
+    },
+    "5c832e44-3e40-5717-8f62-18b5881f3ea4": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "family",
+        "violence",
+        "survival",
+        "crime and justice",
+        "identity"
+      ]
+    },
+    "4c850941-8d21-55ad-bace-7dcf0b95d911": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "adventure and quest",
+        "identity",
+        "friendship",
+        "survival",
+        "tragedy"
+      ]
+    },
+    "e8566b69-b99b-5234-a5d5-5b13038cf196": {
+      "pace": "moderate",
+      "tone": "humorous",
+      "contentIntensity": "high",
+      "themes": [
+        "family",
+        "identity",
+        "love and romance",
+        "mental health"
+      ]
+    },
+    "b1b1b44d-9d3c-52ff-b659-def45d6cbe4e": {
+      "pace": "moderate",
+      "tone": "hopeful",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "coming of age",
+        "love and romance",
+        "power and politics",
+        "adventure and quest"
+      ]
+    },
+    "f0087720-0f51-53c8-9fbc-b33529714981": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "coming of age",
+        "love and romance",
+        "power and politics",
+        "adventure and quest"
+      ]
+    },
+    "800537a8-5ab8-5469-8016-5dc5fac392ff": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "addiction",
+        "survival",
+        "social class and inequality"
+      ]
+    },
+    "f0f1ffd3-a6bd-5a58-8762-d9e22ebad308": {
+      "pace": "slow",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "addiction",
+        "survival",
+        "social class and inequality"
+      ]
+    },
+    "76a34721-4f34-5f41-9c0f-5a41118cd1b2": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "adventure and quest",
+        "friendship",
+        "power and politics",
+        "identity",
+        "survival"
+      ]
+    },
+    "2a649c06-2dfb-5c9b-bad6-f28854d8d229": {
+      "pace": "moderate",
+      "tone": "romantic",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "family",
+        "grief and loss",
+        "friendship",
+        "identity"
+      ]
+    },
+    "090442c0-5eb4-51b3-b25d-f5a8d6376c61": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "high",
+      "themes": [
+        "survival",
+        "mental health",
+        "violence",
+        "identity",
+        "crime and justice"
+      ]
+    },
+    "1d63effb-c5e4-5da8-8f17-c37392bd404a": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "friendship",
+        "family",
+        "identity",
+        "survival"
+      ]
+    },
+    "3c5d047a-a31d-5a3f-a4a3-fbbb1b6fd2fc": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "adventure and quest",
+        "survival",
+        "family",
+        "identity",
+        "power and politics"
+      ]
+    },
+    "c363c00a-275f-5704-8840-e98f96bc2ccf": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "tragedy",
+        "identity",
+        "grief and loss",
+        "social class and inequality",
+        "family"
+      ]
+    },
+    "0de6f44c-d154-5109-b863-4fee5c81fc72": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "power and politics",
+        "family",
+        "war and conflict",
+        "tragedy"
+      ]
+    },
+    "6fcae2e7-7aa9-5646-959f-f774072a62b6": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "identity",
+        "mental health",
+        "survival",
+        "friendship",
+        "family"
+      ]
+    },
+    "e3ad251a-c09d-5514-b434-8a7aad0057a8": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "adventure and quest",
+        "family",
+        "identity",
+        "survival",
+        "friendship"
+      ]
+    },
+    "118a2e73-1ca5-5b0b-abec-fd5124b155b7": {
+      "pace": "moderate",
+      "tone": "romantic",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "friendship",
+        "identity",
+        "family",
+        "social class and inequality"
+      ]
+    },
+    "d4b2474b-812a-5304-9cb1-5634f9cda940": {
+      "pace": "fast",
+      "tone": "romantic",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "family",
+        "friendship",
+        "identity",
+        "survival"
+      ]
+    },
+    "e8060f8a-928c-5e0e-93f5-40e21c8273c7": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "friendship",
+        "love and romance",
+        "adventure and quest",
+        "identity",
+        "survival"
+      ]
+    },
+    "c913405c-3c59-5a64-823e-d095ab83fe96": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "friendship",
+        "love and romance",
+        "adventure and quest",
+        "identity",
+        "survival"
+      ]
+    },
+    "a9478e53-79a3-5df1-abb0-e885b90cd2c0": {
+      "pace": "moderate",
+      "tone": "humorous",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "adventure and quest",
+        "friendship",
+        "power and politics",
+        "coming of age"
+      ]
+    },
+    "88c9ca1a-23cd-56b3-a669-287826e689b1": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "faith and religion",
+        "survival",
+        "power and politics",
+        "friendship",
+        "war and conflict"
+      ]
+    },
+    "671b3347-50ba-5a4a-a17b-8e4954296647": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "identity",
+        "mental health",
+        "family",
+        "coming of age",
+        "violence"
+      ]
+    },
+    "c16e704d-1106-5c61-b120-5186bfe7e910": {
+      "pace": "fast",
+      "tone": "melancholic",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "grief and loss",
+        "identity",
+        "mental health",
+        "survival"
+      ]
+    },
+    "2024c692-5eff-56e7-8ee9-e0fc5b50253a": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "survival",
+        "family",
+        "friendship",
+        "violence",
+        "tragedy"
+      ]
+    },
+    "8bd66307-254b-5c43-920c-faa0ed7045ef": {
+      "pace": "fast",
+      "tone": "humorous",
+      "contentIntensity": "high",
+      "themes": [
+        "mental health",
+        "identity",
+        "family",
+        "addiction",
+        "survival"
+      ]
+    },
+    "6b610f2e-a8cf-585c-989b-a21fa409d91f": {
+      "pace": "moderate",
+      "tone": "hopeful",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "love and romance",
+        "family",
+        "faith and religion",
+        "survival"
+      ]
+    },
+    "d5d7596f-b4e5-5ca9-b0c9-fb86af6c0369": {
+      "pace": "moderate",
+      "tone": "romantic",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "friendship",
+        "identity",
+        "family",
+        "tragedy"
+      ]
+    },
+    "b53d8704-65d6-5157-babb-ab074026c7e5": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "coming of age",
+        "friendship",
+        "survival",
+        "power and politics"
+      ]
+    },
+    "a55b0aa2-ab51-5738-a43b-684e88b4a68a": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "high",
+      "themes": [
+        "adventure and quest",
+        "violence",
+        "power and politics",
+        "tragedy",
+        "friendship"
+      ]
+    },
+    "b8ba4698-81df-5643-a6ed-64aafc57f991": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "faith and religion",
+        "survival",
+        "identity",
+        "adventure and quest",
+        "power and politics"
+      ]
+    },
+    "84f25d41-3443-5685-b045-eeb6cd91fcfc": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "violence",
+        "love and romance",
+        "identity",
+        "tragedy"
+      ]
+    },
+    "724da654-15e1-57a8-b56e-c2f1273a17f4": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "power and politics",
+        "identity",
+        "friendship",
+        "survival",
+        "adventure and quest"
+      ]
+    },
+    "a7ac07b6-e45f-52bd-bdfb-79aac55a04f9": {
+      "pace": "moderate",
+      "tone": "hopeful",
+      "contentIntensity": "low",
+      "themes": [
+        "coming of age",
+        "friendship",
+        "identity",
+        "love and romance",
+        "family"
+      ]
+    },
+    "98184e35-5fb9-5d27-8230-ea5b4f922dee": {
+      "pace": "moderate",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "love and romance",
+        "friendship",
+        "identity",
+        "faith and religion",
+        "survival"
+      ]
+    },
+    "3fa0efb6-102d-54d6-8709-3ea183a93baa": {
+      "pace": "slow",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "love and romance",
+        "family",
+        "tragedy",
+        "grief and loss",
+        "social class and inequality"
+      ]
+    },
+    "b40c73e8-b418-5875-9dd0-5df566643474": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "identity",
+        "adventure and quest",
+        "coming of age",
+        "survival",
+        "love and romance"
+      ]
+    }
+  }
+}

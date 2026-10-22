@@ -10,7 +10,8 @@ Files (committed; labels, IDs and model output only, never review text, D-004 an
 | `claims-instructions.md` | The instructions for judging whether cited reviews support a summary claim. |
 | `set.json` | The evaluation books: a seeded sample of the most-rated editions with enough review text (edition IDs, Goodreads book IDs, titles), and the books that get a golden summary. |
 | `traits/<model>.json` | Each measured model's traits per book, with attempts and token use. |
-| `reference-traits.json` | The reference labels per book, with the instructions' checksum. |
+| `hand-traits.json` | The owner's hand labels per book (D-028 update), imported from the labelling workbook by `pnpm eval label-import`: labels and edition IDs only. When present they are the trait reference, and the reference model is scored against them. |
+| `reference-traits.json` | The reference model's labels per book, with the instructions' checksum; the trait reference while there are no hand labels. |
 | `claims.json` | A seeded sample of golden-summary claims (model-written text), the dataset IDs of the reviews each cites, and the reference judgement. |
 | `manifest.json` | The prompt versions, models and evidence settings that made these files. A test fails when the app's prompts or models no longer match (EVAL-4). |
 | `baseline.json` | The accepted headline metrics; CI fails when one drops by more than `[llm.regression] max_drop` (EVAL-4). |

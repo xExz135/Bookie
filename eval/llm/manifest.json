@@ -1,0 +1,16 @@
+{
+  "traitPromptVersion": "traits-v1",
+  "summaryPromptVersion": "summary-v1",
+  "models": {
+    "small": "gemini-3.5-flash-lite",
+    "large": "gemini-3.6-flash",
+    "summary": "gemini-3.5-flash-lite",
+    "reference": "gemini-3.8-flash"
+  },
+  "evidence": {
+    "maxReviews": 75,
+    "candidateLimit": 400,
+    "minReviewChars": 80,
+    "maxReviewChars": 1000
+  }
+}

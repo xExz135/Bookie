@@ -4,8 +4,12 @@ Reads only the committed files in eval/llm/ (labels, IDs and model output; no
 review text), so it reproduces anywhere, including CI:
 
 - set.json: the evaluation books (a seeded sample of the catalog).
-- reference-traits.json: the reference labels, from a stronger model following
-  traits-instructions.md (the owner's choice instead of hand labels, D-028).
+- hand-traits.json: the owner's hand labels (D-028 update), imported from the
+  labelling workbook by `label-import`. When present, they are the trait
+  reference, and the reference model is scored against them too (how well an
+  LLM labeller agrees with a person).
+- reference-traits.json: labels from a stronger model following
+  traits-instructions.md; the trait reference while there are no hand labels.
 - traits/<model>.json: each measured model's traits and token use per book.
 - claims.json: a seeded sample of golden-summary claims, each judged
   supported or not supported by the reference model (claims-instructions.md).
@@ -55,6 +59,7 @@ def load(directory: Path = LLM_DIR) -> dict[str, Any] | None:
     return {
         "manifest": manifest,
         "set": _read(directory / "set.json"),
+        "hand": _read(directory / "hand-traits.json"),
         "reference": _read(directory / "reference-traits.json"),
         "outputs": {
             role: _read(directory / "traits" / f"{models[role]}.json") for role in ("small", "large")
@@ -133,30 +138,47 @@ def compute(data: dict[str, Any], params: dict[str, Any]) -> dict[str, Any]:
     llm = params["llm"]
     interval = params["metrics"]["interval"]
     rng = np.random.default_rng(llm["seed"])
-    ref_books = data["reference"]["books"] if data["reference"] else {}
+    hand = data.get("hand")
+    # The trait reference: the owner's hand labels when imported (D-028 update), else the reference model.
+    ref_books = hand["books"] if hand else data["reference"]["books"] if data["reference"] else {}
     order = [b["editionId"] for b in data["set"]["books"]]
-    outputs = data["outputs"]
-    # Books with a valid reference label and an answer (or failure) from both models.
+    outputs = dict(data["outputs"])
+    if hand and data["reference"]:
+        # Scored like a model: how well an LLM labeller agrees with the person.
+        outputs["reference"] = data["reference"]
+    # Books with a valid reference label and an answer (or failure) from the small model,
+    # the model Bookie uses. The others are optional (free tier: the large model may not have run).
     books = [
         e
         for e in order
         if e in ref_books
         and "error" not in ref_books[e]
-        and all(o is not None and e in o["books"] for o in outputs.values())
+        and outputs.get("small") is not None
+        and e in outputs["small"]["books"]
+    ]
+    # Another model is scored only when it answered every one of these books, so that every
+    # comparison is paired on the same books.
+    roles = ["small"] + [
+        r for r in ("large", "reference")
+        if outputs.get(r) is not None and books and all(e in outputs[r]["books"] for e in books)
     ]
     n = len(books)
     resamples = rng.integers(0, n, size=(llm["bootstrap_samples"], n)) if n else np.zeros((0, 0), dtype=int)
 
+    def rows_of(role: str) -> list[dict[str, Any]]:
+        # A book the reference model has no answer for counts as failed, like an invalid answer.
+        return [outputs[role]["books"].get(e, {"error": "missing"}) for e in books]
+
     def values(role: str, trait: str) -> list[Any]:
-        rows = [outputs[role]["books"][e] for e in books]
+        rows = rows_of(role)
         if trait == "themes":
             return [set(r.get("themes", [])) if "error" not in r else set() for r in rows]
         return [r.get(trait, "unknown") if "error" not in r else "failed" for r in rows]
 
     results: dict[str, Any] = {"books": n, "models": {}, "difference": {}}
     per_role: dict[str, dict[str, Any]] = {}
-    for role in ("small", "large"):
-        model = data["manifest"]["models"][role]
+    for role in roles:
+        model = data["manifest"]["models"].get(role) or outputs[role].get("model")
         traits: dict[str, Any] = {}
         overall_samples = np.zeros(len(resamples))
         overall_value = []
@@ -192,8 +214,10 @@ def compute(data: dict[str, Any], params: dict[str, Any]) -> dict[str, Any]:
             v = traits[trait]["macroF1"]["value"]
             overall_value.append(float("nan") if v is None else v)
             overall_samples = overall_samples + np.nan_to_num(np.array(f1_s, dtype=float)) / len(TRAITS)
-        rows = [outputs[role]["books"][e] for e in books]
-        price = llm["prices"].get(model)
+        rows = rows_of(role)
+        # Answers reused from traits:extract carry no token record: their cost is unknown, not zero.
+        recorded = bool(rows) and all("inputTokens" in r and "outputTokens" in r for r in rows)
+        price = llm["prices"].get(model) if recorded else None
         costs = [_book_cost(r, price) for r in rows]
         per_role[role] = {"overall": overall_samples, "costs": costs}
         results["models"][role] = {
@@ -207,13 +231,14 @@ def compute(data: dict[str, Any], params: dict[str, Any]) -> dict[str, Any]:
             "retried": sum(1 for r in rows if r.get("attempts", 1) > 1),
             "costPerBookUsd": None if price is None else float(np.mean(costs)) if costs else None,
             "tokensPerBook": {
-                "input": float(np.mean([r.get("inputTokens", 0) for r in rows])) if rows else None,
-                "output": float(np.mean([r.get("outputTokens", 0) for r in rows])) if rows else None,
+                "input": float(np.mean([r["inputTokens"] for r in rows])) if recorded else None,
+                "output": float(np.mean([r["outputTokens"] for r in rows])) if recorded else None,
             },
+            "tokensRecorded": recorded,
             "priced": price is not None,
         }
-    small, large = results["models"]["small"], results["models"]["large"]
-    if n and small["overallMacroF1"]["value"] and large["overallMacroF1"]["value"]:
+    small, large = results["models"]["small"], results["models"].get("large")
+    if n and large and small["overallMacroF1"]["value"] and large["overallMacroF1"]["value"]:
         diff = per_role["small"]["overall"] - per_role["large"]["overall"]
         results["difference"] = {
             "overallMacroF1SmallMinusLarge": _estimate(
@@ -229,6 +254,9 @@ def compute(data: dict[str, Any], params: dict[str, Any]) -> dict[str, Any]:
     results["claims"] = _claims(data["claims"])
     results["provenance"] = {
         "manifest": data["manifest"],
+        # "hand": the owner's labels are the trait reference; "model": the reference model's are.
+        "traitReference": "hand" if hand else "model",
+        "handLabelled": {"labelled": hand["labelled"], "of": hand["of"]} if hand else None,
         "referenceModel": data["reference"]["model"] if data["reference"] else None,
         "referenceInstructionsSha256": data["reference"]["instructionsSha256"] if data["reference"] else None,
         "seed": llm["seed"],
@@ -268,7 +296,11 @@ def _claims(c: dict[str, Any] | None) -> dict[str, Any] | None:
 def headline(results: dict[str, Any]) -> dict[str, float]:
     """The metrics the regression check compares (EVAL-4)."""
     out: dict[str, float] = {}
-    for role, m in results["models"].items():
+    # The measured models only: the reference model's labels are made once and do not change.
+    for role in ("small", "large"):
+        m = results["models"].get(role)
+        if m is None:
+            continue
         if m["overallMacroF1"]["value"] is not None:
             out[f"{role}.overallMacroF1"] = m["overallMacroF1"]["value"]
         for trait in SINGLE:
@@ -306,26 +338,65 @@ def _fmt(e: dict[str, Any] | None, places: int = 3) -> str:
 
 
 def markdown(r: dict[str, Any]) -> str:
-    small, large = r["models"]["small"], r["models"]["large"]
+    small = r["models"]["small"]
+    p = r["provenance"]
+    shown = [(small, "small")]
+    if "large" in r["models"]:
+        shown.append((r["models"]["large"], "large"))
+    if "reference" in r["models"]:
+        shown.append((r["models"]["reference"], "reference labeller"))
+    if p.get("traitReference") == "hand":
+        h = p["handLabelled"]
+        source = (
+            f"Trait reference: the owner's hand labels ({h['labelled']} of {h['of']} books labelled; D-028), so trait "
+            "scores are accuracy against a person. "
+            + (
+                "The reference model is scored against them too: how well an LLM labeller agrees with the person. "
+                if "reference" in r["models"]
+                else "The reference model has not labelled every book, so it is not scored. "
+            )
+            + f"Claims are judged by {p['referenceModel']}."
+        )
+    else:
+        source = (
+            f"Reference labels: {p['referenceModel']} following `eval/llm/traits-instructions.md` "
+            "(a model, not hand labels: the owner's choice, D-028). Scores measure agreement with that reference."
+        )
     lines = [
         "# LLM evaluation (spec 9: trait extraction and summary faithfulness)",
         "",
-        f"Reference labels: {r['provenance']['referenceModel']} following `eval/llm/traits-instructions.md` "
-        "(a model, not hand labels: the owner's choice, D-028). Scores measure agreement with that reference.",
+        source,
         "",
         f"## Trait extraction ({r['books']} books)",
         "",
-        f"| Trait | Metric | {small['model']} (small) | {large['model']} (large) |",
-        "|---|---|---|---|",
+        "| Trait | Metric | " + " | ".join(f"{m['model']} ({label})" for m, label in shown) + " |",
+        "|---|---|" + "---|" * len(shown),
     ]
+    row = lambda name, metric, cell: f"| {name} | {metric} | " + " | ".join(cell(m) for m, _ in shown) + " |"  # noqa: E731
     for trait in TRAITS:
         metrics = ["accuracy", "macroF1"] if trait in SINGLE else ["macroF1", "jaccard"]
-        for m in metrics:
-            lines.append(f"| {trait} | {m} | {_fmt(small['traits'][trait][m])} | {_fmt(large['traits'][trait][m])} |")
-    lines.append(f"| all four | mean macro-F1 | {_fmt(small['overallMacroF1'])} | {_fmt(large['overallMacroF1'])} |")
-    cost = lambda m: "n/a" if m["costPerBookUsd"] is None else f"${m['costPerBookUsd']:.5f}"  # noqa: E731
-    lines.append(f"| | cost per book (list price) | {cost(small)} | {cost(large)} |")
-    lines.append(f"| | failed (invalid twice) | {small['failed']} | {large['failed']} |")
+        for metric in metrics:
+            lines.append(row(trait, metric, lambda m: _fmt(m["traits"][trait][metric])))
+    lines.append(row("all four", "mean macro-F1", lambda m: _fmt(m["overallMacroF1"])))
+    def cost(m: dict[str, Any]) -> str:
+        if not m.get("tokensRecorded", True):
+            return "not recorded"
+        return "n/a" if m["costPerBookUsd"] is None else f"${m['costPerBookUsd']:.5f}"
+
+    lines.append(row("", "cost per book (list price)", cost))
+    lines.append(row("", "failed (invalid twice)", lambda m: str(m["failed"])))
+    if "large" not in r["models"]:
+        lines += [
+            "",
+            "The large model has not answered every one of these books, so there is no small-versus-large "
+            "comparison yet (free tier: run `llm-eval traits large` until it has).",
+        ]
+    if not small.get("tokensRecorded", True):
+        lines += [
+            "",
+            "The small model's answers were reused from `traits:extract`, which does not record tokens, so "
+            "their cost is not reported.",
+        ]
     d = r.get("difference") or {}
     if d:
         lines += [

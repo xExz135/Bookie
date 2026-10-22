@@ -1,0 +1,140 @@
+{
+  "model": "gemini-3.8-flash",
+  "instructionsSha256": "261c8d10c059de94354b257bf4008caf6506ce4664eec98f87f90aa21c690395",
+  "books": {
+    "458b3d7f-aa45-504d-9357-382196c40a4e": {
+      "pace": "slow",
+      "tone": "dark",
+      "contentIntensity": "low",
+      "themes": [
+        "tragedy",
+        "family",
+        "social class and inequality",
+        "addiction",
+        "love and romance"
+      ]
+    },
+    "a2a07907-1049-567e-8336-15a93d3f4362": {
+      "pace": "fast",
+      "tone": "tense",
+      "contentIntensity": "moderate",
+      "themes": [
+        "coming of age",
+        "survival",
+        "friendship",
+        "family",
+        "social class and inequality"
+      ]
+    },
+    "00a40777-2fa9-55b8-81db-012b30324dac": {
+      "pace": "moderate",
+      "tone": "light",
+      "contentIntensity": "low",
+      "themes": [
+        "love and romance",
+        "family",
+        "friendship",
+        "identity"
+      ]
+    },
+    "1f11e308-1056-5783-b1f3-46d2cc2b014d": {
+      "pace": "fast",
+      "tone": "light",
+      "contentIntensity": "low",
+      "themes": [
+        "family",
+        "adventure and quest",
+        "crime and justice"
+      ]
+    },
+    "7e540a9c-4f5b-516d-ac0a-bee6f7c46fdf": {
+      "pace": "fast",
+      "tone": "serious",
+      "contentIntensity": "moderate",
+      "themes": [
+        "crime and justice",
+        "family",
+        "identity",
+        "coming of age",
+        "grief and loss"
+      ]
+    },
+    "48ef9992-b24a-5ae2-875b-46940bcfda3e": {
+      "pace": "fast",
+      "tone": "unknown",
+      "contentIntensity": "moderate",
+      "themes": [
+        "faith and religion",
+        "family",
+        "identity"
+      ]
+    },
+    "dc44808e-4ea8-58da-8b94-4d5270664f7f": {
+      "pace": "moderate",
+      "tone": "serious",
+      "contentIntensity": "low",
+      "themes": [
+        "power and politics",
+        "war and conflict",
+        "social class and inequality",
+        "family"
+      ]
+    },
+    "87e48add-7632-58d5-96ae-ddb096c0fb1f": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "high",
+      "themes": [
+        "crime and justice",
+        "violence",
+        "mental health"
+      ]
+    },
+    "86b88691-c480-542c-8784-a6f9cfb26f49": {
+      "pace": "moderate",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "war and conflict",
+        "identity",
+        "survival",
+        "love and romance",
+        "violence"
+      ]
+    },
+    "86635b9d-f990-5697-aaa0-ac4286315684": {
+      "pace": "slow",
+      "tone": "tense",
+      "contentIntensity": "low",
+      "themes": [
+        "crime and justice",
+        "identity",
+        "love and romance",
+        "mental health",
+        "social class and inequality"
+      ]
+    },
+    "3876d42e-5889-5098-a6be-8374d96fa13b": {
+      "pace": "fast",
+      "tone": "light",
+      "contentIntensity": "low",
+      "themes": [
+        "friendship",
+        "adventure and quest",
+        "coming of age",
+        "family",
+        "identity"
+      ]
+    },
+    "1ead41b8-06ef-52cf-af52-a7f281b2c1d9": {
+      "pace": "fast",
+      "tone": "dark",
+      "contentIntensity": "moderate",
+      "themes": [
+        "faith and religion",
+        "family",
+        "violence"
+      ]
+    }
+  }
+}
