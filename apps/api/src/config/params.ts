@@ -617,6 +617,37 @@ export const PARAMS = {
     description: 'How long an empty source result is remembered before retrying.',
     source: 'Spec 10',
   },
+
+  // --- Cost and latency measurement (spec 9, H4, D-026) ---
+  LLM_PRICES_USD_PER_MTOK: {
+    schema: z
+      .string()
+      .regex(
+        /^[\w.-]+=\d+(\.\d+)?\/\d+(\.\d+)?(,[\w.-]+=\d+(\.\d+)?\/\d+(\.\d+)?)*$/,
+        'Use model=input/output pairs separated by commas, in US dollars per million tokens',
+      )
+      .default('gemini-3.5-flash-lite=0.30/2.50,gemini-3.8-flash=0.75/3.75'),
+    description:
+      'Paid-tier list prices per million input and output tokens, as model=input/output pairs. Used to price measured token use; the free tier itself costs nothing.',
+    source: 'ai.google.dev/gemini-api/docs/pricing, checked 2026-10-22 (D-026)',
+  },
+  COST_COMPARISON_MODEL: {
+    schema: z.string().min(1).default('gemini-3.8-flash'),
+    description:
+      'Larger model the measured token use is also priced at, to report the saving of using the small model (spec 9 tiered model use).',
+    source: 'D-026',
+  },
+  REPORT_BOOTSTRAP_RESAMPLES: {
+    schema: int(1000, 100),
+    description: 'Bootstrap resamples for the intervals in the cost and latency report.',
+    source: 'D-026 (same as the offline evaluation, D-023)',
+  },
+  REPORT_SEED: {
+    schema: int(20261022, 0),
+    description:
+      'Seed of the cost and latency report bootstrap, so the same rows give the same intervals.',
+    source: 'D-026',
+  },
 } satisfies Record<string, ParamDef>;
 
 export type ParamKey = keyof typeof PARAMS;

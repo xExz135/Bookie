@@ -101,6 +101,8 @@ pnpm --filter @bookie/api llm-eval all   # LLM evaluation: set, models, referenc
 pnpm eval label-sheet    # the hand-labelling workbook in data/derived/llm-eval/labelling/ (after `llm-eval sheet`)
 pnpm eval llm [--check | --accept]   # score eval/llm/ to eval/results/llm/; --check is the CI regression test (EVAL-4)
 pnpm --filter @bookie/api models:load   # load the newest release into the database and ship its model
+pnpm --filter @bookie/api bench:analyses [--books N]   # measure cold and cached analyses with real Gemini (H4, D-026)
+pnpm --filter @bookie/api metrics:report --since T   # cost and latency report to eval/results/live/ (D-026)
 ```
 
 ## Technical notes

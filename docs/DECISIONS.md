@@ -469,6 +469,38 @@ Consequences:
 - Frontend follow-up (FE): label a `stale` reception with its date, and offer a "refresh reviews" action that sends `refresh: true` and handles `429`.
 - BE-11: measure cold p50 and p95 with the parallel steps, the cache hit rate, and the model calls saved by reusing outputs.
 
+## D-026 Cost, latency and source outcomes (BE-11)
+Status: **DECIDED** (backend role, BE-11; prices and the comparison model are configurable, checked against Google's price page on 2026-10-22)
+Date: 2026-10-22
+Affects: BE-11, BE-15, BE-16; H4; spec 9 (Cost and latency), spec 10, spec 12 (observability)
+Context: H4 asks for cold analysis latency and cost per analysis, measured and reported with p50 and p95. Spec 9 adds tokens and cost per analysis, cached latency, the cache hit rate and the saving of tiered model use; spec 12 asks for structured logs with step timings and source outcomes. Until now the pipeline only logged token use (D-021), so nothing could be added up afterwards, and blocker 7 (cold analyses of about 20 s) had never been measured with the parallel steps of D-025.
+Decision:
+- **What is stored** (migration `observability`): `llm_calls` holds one row per language-model request of an analysis step: step, model, outcome (`ok`, `invalid_output` for an answer our checks refused and retried, or the client's error kind such as `quota`), input and output tokens, time at Google, and time our client held the request back under its free-tier pacing. `source_calls` holds one row per live rating source answer: outcome, reason (`timeout`, `not_found`, ...), whether an earlier answer was reused (PERF-1) and how long the source took. Recording is best effort: a failed write is logged and never fails the analysis. The structured log lines stay as they were.
+- **Data deletion (SEC-3):** both tables link to the analysis with `ON DELETE SET NULL`. They hold no reader data (a book, a model, token counts), so deleting a reader's data clears the link and the cost totals stay correct.
+- **The report** (`pnpm --filter @bookie/api metrics:report --since <time>`) reads the analyses created in a window and writes `cost-latency.json` and `cost-latency.md` to `eval/results/live/`. Definitions:
+  - *Cold*: the analysis built the public reception. *Cached*: it reused a fresh one at once (PERF-1). *Shared*: it waited for another analysis building the same book (PERF-2), recognised by a resolve wait of at least `PUBLIC_BUILD_WAIT_POLL_MS`.
+  - Latency is server time from the request to the final status. The reader also waits for the first poll (`ANALYSIS_POLL_AFTER_MS`), which is not included. Analyses with a retried step (their time includes the reader), stale fallbacks (PERF-3) and failed ones are counted but left out of latency.
+  - For cold analyses the report separates model time from our pacing wait (the free tier's per-minute caps), and gives each step's p50 and p95.
+  - Tokens and cost per cold analysis use cold builds that called the model and reused no earlier output. Cost is at paid-tier list prices (`LLM_PRICES_USD_PER_MTOK`: gemini-3.5-flash-lite $0.30 input and $2.50 output per million tokens, gemini-3.8-flash $0.75 and $3.75, from ai.google.dev/gemini-api/docs/pricing on 2026-10-22). The free tier used here costs nothing, and the report says so. A model with no price is named, never priced at zero.
+  - Tiered model use (spec 9): the same tokens are also priced at `COST_COMPARISON_MODEL` (gemini-3.8-flash), and the difference is reported. This assumes the larger model would use the same tokens; it is an estimate, not a measurement of that model.
+  - Reuse: the share of analyses that reused a public reception, the share of source answers reused, model outputs reused for unchanged evidence (D-025), and the model calls avoided (builds avoided times the mean calls per cold build, plus reused outputs).
+  - Method: quantiles interpolate linearly (numpy's default); intervals are 95% percentile bootstrap over analyses with `REPORT_BOOTSTRAP_RESAMPLES` (1000) and `REPORT_SEED`, so the same rows give the same numbers; rates use the Wilson interval.
+- **The measurement** (`pnpm --filter @bookie/api bench:analyses`): real Gemini, real live sources, the dev database.
+  - A benchmark reader is created with the ratings of the dataset reader who rated the most of the shipped model's books (20 by default), so the personal match runs as for a real reader.
+  - Cold books are the most-rated editions with dataset reviews, no public analysis yet and no unexpired source answer, so nothing is reused.
+  - They run one at a time with 45 s between them. One cold analysis sends about 18,000 input tokens and our client caps 30,000 a minute, so the gap measures a single reader's request rather than our own throttling. Then each book is analysed again (cached).
+  - The report covers only the benchmark reader's analyses. The run stops at the first analysis that ran out of quota.
+- **Price of the larger trait model:** `GEMINI_TRAIT_MODEL_LARGE` is `gemini-3.5-flash`, which the price page does not list (it lists gemini-3.5-flash-lite, gemini-3.6-flash and gemini-3.8-flash). BE-15's small-versus-large comparison (H2) should check that ID first.
+Measured: pending. The free daily Gemini quota was used up when BE-11 was built (2026-10-22 morning); the tools ran end to end against the dev database (the smoke run stopped at the quota as designed). The first benchmark runs after the quota reset; its numbers are added here and in STATUS.
+Not covered:
+- Cover scans and embeddings are not recorded per call; the report covers analyses only.
+- When the client gives up on a request (quota, timeout) after an invalid first answer, that first answer's tokens are not recorded.
+- The time a reader waits for the first poll is not measured; it is `ANALYSIS_POLL_AFTER_MS` at most.
+- No dashboard, endpoint or alerting: the report is a command, as the portfolio scope needs.
+Consequences:
+- BE-16 takes the cost and latency table from `eval/results/live/cost-latency.md`.
+- Blocker 7 is updated with the measured cold p50 and p95.
+
 ## D-027 User study (FE-10)
 Status: **DECIDED** (the outline approved by the owner for both roles on 2026-10-22: join a study, five books held out on the server, the model's and B0's predictions next to the reader's ratings, a report over all participants; the details below follow it; numbers are configurable)
 Date: 2026-10-22

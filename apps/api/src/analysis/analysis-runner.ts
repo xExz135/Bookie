@@ -38,10 +38,14 @@ export class AnalysisRunner implements OnApplicationBootstrap {
     }
   }
 
-  /** Requeues every running analysis; steps cut off while running start again. */
-  async recover(): Promise<number> {
+  /**
+   * Requeues every running analysis; steps cut off while running start again.
+   * `only` limits it to the given analyses: tests share one database, and a
+   * test must not pick up analyses another test file is running.
+   */
+  async recover(only?: string[]): Promise<number> {
     const running = await this.prisma.analysis.findMany({
-      where: { status: 'running' },
+      where: { status: 'running', ...(only ? { id: { in: only } } : {}) },
       select: { id: true },
       orderBy: { createdAt: 'asc' },
     });

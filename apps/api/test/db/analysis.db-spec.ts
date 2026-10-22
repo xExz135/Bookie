@@ -470,7 +470,8 @@ describe('analysis pipeline (BE-8)', () => {
       `UPDATE analyses SET status = 'running', finished_at = NULL, public_analysis_id = NULL WHERE id = $1`,
       [id],
     );
-    expect(await runner.recover()).toBeGreaterThanOrEqual(1);
+    // Only this analysis: other test files may have analyses running in the same database.
+    expect(await runner.recover([id])).toBe(1);
     const a = await finished(token, id);
     expect(a.status).toBe('complete');
   });

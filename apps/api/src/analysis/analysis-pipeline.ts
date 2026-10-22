@@ -5,7 +5,8 @@ import { InjectConfig } from '../config/config.module';
 import type { ErrorCode } from '../contract/error-codes';
 import { PrismaService } from '../database/prisma.service';
 import { Prisma } from '../generated/prisma/client';
-import { type GeminiClient, LlmError } from '../llm/gemini.client';
+import { type GeminiClient, LlmError, type LlmUsage } from '../llm/gemini.client';
+import { UsageRecorder, attemptsAsCalls } from '../observability/usage-recorder';
 import { EditionEvidenceRepository } from '../representation/edition-evidence.repository';
 import {
   type SelectedReview,
@@ -92,6 +93,7 @@ export class AnalysisPipeline {
     private readonly ratingSources: RatingSourcesService,
     @Inject(ANALYSIS_LLM) private readonly llm: Llm,
     @Inject(PERSONAL_SCORER) private readonly scorer: PersonalScorer,
+    private readonly recorder: UsageRecorder,
   ) {
     // The repository takes a pg-style pool; Prisma runs the same SQL.
     const pool = {
@@ -373,6 +375,7 @@ export class AnalysisPipeline {
     // PERF-1: a source's still-valid earlier answer is reused; a refresh asks again.
     const live =
       (await this.ratingSources.lookupEdition(ctx.editionId, { useCache: !ctx.refresh })) ?? [];
+    await this.recorder.sourceCalls(ctx.analysisId, ctx.editionId, live);
     for (const r of live) {
       sources.push({
         key: r.key,
@@ -542,13 +545,14 @@ export class AnalysisPipeline {
     if (reviews.length === 0 && !ctx.edition.description) {
       return { traits: null, model: null, promptVersion: null };
     }
-    const result = await extractTraits(this.llm, this.config.GEMINI_TRAIT_MODEL, {
-      title: ctx.edition.title,
-      authors: ctx.edition.authors,
-      description: ctx.edition.description,
-      reviews,
-    });
-    this.logUsage(ctx, 'extractTraits', result.usage);
+    const result = await this.measured(ctx, 'extractTraits', this.config.GEMINI_TRAIT_MODEL, () =>
+      extractTraits(this.llm, this.config.GEMINI_TRAIT_MODEL, {
+        title: ctx.edition.title,
+        authors: ctx.edition.authors,
+        description: ctx.edition.description,
+        reviews,
+      }),
+    );
     return { traits: result.traits, model: result.model, promptVersion: result.promptVersion };
   }
 
@@ -566,13 +570,14 @@ export class AnalysisPipeline {
     );
     if (earlier) return earlier;
     const reviews = await this.reviewTexts(selection);
-    const result = await generateSummary(this.llm, this.config.GEMINI_SUMMARY_MODEL, {
-      title: ctx.edition.title,
-      authors: ctx.edition.authors,
-      description: ctx.edition.description,
-      reviews,
-    });
-    this.logUsage(ctx, 'publicSummary', result.usage);
+    const result = await this.measured(ctx, 'publicSummary', this.config.GEMINI_SUMMARY_MODEL, () =>
+      generateSummary(this.llm, this.config.GEMINI_SUMMARY_MODEL, {
+        title: ctx.edition.title,
+        authors: ctx.edition.authors,
+        description: ctx.edition.description,
+        reviews,
+      }),
+    );
     return { summary: result.summary, model: result.model, promptVersion: result.promptVersion };
   }
 
@@ -863,12 +868,37 @@ export class AnalysisPipeline {
     };
   }
 
-  /** Token use per step, for cost measurement (H4, BE-11). */
-  private logUsage(
+  /**
+   * Runs a model step and records every request it made (H4, D-026): each
+   * attempt with its tokens, an invalid answer as `invalid_output`, and a
+   * request the client gave up on (quota, timeout, ...) with no tokens.
+   */
+  private async measured<T extends { usage: LlmUsage[] }>(
     ctx: Context,
-    step: StepName,
-    usage: Array<{ model: string; inputTokens: number; outputTokens: number; latencyMs: number }>,
-  ) {
+    step: 'extractTraits' | 'publicSummary',
+    model: string,
+    call: () => Promise<T>,
+  ): Promise<T> {
+    const record = (calls: ReturnType<typeof attemptsAsCalls>) =>
+      this.recorder.llmCalls(ctx.analysisId, ctx.editionId, step, calls);
+    try {
+      const result = await call();
+      await record(attemptsAsCalls(result.usage, 'ok'));
+      this.logUsage(ctx, step, result.usage);
+      return result;
+    } catch (error) {
+      if (error instanceof TraitExtractionError || error instanceof SummaryError) {
+        await record(attemptsAsCalls(error.usage, 'invalid_output'));
+      } else if (error instanceof LlmError) {
+        const none = { model, inputTokens: 0, outputTokens: 0, latencyMs: 0, waitedMs: 0 };
+        await record([{ usage: none, outcome: error.kind }]);
+      }
+      throw error;
+    }
+  }
+
+  /** Token use per step in the log, next to the stored calls (spec 12). */
+  private logUsage(ctx: Context, step: StepName, usage: LlmUsage[]) {
     this.logger.log(
       JSON.stringify({
         event: 'analysis_llm',

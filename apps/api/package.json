@@ -21,7 +21,9 @@
     "traits:extract": "nest build && node dist/tools/extract-traits.js",
     "models:load": "nest build && node dist/tools/load-models.js",
     "sources:check": "nest build && node dist/tools/check-sources.js",
-    "llm-eval": "nest build && node dist/tools/llm-eval.js"
+    "llm-eval": "nest build && node dist/tools/llm-eval.js",
+    "metrics:report": "nest build && node dist/tools/metrics-report.js",
+    "bench:analyses": "nest build && node dist/tools/bench-analyses.js"
   },
   "dependencies": {
     "@nestjs/common": "^12.2.0",

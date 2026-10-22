@@ -236,8 +236,10 @@ describe('authentication (BE-3, D-001)', () => {
       expect(none.body.code).toBe('UNAUTHENTICATED');
 
       const res = await register(uniqueEmail('rexp')).expect(201);
+      // An hour, not a second: the database clock (Docker) can drift a second or
+      // more from the API's, which checks expiry with its own clock.
       await db.query(
-        `UPDATE refresh_tokens SET expires_at = now() - interval '1 second' WHERE user_id = $1`,
+        `UPDATE refresh_tokens SET expires_at = now() - interval '1 hour' WHERE user_id = $1`,
         [res.body.user.id],
       );
       await http().post('/api/v1/auth/refresh').set('Cookie', refreshCookie(res).pair).expect(401);
@@ -321,7 +323,8 @@ describe('authentication (BE-3, D-001)', () => {
       await http().post('/api/v1/auth/forgot-password').send({ email }).expect(202);
       const token = tokenFrom((await mailer.waitFor(email)).text);
       await db.query(
-        `UPDATE password_reset_tokens SET expires_at = now() - interval '1 second' WHERE user_id = $1`,
+        // An hour: see the expired refresh token above (clock drift).
+        `UPDATE password_reset_tokens SET expires_at = now() - interval '1 hour' WHERE user_id = $1`,
         [res.body.user.id],
       );
       const late = await http()

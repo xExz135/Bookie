@@ -776,6 +776,8 @@ model Analysis {
   personalAnalysis      PersonalAnalysis?
   feedback              Feedback[]
   publicBuilds          PublicAnalysisBuild[]
+  llmCalls              LlmCall[]
+  sourceCalls           SourceCall[]
 
   @@index([userId, createdAt])
   @@map("analyses")
@@ -792,6 +794,51 @@ model PublicAnalysisBuild {
   analysis   Analysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
 
   @@map("public_analysis_builds")
+}
+
+/// One language-model request made for an analysis step (H4, D-026): tokens,
+/// time at Google and time spent waiting under our own rate pacing. Kept when
+/// the reader's data is deleted (the analysis link is cleared): it holds no
+/// reader data, and the cost numbers stay correct.
+model LlmCall {
+  id           String    @id @default(uuid()) @db.Uuid
+  analysisId   String?   @map("analysis_id") @db.Uuid
+  editionId    String    @map("edition_id") @db.Uuid
+  /// The step that asked, e.g. `extractTraits` or `publicSummary`.
+  purpose      String
+  model        String
+  /// `ok`, `invalid_output` (answer refused by our checks, retried once), or the client error kind (`quota`, ...).
+  outcome      String
+  inputTokens  Int       @map("input_tokens")
+  outputTokens Int       @map("output_tokens")
+  latencyMs    Int       @map("latency_ms")
+  waitedMs     Int       @map("waited_ms")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  analysis     Analysis? @relation(fields: [analysisId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([analysisId])
+  @@map("llm_calls")
+}
+
+/// One live rating source's answer for an analysis (spec 12 source outcomes,
+/// D-026): asked now, or an earlier answer reused (`cached`, PERF-1).
+model SourceCall {
+  id         String        @id @default(uuid()) @db.Uuid
+  analysisId String?       @map("analysis_id") @db.Uuid
+  editionId  String        @map("edition_id") @db.Uuid
+  sourceKey  String        @map("source_key")
+  outcome    SourceOutcome
+  /// Why it was empty or failed (`timeout`, `not_found`, ...).
+  detail     String?
+  cached     Boolean
+  durationMs Int           @map("duration_ms")
+  createdAt  DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  analysis   Analysis?     @relation(fields: [analysisId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([analysisId])
+  @@map("source_calls")
 }
 
 /// Per-step status, visible in the API (RES-2). Retries rerun only failed steps.

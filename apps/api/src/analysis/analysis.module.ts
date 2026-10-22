@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import type { AppConfig } from '../config/app-config';
 import { APP_CONFIG } from '../config/config.module';
 import { geminiClient } from '../representation/representation-config';
+import { UsageRecorder } from '../observability/usage-recorder';
 import { SourcesModule } from '../sources/sources.module';
 import { ANALYSIS_LLM, AnalysisPipeline } from './analysis-pipeline';
 import { AnalysisRunner } from './analysis-runner';
@@ -20,6 +21,7 @@ import { PERSONAL_SCORER } from './personal-scorer';
     AnalysisPipeline,
     AnalysisRunner,
     AnalysisView,
+    UsageRecorder,
     {
       provide: ANALYSIS_LLM,
       inject: [APP_CONFIG],
