@@ -1,4 +1,4 @@
-import type { GeminiClient, LlmUsage } from '../llm/gemini.client';
+import { type GeminiClient, LlmError, type LlmUsage } from '../llm/gemini.client';
 
 /**
  * Reads a cover photo with a vision model (spec 6: "Identification returns
@@ -118,4 +118,41 @@ export async function readCover(
     if (reading) return { reading, usage };
   }
   throw new CoverReadError('Cover reading was invalid twice', usage);
+}
+
+export type VisionProvider = 'groq' | 'gemini';
+
+/** One provider that can read covers, with the model to ask (D-030). */
+export interface VisionReader {
+  provider: VisionProvider;
+  model: string;
+  client: Pick<GeminiClient, 'generateJson'>;
+}
+
+/**
+ * Reads the cover with the first reader, and with the next one when it fails
+ * (service failure, refusal, or invalid output twice). A reading, including
+ * "not a book", is an answer and is never asked again. When every reader
+ * fails, the last error is thrown, so the caller maps it as before.
+ */
+export async function readCoverWithFallback(
+  readers: VisionReader[],
+  image: { mimeType: string; data: Buffer },
+  onFailure?: (reader: VisionReader, error: LlmError | CoverReadError) => void,
+): Promise<{ reading: CoverReading; usage: LlmUsage[]; provider: VisionProvider }> {
+  let lastError: LlmError | CoverReadError = new LlmError(
+    'auth',
+    'No vision provider is configured',
+  );
+  for (const reader of readers) {
+    try {
+      const result = await readCover(reader.client, reader.model, image);
+      return { ...result, provider: reader.provider };
+    } catch (error) {
+      if (!(error instanceof LlmError) && !(error instanceof CoverReadError)) throw error;
+      onFailure?.(reader, error);
+      lastError = error;
+    }
+  }
+  throw lastError;
 }

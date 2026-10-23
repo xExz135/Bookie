@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import type { AppConfig } from '../config/app-config';
 import { APP_CONFIG } from '../config/config.module';
-import { GeminiClient } from '../llm/gemini.client';
 import { SourcesModule } from '../sources/sources.module';
 import { BookSearchService } from './book-search.service';
 import { CatalogSearch } from './catalog-search';
+import { buildVisionReaders } from './cover-vision';
 import { DiscoveryController } from './discovery.controller';
 import { OpenLibraryImport } from './open-library-import';
 import { COVER_VISION, ScanService } from './scan.service';
@@ -34,15 +34,8 @@ import { ScanQuota } from './scan-quota';
     {
       provide: COVER_VISION,
       inject: [APP_CONFIG],
-      // Its own client: a scan should fail fast rather than wait a minute.
-      useFactory: (config: AppConfig) =>
-        new GeminiClient({
-          apiKey: config.GEMINI_API_KEY,
-          timeoutMs: config.SCAN_TIMEOUT_MS,
-          maxRequestsPerMinute: config.GEMINI_MAX_REQUESTS_PER_MINUTE,
-          tokensPerMinute: config.GEMINI_TOKENS_PER_MINUTE,
-          transientRetries: 1,
-        }),
+      // Groq first, Gemini as fallback by default (D-030).
+      useFactory: (config: AppConfig) => buildVisionReaders(config),
     },
   ],
   exports: [BookSearchService, CatalogSearch],

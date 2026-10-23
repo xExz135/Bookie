@@ -2,9 +2,9 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ApiError } from '../common/api-error';
 import type { AppConfig } from '../config/app-config';
 import { InjectConfig } from '../config/config.module';
-import { type GeminiClient, LlmError } from '../llm/gemini.client';
+import { LlmError } from '../llm/gemini.client';
 import { BookSearchService } from './book-search.service';
-import { CoverReadError, readCover } from './cover-reader';
+import { CoverReadError, readCoverWithFallback, type VisionReader } from './cover-reader';
 import { type ScanResult, toCandidate } from './discovery.schemas';
 import { checkImage } from './image-check';
 import { decideScan, isPlausible } from './scan-decision';
@@ -23,8 +23,8 @@ export interface UploadedImage {
  * 1. Size is checked while uploading (UPLOAD_TOO_LARGE), type and structure
  *    here (UNSUPPORTED_TYPE, UNREADABLE_IMAGE): all before any processing (DISC-4).
  * 2. One scan is taken from the reader's quota.
- * 3. The vision model reads the cover. If the service fails on our side the
- *    scan is given back.
+ * 3. The vision model reads the cover: Groq first, Gemini when Groq fails
+ *    (D-030). If every provider fails on our side the scan is given back.
  * 4. The catalog (then Open Library) is searched with what the cover says,
  *    and code decides whether the scan is identified or uncertain (DISC-2).
  * The image is never written anywhere (DISC-3).
@@ -36,7 +36,8 @@ export class ScanService {
   constructor(
     private readonly quota: ScanQuota,
     private readonly search: BookSearchService,
-    @Inject(COVER_VISION) private readonly vision: Pick<GeminiClient, 'generateJson'>,
+    /** The providers to try, in order (D-030). */
+    @Inject(COVER_VISION) private readonly vision: VisionReader[],
     @InjectConfig() private readonly config: AppConfig,
   ) {}
 
@@ -54,8 +55,13 @@ export class ScanService {
 
     const usageId = await this.quota.reserve(userId);
     let reading;
+    let provider;
     try {
-      ({ reading } = await readCover(this.vision, this.config.GEMINI_VISION_MODEL, image));
+      ({ reading, provider } = await readCoverWithFallback(this.vision, image, (reader, error) =>
+        this.logger.warn(
+          `Cover reading with ${reader.provider} failed (${error instanceof LlmError ? error.kind : 'invalid output twice'}): ${error.message}`,
+        ),
+      ));
     } catch (error) {
       throw await this.identificationFailed(error, usageId);
     }
@@ -63,7 +69,7 @@ export class ScanService {
     if (!reading.readable) {
       // Blocker 6: say why a cover was refused, without logging the photo.
       this.logger.log(
-        `Scan by user ${userId}: the model could not read the cover (certainty ${reading.certainty})`,
+        `Scan by user ${userId}: ${provider} could not read the cover (certainty ${reading.certainty})`,
       );
       throw new ApiError('UNREADABLE_IMAGE');
     }
@@ -84,7 +90,7 @@ export class ScanService {
     );
     const { outcome, ordered } = decideScan(reading, hits, thresholds);
     this.logger.log(
-      `Scan by user ${userId}: ${outcome}, certainty ${reading.certainty}, ${hits.length} matches`,
+      `Scan by user ${userId}: ${outcome}, read by ${provider}, certainty ${reading.certainty}, ${hits.length} matches`,
     );
     return {
       outcome,

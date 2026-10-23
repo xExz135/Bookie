@@ -7,6 +7,7 @@ import { Client } from 'pg';
 import request from 'supertest';
 import { normalizeForSearch } from '../../src/catalog/normalize';
 import { OPEN_LIBRARY } from '../../src/discovery/book-search.service';
+import type { VisionReader } from '../../src/discovery/cover-reader';
 import { COVER_VISION } from '../../src/discovery/scan.service';
 import { LlmError } from '../../src/llm/gemini.client';
 import type { OpenLibraryWork } from '../../src/sources/open-library/open-library.client';
@@ -38,6 +39,14 @@ class FakeVision {
     };
   };
 }
+
+/** The scan's vision providers, in the order they are tried (D-030). */
+const readers = (...fakes: FakeVision[]): VisionReader[] =>
+  fakes.map((client, i) => ({
+    provider: i === 0 ? 'groq' : 'gemini',
+    model: `test-vision-${i}`,
+    client,
+  }));
 
 class FakeOpenLibrary {
   readonly queries: string[] = [];
@@ -129,7 +138,7 @@ describe('discovery: search and scan (BE-6)', () => {
 
   beforeAll(async () => {
     ({ app } = await createTestApp({}, [
-      { token: COVER_VISION, value: vision },
+      { token: COVER_VISION, value: readers(vision) },
       { token: OPEN_LIBRARY, value: openLibrary },
     ]));
     db = new Client({ connectionString: TEST_DATABASE_URL });
@@ -469,7 +478,7 @@ describe('scan limits', () => {
   it('DISC-4: rejects an oversized upload before processing', async () => {
     const vision = new FakeVision();
     const { app } = await createTestApp({ SCAN_MAX_UPLOAD_BYTES: '100000' }, [
-      { token: COVER_VISION, value: vision },
+      { token: COVER_VISION, value: readers(vision) },
       { token: OPEN_LIBRARY, value: new FakeOpenLibrary() },
     ]);
     try {
@@ -501,7 +510,7 @@ describe('scan limits', () => {
       certainty: 'low',
     };
     const { app } = await createTestApp({ SCAN_DAILY_QUOTA: '2' }, [
-      { token: COVER_VISION, value: vision },
+      { token: COVER_VISION, value: readers(vision) },
       { token: OPEN_LIBRARY, value: new FakeOpenLibrary() },
     ]);
     try {
@@ -521,6 +530,49 @@ describe('scan limits', () => {
       expect(blocked.body.retryAfterSeconds).toBeGreaterThan(86_000);
       expect(blocked.headers['retry-after']).toBe(String(blocked.body.retryAfterSeconds));
       expect(vision.requests).toHaveLength(2);
+    } finally {
+      await app.close();
+    }
+  });
+
+  it('D-030: reads with the backup provider when the first fails, and gives the scan back when both fail', async () => {
+    const groq = new FakeVision();
+    const gemini = new FakeVision();
+    groq.error = new LlmError('quota', 'rate limited', 30);
+    gemini.error = new LlmError('unavailable', 'overloaded');
+    const { app } = await createTestApp({ SCAN_DAILY_QUOTA: '1' }, [
+      { token: COVER_VISION, value: readers(groq, gemini) },
+      { token: OPEN_LIBRARY, value: new FakeOpenLibrary() },
+    ]);
+    try {
+      const reg = await request(app.getHttpServer())
+        .post('/api/v1/auth/register')
+        .send({ email: uniqueEmail('backup'), password: 'discovery password', displayName: 'B' })
+        .expect(201);
+      const send = () =>
+        request(app.getHttpServer())
+          .post('/api/v1/scan')
+          .set('Authorization', `Bearer ${reg.body.accessToken}`)
+          .attach('image', jpeg(), { filename: 'cover.jpg', contentType: 'image/jpeg' });
+
+      // Both fail on our side: unavailable, and the scan is given back.
+      const failed = await send().expect(503);
+      expect(failed.body.code).toBe('IDENTIFICATION_UNAVAILABLE');
+      expect([groq.requests.length, gemini.requests.length]).toEqual([1, 1]);
+
+      // The backup answers: its reading is used, and the one daily scan is spent.
+      gemini.error = null;
+      gemini.reply = {
+        isBook: false,
+        readable: false,
+        title: '',
+        subtitle: '',
+        authors: [],
+        certainty: 'low',
+      };
+      expect((await send().expect(422)).body.code).toBe('NOT_A_BOOK');
+      expect([groq.requests.length, gemini.requests.length]).toEqual([2, 2]);
+      await send().expect(429);
     } finally {
       await app.close();
     }

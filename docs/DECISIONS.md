@@ -562,3 +562,18 @@ Options:
 - C. Use `outline` for every control border, including cards and buttons with outlines. Heaviest look.
 Decision: **B.** Text and search fields use `outline` (`#76777d`) for their border, from one constant (`FIELD_BORDER` in `components/ui/text-field.tsx`) used by the shared text field and the import review's row search. Option cards and buttons keep the light border. Chosen by the owner on 2026-10-22.
 Consequences: DESIGN.md's input border line now names the `outline` token. `src/app/contrast.test.ts` checks that the field border and the error border reach 3:1 on the page and card backgrounds, and fails if a field (an input styled with the text field's focus ring) uses `border-outline-variant` again.
+
+## D-030 Cover photos read by Groq, with Gemini as the backup
+Status: **DECIDED** (owner, 2026-10-23; the model, pacing and fallback rules are configurable hypotheses, not yet measured on real covers)
+Date: 2026-10-23
+Affects: BE-6 (scan), D-005 (stack: a second model provider), D-017 (cover reading); spec 6; no contract change
+Context: the scan used `gemini-3.5-flash-lite`, the same model and daily free-tier quota as the summary and trait steps of every analysis (D-024, D-026). A scan therefore costs an analysis request, and a used-up quota stops both. The owner wants the app to work first, and chose a second provider for the photos readers upload.
+Decision:
+- **Groq reads cover photos first; Gemini is the backup** (`SCAN_VISION_PROVIDER=groq`, `SCAN_VISION_FALLBACK=true`). The backup is tried when the first provider fails on our side (rate limit, outage, timeout, missing or rejected key), refuses the image, or gives invalid output twice. A reading, including "not a book" or "unreadable", is an answer and is never sent to the backup. When both fail, the scan maps the last error as before and the scan is given back (`IDENTIFICATION_UNAVAILABLE`). A provider without a key is left out at start-up.
+- **Model `qwen/qwen3.8-27b`** (`GROQ_VISION_MODEL`): on 2026-10-23 it was the only model available to the key that accepts images. One test image (two colour blocks) was described correctly, with 1,307 input tokens, about the same as a Gemini scan. So the change saves Gemini *requests*, not tokens.
+- **Same prompt and checks:** `readCover` (prompt `cover-v1`, `parseCoverReading`, one retry for invalid output) is shared, and code still decides identified or uncertain (DISC-2). Groq's chat API cannot be held to the schema on every model, so the schema is written into the system prompt and the JSON object is taken out of a code fence or reasoning block before the usual checks.
+- **Groq client** (`src/llm/groq.client.ts`): OpenAI-compatible chat completions, the key in the `Authorization` header, the photo inline from memory (DISC-3), the same `LlmError` kinds. A rate limit is not waited out, so the scan falls back at once; an outage is retried once. Pacing `GROQ_MAX_REQUESTS_PER_MINUTE` (30, a hypothesis).
+Not measured yet:
+- How well the Groq model reads real covers, and whether its "high" certainty means the same as Gemini's for `SCAN_MIN_CONFIDENCE`. The owner tests this with real photos; until then `SCAN_VISION_PROVIDER=gemini` restores the earlier behaviour without a code change.
+- Groq's terms on keeping or training on uploaded images: to be checked by the owner before any public deployment (the photo is never stored by Bookie, but it is sent to Groq).
+Consequences: no frontend, contract or database change. Logs name the provider that read each scan and every provider failure. Scan token use is still not recorded in the cost report (D-026), as before.

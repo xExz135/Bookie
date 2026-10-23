@@ -69,6 +69,12 @@ export const PARAMS = {
     source: 'D-005',
     secret: true,
   },
+  GROQ_API_KEY: {
+    schema: z.string().min(1).optional(),
+    description: 'Groq API key for reading cover photos (scan). Server-side only.',
+    source: 'D-030',
+    secret: true,
+  },
 
   // --- Mail (Mailpit locally) ---
   SMTP_HOST: {
@@ -298,8 +304,31 @@ export const PARAMS = {
   },
   GEMINI_VISION_MODEL: {
     schema: z.string().min(1).default('gemini-3.5-flash-lite'),
-    description: 'Model that reads cover photos (title, author, whether it is a book).',
+    description: 'Gemini model that reads cover photos (title, author, whether it is a book).',
     source: 'D-017',
+  },
+  SCAN_VISION_PROVIDER: {
+    schema: z.enum(['groq', 'gemini']).default('groq'),
+    description:
+      'Provider that reads cover photos first. Groq keeps scans off the Gemini quota that analyses need.',
+    source: 'D-030',
+  },
+  SCAN_VISION_FALLBACK: {
+    schema: z.stringbool().default(true),
+    description:
+      'When the first provider fails (quota, outage, refused or invalid output twice), read the cover with the other provider, if its key is set.',
+    source: 'D-030',
+  },
+  GROQ_VISION_MODEL: {
+    schema: z.string().min(1).default('qwen/qwen3.8-27b'),
+    description:
+      'Groq model that reads cover photos. The only model with image input available to the key on 2026-10-23.',
+    source: 'D-030',
+  },
+  GROQ_MAX_REQUESTS_PER_MINUTE: {
+    schema: int(30),
+    description: 'Client-side request pacing for Groq.',
+    source: 'D-030 (hypothesis)',
   },
   SEARCH_MIN_SCORE: {
     schema: num(0.4, 0.1, 1),
