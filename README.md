@@ -14,7 +14,7 @@ The evaluation is part of the product: every number below has a baseline, a meth
 
 - **Accounts:** email and password sign-up, sign-in and password reset, written from scratch (no auth provider).
 - **Taste capture:** import a Goodreads or StoryGraph export, quick-rate popular books, or answer an optional questionnaire. A personal match needs at least 3 rated books.
-- **Discovery:** search by title (falling back to Open Library when the catalog has no good match), or photograph a cover (read by a Groq vision model, with Gemini as the backup), then confirm the edition. Photos are never stored.
+- **Discovery:** search by title (falling back to Open Library when the catalog has no good match), or photograph a cover with the in-app camera or pick a saved photo (read by a Groq vision model, with Gemini as the backup), then confirm the edition. Photos are never stored.
 - **Result screen:** the public reception with clickable citations, ratings from live sources (Open Library, Hardcover), the personal match with the reader's most similar rated books as reasons, and a confidence level for each.
 - **Feedback:** "Accurate" or "Not for me" on each result, stored as labelled data.
 - **History, reading list and comparison:** past results with timestamps and model versions, a reading list ranked by personal match, and a side-by-side comparison of two books.
@@ -37,7 +37,7 @@ flowchart LR
 
 - **Analysis pipeline.** An analysis runs as eight background steps that store their output, so a retry reruns only what failed and a restart resumes where it stopped. A source that fails is reported as failed, never as "no criticism found".
 - **LLM safety.** Review text is untrusted: it is delimited in the prompt, instructions inside it are ignored, and it is shown as plain text. Every claim must cite a real review, which the code checks; invalid output is retried once, then the step fails.
-- **Cover scan.** Groq (`qwen/qwen3.8-27b`) reads the photo first and Gemini is the backup, so scans do not use the Gemini quota that analyses need. The model only reports what is printed; code decides from catalog match scores whether a scan is identified or goes to the reader to confirm. The photo stays in memory and is never stored. How well Groq reads real covers is not measured yet ([D-030](docs/DECISIONS.md)).
+- **Cover scan.** Groq (`qwen/qwen3.8-27b`) reads the photo first and Gemini is the backup, so scans do not use the Gemini quota that analyses need. The model only reports what is printed; code decides from catalog match scores whether a scan is identified or goes to the reader to confirm. The photo stays in memory and is never stored. The in-app camera (webcam on a laptop, back camera on a phone) sends the frame as taken, with no clean-up. In informal checks, Groq read clear cover photos and declined blurry webcam frames with low certainty instead of guessing a title; the reader is then asked to type it. Accuracy on a labelled photo set is not measured yet ([D-030](docs/DECISIONS.md)).
 - **Caching.** A book's public reception is built once and reused by every reader for 30 days. Readers asking for the same book at the same time share one build, and model output is reused when the evidence has not changed. A failed rebuild falls back to the older reception, labelled with its date.
 - **Models.** Trained and evaluated in Python, exported as a versioned release, and scored by the API in TypeScript. A parity test checks that both languages give the same scores (within 1e-6), so the app runs exactly the model that was evaluated.
 - **Contract.** Request and response shapes are zod schemas in the API, published as `contract/openapi.json`; the web app's types are generated from it, and its tests mock the API with the contract's fixtures.
@@ -128,7 +128,7 @@ Other jobs shared the model's per-minute quota during the run, so the pacing wai
 - **Plain item neighbours were no better than the baseline** (0.317 against 0.319) until a damping constant, tuned on validation, kept one weak neighbour from deciding a prediction. Matrix factorization (32 and 64 factors) reached only 0.31 to 0.34 on validation against 0.357, and took minutes instead of seconds.
 - **The small model misjudges pace and content intensity.** Both score below always answering "moderate", and it rates intensity lower than a person almost every time it disagrees. That matters most to readers looking for content warnings; a prompt change is the next thing to try.
 - **Live sources have no usable review text.** Open Library and Hardcover give ratings only, so written summaries come from the Goodreads dataset, and books published after about 2017 get ratings but no summary. Google Books matched 0 of the 12 most-rated books and is off by default.
-- **The free Gemini tier set the pace.** A background run extracting traits for the whole catalog used up the daily quota the live app needed, so extraction now stops at the evaluation set (633 of 1,000 books done). The larger models allow 20 requests a day, which is why the size comparison and the claim check are unfinished. `gemini-embedding-2` ran out of free quota after about 47,000 tokens, so embeddings use `gemini-embedding-001`. Cover scans used the same model and quota as analyses, so they now go to Groq first, with Gemini as the backup ([D-030](docs/DECISIONS.md)).
+- **The free Gemini tier set the pace.** A background run extracting traits for the whole catalog used up the daily quota the live app needed, so extraction now stops at the 1,000-book evaluation set, which still needs traits for the final run. The larger models allow 20 requests a day, which is why the size comparison and the claim check are unfinished. `gemini-embedding-2` ran out of free quota after about 47,000 tokens, so embeddings use `gemini-embedding-001`. Cover scans used the same model and quota as analyses, so they now go to Groq first, with Gemini as the backup ([D-030](docs/DECISIONS.md)).
 - **Cold analyses first took about 20 s.** Running the summary and traits in parallel brought the median to 11.2 s, of which about 4.8 s is waiting on free-tier rate limits.
 
 ## Running it locally
@@ -149,6 +149,8 @@ pnpm --filter @bookie/api import:goodreads --limit-books 5000   # safe to re-run
 pnpm --filter @bookie/api embed:books --limit 1000              # about an hour on the free tier; resumable
 pnpm --filter @bookie/api traits:extract --limit 1000           # optional, resumable; shares the app's daily quota
 ```
+
+`data/` sits in the repository folder but is git-ignored, so git keeps no copy of it. Back up `data/derived/` (the trait cache, evaluation snapshots and model releases): rebuilding the trait cache takes days of free-tier quota. Books, reviews, ratings and embeddings live in the PostgreSQL Docker volume, not in `data/`.
 
 **Model.** Train, evaluate and load the personal-match model:
 
